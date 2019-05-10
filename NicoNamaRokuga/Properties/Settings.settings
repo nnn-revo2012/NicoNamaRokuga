@@ -1,0 +1,69 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NicoNamaRokuga.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="UserID" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="Password" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="IsLogin" Type="System.String" Scope="User">
+      <Value Profile="(Default)">always</Value>
+    </Setting>
+    <Setting Name="SelectedCookie" Type="SunokoLibrary.Application.CookieSourceInfo" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="IsAllCookie" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SaveDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SaveFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">{2}_{3}({4})_{0}({1})</Value>
+    </Setting>
+    <Setting Name="QualityType" Type="System.String" Scope="User">
+      <Value Profile="(Default)">normal</Value>
+    </Setting>
+    <Setting Name="Protocol" Type="System.String" Scope="User">
+      <Value Profile="(Default)">hls</Value>
+    </Setting>
+    <Setting Name="ExecFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ffmpeg.exe;ffmpeg.exe</Value>
+    </Setting>
+    <Setting Name="LoginMethod" Type="System.String" Scope="User">
+      <Value Profile="(Default)">login</Value>
+    </Setting>
+    <Setting Name="ExecCommand" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%HEADERS% -i "%PARA%" -c copy "%FILE%";%HEADERS% -i "%PARA%" -c copy "%FILE%"</Value>
+    </Setting>
+    <Setting Name="DefaultSaveFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">{2}_{3}({4})_{0}({1})</Value>
+    </Setting>
+    <Setting Name="DefaultExecFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ffmpeg.exe;ffmpeg.exe</Value>
+    </Setting>
+    <Setting Name="DefaultExecCommand" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%HEADERS% -i "%PARA%" -c copy "%FILE%";%HEADERS% -i "%PARA%" -c copy "%FILE%"</Value>
+    </Setting>
+    <Setting Name="IsLogging" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ReConnectTime1" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
+    <Setting Name="Retry" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="ReConnectTime2" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="BreakCommand" Type="System.String" Scope="User">
+      <Value Profile="(Default)">q;q</Value>
+    </Setting>
+    <Setting Name="IsComment" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

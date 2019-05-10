@@ -1,0 +1,262 @@
+﻿using System;
+using System.Net;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Configuration;
+
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Diagnostics;
+using System.IO;
+
+using SunokoLibrary.Application;
+
+namespace NicoNamaRokuga.Prop
+{
+
+    public enum IsLogin { none, always, necessary, };
+    public enum LoginMethod { login, cookie, };
+    public enum QTypes { super_high, high, normal, low, super_low, };
+    public enum Protocol { hls, rtmp, };
+
+    public class Props
+    {
+
+        //定数設定
+        public static string Version = "0.1.0.0";
+        public static string UserAgent = "Mozilla/5.0 (NicoNamaRokuga; " + Props.Version + ")";
+        //public static string UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36";
+        public static string NicoDomain = "https://nicovideo.jp/";
+
+        public static string NicoLiveUrl = "https://live.nicovideo.jp/watch/";
+        public static string NicoCommUrl = "https://com.nicovideo.jp/community/";
+        public static string NicoChannelUrl = "https://ch.nicovideo.jp/";
+        public static string NicoUserUrl = "https://www.nicovideo.jp/user/";
+
+        public static string NicoLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico";
+        public static string NicoGetPlayerStatus = "https://ow.live.nicovideo.jp/api/getplayerstatus?v=";
+        public static string NicoWayBackKey = "https://live.nicovideo.jp/api/getwaybackkey";
+        //public static string NicoCasApi = "https://api.cas.nicovideo.jp/v1/services/live/programs/";
+
+        public static string TIMESHIFT = "timeshift";
+
+        public static Dictionary<string, string> WsHeaderStream =
+            new Dictionary<string, string>()
+            {{"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"}};
+
+        //public static Dictionary<string, string> WsHeaderStream =
+        //    new Dictionary<string, string>()
+        //    {{"User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"},
+        //     {"Origin", "https://live2.nicovideo.jp"},
+        //     {"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"}};
+
+        public static Dictionary<string, string> WsHeaderComment =
+            new Dictionary<string, string>()
+            {{"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"},
+             {"Sec-WebSocket-Protocol", "msg.nicovideo.jp#json"}};
+
+        public static string[] Quality =
+            { "3Mbps (suoer_high)","2Mbps (high)", "1Mbps (normal)", "384Kbps (low)", "192Kbps (super_low)" };
+
+        public bool IsDebug { get; set; }
+
+        public IsLogin IsLogin { get; set; }
+        public LoginMethod LoginMethod { get; set; }
+        public string UserID { get; set; }
+        public string Password { get; set; }
+        public CookieSourceInfo SelectedCookie { get; set; }
+        public bool IsAllCookie { get; set; }
+        public string SaveDir { get; set; }
+        public string SaveFile { get; set; }
+        public QTypes QuarityType { get; set; }
+        public Protocol Protocol { get; set; }
+        public string[] ExecFile { get; set; }
+        public string[] ExecCommand { get; set; }
+        public string[] BreakCommand { get; set; }
+        public int ReConnectTime1 { get; set; }
+        public int Retry { get; set; }
+        public int ReConnectTime2 { get; set; }
+        public bool IsLogging { get; set; }
+        public bool IsComment { get; set; }
+
+
+        public Props()
+        {
+            ExecFile = new string[2];
+            ExecCommand = new string[2];
+            BreakCommand = new string[2];
+        }
+
+        public static int ParseProtocol(string str)
+        {
+            return (int)(Protocol)Enum.Parse(typeof(Protocol), str);
+        }
+
+        public static int ParseQTypes(string str)
+        {
+            return (int)(QTypes)Enum.Parse(typeof(QTypes), str);
+        }
+
+        public bool LoadData()
+        {
+            try
+            {
+                this.IsLogin =
+                    (IsLogin)Enum.Parse(typeof(IsLogin), Properties.Settings.Default.IsLogin);
+                this.LoginMethod =
+                    (LoginMethod)Enum.Parse(typeof(LoginMethod), Properties.Settings.Default.LoginMethod);
+                this.UserID = Properties.Settings.Default.UserID;
+                this.Password = Properties.Settings.Default.Password;
+                this.SelectedCookie = Properties.Settings.Default.SelectedCookie;
+                this.IsAllCookie = Properties.Settings.Default.IsAllCookie;
+                this.SaveDir = Properties.Settings.Default.SaveDir;
+                this.SaveFile = Properties.Settings.Default.SaveFile;
+                this.QuarityType =
+                    (QTypes)Enum.Parse(typeof(QTypes), Properties.Settings.Default.QualityType);
+                this.Protocol =
+                    (Protocol)Enum.Parse(typeof(Protocol), Properties.Settings.Default.Protocol);
+                this.ExecFile = Properties.Settings.Default.ExecFile.Split(';');
+                this.ExecCommand = Properties.Settings.Default.ExecCommand.Split(';');
+                this.BreakCommand = Properties.Settings.Default.BreakCommand.Split(';');
+                this.ReConnectTime1 = Properties.Settings.Default.ReConnectTime1;
+                this.Retry = Properties.Settings.Default.Retry;
+                this.ReConnectTime2 = Properties.Settings.Default.ReConnectTime2;
+                this.IsLogging = Properties.Settings.Default.IsLogging;
+                this.IsComment = Properties.Settings.Default.IsComment;
+            }
+            catch (Exception Ex)
+            {
+                MessageBox.Show("LoadData Error: " + Ex.Message);
+                return false;
+            }
+            return true;
+        }
+
+        public bool SaveData()
+        {
+            try
+            {
+                Properties.Settings.Default.IsLogin = this.IsLogin.ToString().ToLower();
+                Properties.Settings.Default.LoginMethod = this.LoginMethod.ToString().ToLower();
+                Properties.Settings.Default.UserID = this.UserID;
+                Properties.Settings.Default.Password = this.Password;
+                Properties.Settings.Default.SelectedCookie = this.SelectedCookie;
+                Properties.Settings.Default.IsAllCookie = this.IsAllCookie;
+                Properties.Settings.Default.SaveDir = this.SaveDir;
+                Properties.Settings.Default.SaveFile = this.SaveFile;
+                Properties.Settings.Default.QualityType = this.QuarityType.ToString().ToLower();
+                Properties.Settings.Default.Protocol = this.Protocol.ToString().ToLower();
+                Properties.Settings.Default.ExecFile = String.Join(";", this.ExecFile);
+                Properties.Settings.Default.ExecCommand = String.Join(";", this.ExecCommand);
+                Properties.Settings.Default.BreakCommand = String.Join(";", this.BreakCommand);
+                Properties.Settings.Default.ReConnectTime1 = this.ReConnectTime1;
+                Properties.Settings.Default.ReConnectTime2 = this.ReConnectTime2;
+                Properties.Settings.Default.Retry = this.Retry;
+                Properties.Settings.Default.IsLogging = this.IsLogging;
+                Properties.Settings.Default.IsComment = this.IsComment;
+                Properties.Settings.Default.Save();
+            }catch(Exception Ex)
+            {
+                MessageBox.Show("SaveData Error: " + Ex.Message);
+                return false;
+            }
+            return true;
+        }
+
+        public bool ReloadData()
+        {
+            Properties.Settings.Default.Reload();
+            return this.LoadData();
+        }
+
+        public bool ResetData()
+        {
+            Properties.Settings.Default.Reset();
+            return this.LoadData();  
+        }
+
+        //設定ファイルの場所をGet
+        public static string GetSettingDirectory()
+        {
+            //設定ファイルの場所
+            var config = ConfigurationManager.OpenExeConfiguration(
+                ConfigurationUserLevel.PerUserRoamingAndLocal);
+            return Path.GetDirectoryName(config.FilePath);
+        }
+
+        //アプリケーションの場所をGet
+        public static string GetApplicationDirectory()
+        {
+            //アプリケーションの場所
+            var tmp = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            return Path.GetDirectoryName(tmp);
+        }
+
+        //ログファイル名をGet
+        public static string GetLogfile(string dir, string filename)
+        {
+            var tmp = Path.GetFileNameWithoutExtension(filename) + "_" + System.DateTime.Now.ToString("yyMMdd_HHmmss") + ".log";
+            return Path.Combine(dir, tmp);
+        }
+
+        //実行ログファイル名をGet
+        public static string GetExecLogfile(string dir, string filename)
+        {
+            var tmp = Path.GetFileNameWithoutExtension(filename) + "_exec_" + System.DateTime.Now.ToString("yyMMdd_HHmmss") + ".log";
+            return Path.Combine(dir, tmp);
+        }
+
+        public static string GetLiveUrl(string liveid)
+        {
+            return NicoLiveUrl + liveid;
+        }
+
+        public static string GetChannelUrl(string channelid)
+        {
+            return NicoChannelUrl + channelid;
+        }
+
+        public static string GetCommUrl(string channelid)
+        {
+            return NicoCommUrl + channelid;
+        }
+
+        public static string GetUserUrl(string userid)
+        {
+            return NicoUserUrl + userid;
+        }
+
+        public static string GetProviderType(string type)
+        {
+            var result = "？？";
+            switch (type)
+            {
+                case "community":
+                    result = "コミュニティ";
+                    break;
+                case "user":
+                    result = "コミュニティ";
+                    break;
+                case "channel":
+                    result = "チャンネル";
+                    break;
+                case "official":
+                    result = "公式生放送";
+                    break;
+                case "cas":
+                    result = "実験放送";
+                    break;
+                default:
+                    break;
+            }
+            return result;
+        }
+
+
+    }
+}
