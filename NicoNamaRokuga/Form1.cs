@@ -34,7 +34,7 @@ namespace NicoNamaRokuga
         public  static volatile int[] WsStatus;       //WebSocketの状態
         public  static volatile int PsStatus;         //実行ファイルの状態
 
-        public  NicoLiveNet _nLiveNet = null;         //HttpClient
+        public  NicoLiveNet _nLiveNet = null;         //WebClient
         public  NicoNetStream _nNetStream = null;     //WebSocket(Stream)
         public  NicoNetComment _nNetComment = null;   //WebSocket(Comment)
         public  ExecProcess _eProcess = null;         //Process
@@ -60,9 +60,6 @@ namespace NicoNamaRokuga
             //設定データー読み込み
             props = new Props();
             props.LoadData();
-
-            //System.Net.HttpClient
-            _nLiveNet = new NicoLiveNet();
 
             //各種ステータスの初期化
             WsStatus = new int[2];
@@ -97,6 +94,10 @@ namespace NicoNamaRokuga
                     if (_nNetComment != null)
                     {
                         _nNetComment.Close();
+                    }
+                    if (_nLiveNet != null)
+                    {
+                        _nLiveNet.Dispose();
                     }
                     AddLog("中断しました。", 1);
                     EnableButton(true);
@@ -140,6 +141,8 @@ namespace NicoNamaRokuga
                 {
                     exec_command = Properties.Settings.Default.DefaultExecCommand;
                 }
+
+                _nLiveNet = new NicoLiveNet();
 
                 //放送ID
                 if (!IsBatchMode) liveId = _nLiveNet.GetLiveID(textBox1.Text);
@@ -204,7 +207,6 @@ namespace NicoNamaRokuga
                 }
 
                 //将来的には番組情報・放送情報は放送ページから取得
-                //nicocas のみ PlayerAPIから放送情報取得
 
                 //番組情報を取得する
                 var gpsi = await _nLiveNet.GetPlayerStatusAsync(liveId);
@@ -292,6 +294,10 @@ namespace NicoNamaRokuga
                     if (_nNetComment != null)
                     {
                         _nNetComment.Close();
+                    }
+                    if (_nLiveNet != null)
+                    {
+                        _nLiveNet.Dispose();
                     }
                     AddLog("録画終了しました。", 1);
                     EnableButton(true);

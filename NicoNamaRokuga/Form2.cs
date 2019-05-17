@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using SunokoLibrary.Application;
 
 using NicoNamaRokuga.Prop;
+using NicoNamaRokuga.Net;
 
 namespace NicoNamaRokuga
 {
@@ -131,7 +132,7 @@ namespace NicoNamaRokuga
             _props.IsComment = checkBox3.Checked;
 
             _props.SelectedCookie =
-                await _form._nLiveNet.GetCookieSource(!checkBox1.Checked, comboBox1.SelectedIndex);
+                await NicoLiveNet.GetCookieSource(!checkBox1.Checked, comboBox1.SelectedIndex);
 
             return;
         }
@@ -146,7 +147,7 @@ namespace NicoNamaRokuga
             {
                 //使えるブラウザー一覧を取得
                 comboBox1.Items.Clear();
-                var bb = await _form._nLiveNet.GetCookieBrowsers(flag);
+                var bb = await NicoLiveNet.GetCookieBrowsers(flag);
 
                 //combobox1 にブラウザ名を登録
                 for (int i = 0; i < bb.Count(); i++)

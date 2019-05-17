@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Diagnostics;
+using System.Collections.Specialized;
 using System.Xml;
 using System.IO;
 using System.Web;
@@ -120,13 +121,25 @@ namespace NicoNamaRokuga.Net
 
         private bool disposedValue = false; // 重複する呼び出しを検知するには
 
-        //HttpClient
-        private static HttpClientHandler handler = new HttpClientHandler()
+        private WebClientEx _wc = null;
+
+        private class WebClientEx : WebClient
         {
-            CookieContainer = new CookieContainer(),
-            UseCookies = true
-        };
-        private static HttpClient client = new HttpClient(handler);
+            public CookieContainer cookieContainer = new CookieContainer();
+
+            protected override WebRequest GetWebRequest(Uri address)
+            {
+                var wr = base.GetWebRequest(address);
+
+                HttpWebRequest hwr = wr as HttpWebRequest;
+                if (hwr != null)
+                {
+                    hwr.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; //圧縮を有効化
+                    hwr.CookieContainer = cookieContainer; //Cookie
+                }
+                return wr;
+            }
+        }
 
         //Debug
         public bool IsDebug { get; set; }
@@ -139,14 +152,11 @@ namespace NicoNamaRokuga.Net
 
             IsLoginStatus = false;
 
-            if (client.DefaultRequestHeaders.Count() <= 0)
-            {
-                // ユーザーエージェント文字列をセット（オプション）
-                client.DefaultRequestHeaders.Add("User-Agent", Props.UserAgent);
-                // タイムアウトをセット（オプション）
-                client.Timeout = TimeSpan.FromSeconds(10.0);
-            }
+            var wc = new WebClientEx();
+            _wc = wc;
 
+            _wc.Encoding = Encoding.UTF8;
+            _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
         }
 
         ~NicoLiveNet()
@@ -158,7 +168,7 @@ namespace NicoNamaRokuga.Net
         public List<KeyValuePair<string, string>> GetCookieList()
         {
             var result = new Dictionary<string, string>();
-            var cc = handler.CookieContainer;
+            var cc = _wc.cookieContainer;
 
             foreach (Cookie ck in cc.GetCookies(new Uri(Props.NicoDomain)))
                 result.Add(ck.Name.ToString(), ck.Value.ToString());
@@ -199,36 +209,39 @@ namespace NicoNamaRokuga.Net
 
             var flag = false;
             try {
+                var ps = new NameValueCollection();
                 //ログイン認証(POST)
-                var content = new FormUrlEncodedContent(new Dictionary<string, string>
-                        { { "mail", mail },
-                          { "password", pass } });
-                using (var response = await client.PostAsync(Props.NicoLoginUrl, content))
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        //ヘッダーに x-niconico-authflag があれば正常にログイン
-                        IEnumerable<string> authflag;
-                        if (response.Headers.TryGetValues("x-niconico-authflag", out authflag))
-                        {
-                            flag = true;
-                            IsLoginStatus = true;
-                        }
-                    }else
-                    {
-                        //何らかのエラー
-                    }
+                ps.Add("mail", mail);
+                ps.Add("password", pass);
 
-                    if (IsDebug)
+                byte[] resArray = await _wc.UploadValuesTaskAsync(Props.NicoLoginUrl, ps);
+                string ttt = _wc.ResponseHeaders.Get("x-niconico-authflag");
+                int authflg;
+                if (int.TryParse(ttt, out authflg))
+                {
+                    //ヘッダーに x-niconico-authflag があれば正常にログイン
+                    if (authflg > 0)
                     {
-                        //responseヘッダーの数と内容を表示
-                        var strtmp = string.Format("Login Headers: {0}\r\n\r\n", response.Headers.Count());
-                        foreach (var item in response.Headers)
-                        strtmp += string.Format("{0}: {1}\r\n", item.Key, item.Value.First());
-                        MessageBox.Show(strtmp);
+                        flag = true;
+                        IsLoginStatus = true;
                     }
                 }
-            }catch (Exception Ex) //タイムアウトなど
+                else
+                {
+                    //エラー
+                }
+
+                if (IsDebug)
+                {
+                    //responseヘッダーの数と内容を表示
+                    var strtmp = string.Format("Login Headers: {0}\r\n\r\n", _wc.ResponseHeaders.Count);
+                    for (int i = 0; i < _wc.ResponseHeaders.Count; i++)
+                        strtmp += string.Format("{0}: {1}\r\n", _wc.ResponseHeaders.GetKey(i),
+                            _wc.ResponseHeaders.Get(i));
+                    MessageBox.Show(strtmp);
+                }
+            }
+            catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
                 MessageBox.Show("LoginNico() Error: \r\n" + Ex.Message);
@@ -239,13 +252,14 @@ namespace NicoNamaRokuga.Net
 
         }
 
+        /*
         //ニコニコをログアウト
         public async Task<bool> LogoutNico()
         {
 
             var flag = false;
             try {
-                using (var response = await client.GetAsync("http://live.nicovideo.jp/logout"))
+                using (var response = await _wc.("http://live.nicovideo.jp/logout"))
                 {
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
@@ -273,6 +287,7 @@ namespace NicoNamaRokuga.Net
 
             return flag;
         }
+*/
 
         //GetPlayerStatusを実行
         public async Task<GetPlayerStatusInfo> GetPlayerStatusAsync(string nicoUrl)
@@ -288,7 +303,7 @@ namespace NicoNamaRokuga.Net
                 if (string.IsNullOrEmpty(stmp)) return gpsi;
 
                 stmp = Props.NicoGetPlayerStatus + stmp;
-                var xhtml =  await client.GetStringAsync(stmp);
+                var xhtml =  await _wc.DownloadStringTaskAsync(stmp);
                 var doc = new XmlDocument();
                 doc.LoadXml(xhtml);
                 gpsi.Status = doc.DocumentElement.GetAttribute("status");
@@ -350,7 +365,7 @@ namespace NicoNamaRokuga.Net
 
                 bci.LiveId = stmp;
                 //stmp = Props.NicoAPIUrl + stmp + "/player";
-                var hs = await client.GetStringAsync(stmp);
+                var hs = await _wc.DownloadStringTaskAsync(stmp);
                 if (string.IsNullOrEmpty(hs)) return bci;
 
                 var des = JObject.Parse(hs);
@@ -397,7 +412,7 @@ namespace NicoNamaRokuga.Net
                 var providertype = "unama";
                 tpi.Provider_Type = providertype;
 
-                var hs = await client.GetStringAsync(Props.NicoLiveUrl + liveid);
+                var hs = await _wc.DownloadStringTaskAsync(Props.NicoLiveUrl + liveid);
                 if (string.IsNullOrEmpty(hs)) return tpi;
                 if (hs.IndexOf("window.NicoGoogleTagManagerDataLayer = [];") > 0)
                 {
@@ -477,7 +492,7 @@ namespace NicoNamaRokuga.Net
 
                 bci.LiveId = stmp;
                 stmp = Props.NicoLiveUrl + stmp;
-                var hs = HttpUtility.HtmlDecode(await client.GetStringAsync(stmp));
+                var hs = HttpUtility.HtmlDecode(await _wc.DownloadStringTaskAsync(stmp));
                 if (string.IsNullOrEmpty(hs)) return bci;
 
                 bci.WsUrl = Regex.Match(hs, @"""webSocketUrl"":""([^""]+)""").Groups[1].Value;
@@ -511,7 +526,7 @@ namespace NicoNamaRokuga.Net
             try
             {
                 var stmp = Props.NicoWayBackKey + "?thread=" + thread_id;
-                result = await client.GetStringAsync(stmp);
+                result = await _wc.DownloadStringTaskAsync(stmp);
                 result = result.Split('=')[1];
             }
             catch (Exception Ex) //タイムアウトなど
@@ -532,7 +547,7 @@ namespace NicoNamaRokuga.Net
             {
                 var idx = url.IndexOf("master.m3u8");
                 if (idx >= 0) result = url.Substring(0, idx);
-                var str = await client.GetStringAsync(url);
+                var str = await _wc.DownloadStringTaskAsync(url);
                 using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(str), false))
                 using (var sr = new StreamReader(stream, Encoding.UTF8))
                 {
@@ -553,7 +568,7 @@ namespace NicoNamaRokuga.Net
         //*************** Cookie用 *******************
 
         //使えるブラウザー一覧を取得
-        public async Task<IList<string>> GetCookieBrowsers(bool flag)
+        public static async Task<IList<string>> GetCookieBrowsers(bool flag)
         {
             var result = new List<string>();
             try
@@ -572,7 +587,7 @@ namespace NicoNamaRokuga.Net
         }
 
         //指定番号のCookieSourceInfoを取得
-        public async Task<CookieSourceInfo> GetCookieSource(bool flag, int index)
+        public static async Task<CookieSourceInfo> GetCookieSource(bool flag, int index)
         {
             var importableBrowsers = await CookieGetters.Default.GetInstancesAsync(flag);
 
@@ -581,7 +596,7 @@ namespace NicoNamaRokuga.Net
         }
 
         //指定番号のCookie情報を取得
-        public async Task<ICookieImporter> GetCookieGetter(bool flag, int index)
+        public static async Task<ICookieImporter> GetCookieGetter(bool flag, int index)
         {
             var importableBrowsers = await CookieGetters.Default.GetInstancesAsync(flag);
 
@@ -611,12 +626,12 @@ namespace NicoNamaRokuga.Net
                 }
 
                 // Cookieをセット
-                handler.CookieContainer.Add(targetUrl, result.Cookies);
+                _wc.cookieContainer.Add(targetUrl, result.Cookies);
                 IsLoginStatus = true;
 
                 if (IsDebug)
                 {
-                    var cc = handler.CookieContainer;
+                    var cc = _wc.cookieContainer;
                     Debug.WriteLine(string.Format("Cookie GetCookieHeader: \r\n{0}\r\n",
                         cc.GetCookieHeader(targetUrl)));
                 }
@@ -637,8 +652,7 @@ namespace NicoNamaRokuga.Net
                 if (disposing)
                 {
                     // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
-                    client?.Dispose();
-                    handler?.Dispose();
+                    _wc?.Dispose();
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
