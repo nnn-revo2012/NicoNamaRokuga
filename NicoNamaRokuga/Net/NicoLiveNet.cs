@@ -179,7 +179,7 @@ namespace NicoNamaRokuga.Net
         //*************** URL系 *******************
 
         //放送URLから放送IDをゲット(lv00000000000)
-        public string GetLiveID(string liveUrl)
+        public static string GetLiveID(string liveUrl)
         {
             var stmp = Regex.Match(liveUrl, "(lv[0-9]+)").Groups[1].Value;
             if (string.IsNullOrEmpty(stmp)) stmp = null;
@@ -187,14 +187,14 @@ namespace NicoNamaRokuga.Net
         }
 
         //放送IDから放送URLをゲット
-        public string GetNicoPageUrl(string liveID)
+        public static string GetNicoPageUrl(string liveID)
         {
             if (string.IsNullOrEmpty(liveID)) return null;
             return Props.NicoLiveUrl + liveID;
         }
 
         //放送IDからプレイヤーAPIをゲット
-        public string GetAPIUrl(string liveID)
+        public static string GetAPIUrl(string liveID)
         {
             if (string.IsNullOrEmpty(liveID)) return null;
             //return Props.NicoAPIUrl + liveID + "/player";

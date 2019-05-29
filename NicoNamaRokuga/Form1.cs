@@ -71,8 +71,14 @@ namespace NicoNamaRokuga
             Timer1.Interval = 10000;
             Timer1.Tick += new EventHandler(Timer1_Tick);
 
-            if (IsBatchMode) liveId = args[0];
-
+            if (IsBatchMode)
+            {
+                liveId = NicoLiveNet.GetLiveID(args[0]);
+                if (string.IsNullOrEmpty(liveId))
+                {
+                    this.Close();
+                }
+            }
         }
 
         private async void button1_Click(object sender, EventArgs e)
@@ -142,10 +148,9 @@ namespace NicoNamaRokuga
                     exec_command = Properties.Settings.Default.DefaultExecCommand;
                 }
 
-                _nLiveNet = new NicoLiveNet();
-
                 //放送ID
-                if (!IsBatchMode) liveId = _nLiveNet.GetLiveID(textBox1.Text);
+                if (!IsBatchMode)
+                    liveId = NicoLiveNet.GetLiveID(textBox1.Text);
                 if (string.IsNullOrEmpty(liveId))
                 {
                     AddLog("放送URLまたは放送IDを指定してください。", 2);
@@ -158,13 +163,15 @@ namespace NicoNamaRokuga
 
                 AddLog("録画開始します。", 1);
                 AddLog(string.Format("LiveID: {0}", liveId), 1);
-                textBox1.Text = _nLiveNet.GetNicoPageUrl(liveId);
+                textBox1.Text = NicoLiveNet.GetNicoPageUrl(liveId);
 
                 //各種ステータスの初期化
                 WsStatus[0] = -1;
                 WsStatus[1] = -1;
                 PsStatus = -1;
                 IsTimeShift = false;
+
+                _nLiveNet = new NicoLiveNet();
 
                 //if (_nLiveNet.IsLoginStatus == true)
                 //    await _nLiveNet.LogoutNico();
