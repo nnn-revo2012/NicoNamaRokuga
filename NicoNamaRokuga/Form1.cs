@@ -213,8 +213,7 @@ namespace NicoNamaRokuga
                         break;
                 }
 
-                //将来的には番組情報・放送情報は放送ページから取得
-
+                //将来的には番組情報・放送情報も放送ページから取得
                 //番組情報を取得する
                 var gpsi = await _nLiveNet.GetPlayerStatusAsync(liveId);
                 if (gpsi.Status != "ok")
@@ -225,7 +224,6 @@ namespace NicoNamaRokuga
                 }
                 AddLog(string.Format("Provider_Type: {0}", gpsi.Provider_Type), 1);
 
-                //bci = await _nLiveNet.GetPlayerAPIAsync(liveId);
                 bci = await _nLiveNet.GetNicoPageAsync(liveId);
                 if (bci.Status != "ok")
                 {
@@ -278,7 +276,8 @@ namespace NicoNamaRokuga
                 //15秒おきに状態を調べて処理する
                 Timer1.Start();
 
-            }catch (Exception Ex)
+            }
+            catch (Exception Ex)
             {
                 AddLog("button1_Click Error: \r\n"+Ex.Message, 2);
             }

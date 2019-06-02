@@ -97,7 +97,6 @@ namespace NicoNamaRokuga.Net
             {
                 _form.AddLog("コメントサーバー接続を開始します。", 1);
                 _wsconnect = false;
-                //var _websocket = new WebSocket(wsurl, "", null, Props.WsHeaderComment.ToList(), Props.UserAgent, "", WebSocketVersion.Rfc6455, null, System.Security.Authentication.SslProtocols.Tls12, 0);
                 var _websocket = new WebSocket(wsurl, "", null, Props.WsHeaderComment.ToList(), Props.UserAgent, "", WebSocketVersion.Rfc6455);
                 _ws = _websocket;
             }
@@ -362,51 +361,6 @@ namespace NicoNamaRokuga.Net
 
         }
 
-        private void _AppendComment()
-        {
-            var enc = new System.Text.UTF8Encoding(false);
-            var count = 0;
-
-            //一時ファイル番号大きい方から読み込み
-            //ファイル書き出す
-            try
-            {
-                _form.AddLog("コメントファイル出力開始", 1);
-                BeginXmlDoc();
-                for (var i = _seq_no - 1; i >= 0; i--)
-                {
-
-                    _form.AddLog("コメント SEQ " + i + "出力中", 1);
-                    var r_file = Path.Combine(_come_tempfolder, string.Format(_COME_FILE, i));
-                    using (var sr = new StreamReader(r_file, enc))
-                    {
-                        string line;
-                        while ((line = sr.ReadLine()) != null) // 1行ずつ読み出し。
-                        {
-                            var jmes = JObject.Parse(line);
-                            var chat_no = (int)jmes["chat"]["no"];
-                            if (chat_no > count)
-                            {
-                                System.IO.File.AppendAllText(Form1._cmi.SaveFile, Json2Xml(jmes));
-                                count = chat_no;
-                            }
-                        }
-                    }
-                    File.Delete(r_file);
-                }
-                EndXmlDoc();
-                _form.AddLog("コメントファイル出力終了", 1);
-
-                //一時フォルダを削除
-                if (Directory.Exists(_come_tempfolder))
-                    Directory.Delete(_come_tempfolder);
-
-            }catch (Exception Ex)
-            {
-                MessageBox.Show(Ex.Message);
-            }
-
-        }
 
         public void BeginXmlDoc() 
         {
@@ -449,7 +403,7 @@ namespace NicoNamaRokuga.Net
 
         private void StartHBTimer()
         {
-            var time = TimeSpan.FromSeconds(30.0);
+            var time = TimeSpan.FromSeconds(40.0);
 
             _hbTimer = new System.Threading.Timer(_ =>
             {

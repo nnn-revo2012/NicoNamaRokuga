@@ -193,14 +193,6 @@ namespace NicoNamaRokuga.Net
             return Props.NicoLiveUrl + liveID;
         }
 
-        //放送IDからプレイヤーAPIをゲット
-        public static string GetAPIUrl(string liveID)
-        {
-            if (string.IsNullOrEmpty(liveID)) return null;
-            //return Props.NicoAPIUrl + liveID + "/player";
-            return "";
-        }
-
         //*************** HTTP系 *******************
 
         //ニコニコにログイン
@@ -241,53 +233,20 @@ namespace NicoNamaRokuga.Net
                     MessageBox.Show(strtmp);
                 }
             }
+            catch (WebException Ex)
+            {
+                MessageBox.Show("LoginNico() Error: \r\n" + Ex.Status.ToString());
+                return false;
+            }
             catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
                 MessageBox.Show("LoginNico() Error: \r\n" + Ex.Message);
-                return false;	
-            }
-
-            return flag;
-
-        }
-
-        /*
-        //ニコニコをログアウト
-        public async Task<bool> LogoutNico()
-        {
-
-            var flag = false;
-            try {
-                using (var response = await _wc.("http://live.nicovideo.jp/logout"))
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        flag = true;
-                        IsLoginStatus = false;
-                    }else
-                    {
-                        //何らかのエラー
-                    }
-                    if (IsDebug)
-                    {
-                        //responseヘッダーの数と内容を表示
-                        var strtmp = string.Format("Logout Headers: {0}\r\n\r\n", response.Headers.Count());
-                        foreach (var item in response.Headers)
-                        strtmp += string.Format("{0}: {1}\r\n", item.Key, item.Value.First());
-                        MessageBox.Show(strtmp);
-                    }
-                 }
-            }catch (Exception Ex) //タイムアウトなど
-            {
-                //HttpRequestException
-                MessageBox.Show("LogoutNico() Error: \r\n" + Ex.Message);
                 return false;
             }
 
             return flag;
         }
-*/
 
         //GetPlayerStatusを実行
         public async Task<GetPlayerStatusInfo> GetPlayerStatusAsync(string nicoUrl)
@@ -303,7 +262,7 @@ namespace NicoNamaRokuga.Net
                 if (string.IsNullOrEmpty(stmp)) return gpsi;
 
                 stmp = Props.NicoGetPlayerStatus + stmp;
-                var xhtml =  await _wc.DownloadStringTaskAsync(stmp);
+                var xhtml = await _wc.DownloadStringTaskAsync(stmp);
                 var doc = new XmlDocument();
                 doc.LoadXml(xhtml);
                 gpsi.Status = doc.DocumentElement.GetAttribute("status");
@@ -331,8 +290,8 @@ namespace NicoNamaRokuga.Net
                             //gpsi.Channel_Stream_Status = nodes.Item(0)["channel_stream_status"].InnerText;
                             break;
                         case "official":
-                             gpsi.Default_Community = gpsi.Provider_Type;
-                             break;
+                            gpsi.Default_Community = gpsi.Provider_Type;
+                            break;
                     }
                 }
                 nodes = doc.GetElementsByTagName("user");
@@ -341,7 +300,13 @@ namespace NicoNamaRokuga.Net
                     gpsi.User_Id = nodes.Item(0)["user_id"].InnerText;
                 }
 
-            } catch (Exception Ex) //タイムアウトなど
+            }
+            catch (WebException Ex)
+            {
+                gpsi.Error = Ex.Status.ToString();
+                return gpsi;
+            }
+            catch (Exception Ex) //タイムアウトなど
             {
                 MessageBox.Show("GetPlayerStatusAsync() Error: \r\n" + Ex.Message);
                 return gpsi;
@@ -349,50 +314,6 @@ namespace NicoNamaRokuga.Net
 
             gpsi.Error = "";
             return gpsi;
-        }
-
-        //新配信API(player)を実行
-        public async Task<BroadCastInfo> GetPlayerAPIAsync(string nicoUrl)
-        {
-            var bci = new BroadCastInfo(null, null, null, null);
-            bci.Status = "fail";
-            bci.Error = "PARAMERROR";
-
-            try
-            {
-                var stmp = GetLiveID(nicoUrl);
-                if (string.IsNullOrEmpty(stmp)) return bci;
-
-                bci.LiveId = stmp;
-                //stmp = Props.NicoAPIUrl + stmp + "/player";
-                var hs = await _wc.DownloadStringTaskAsync(stmp);
-                if (string.IsNullOrEmpty(hs)) return bci;
-
-                var des = JObject.Parse(hs);
-                JToken jtkn;
-                if (des.TryGetValue("errorCode", out jtkn))
-                {
-                    bci.Error = jtkn.ToString();
-                    return bci;
-                }
-
-                bci.WsUrl = des["webSocketUrl"].ToString()
-                          + des["broadcastId"].ToString()
-                          + "?audience_token=" + des["audienceToken"].ToString();
-
-                bci.AuTkn = des["audienceToken"].ToString();
-                bci.BcId = des["broadcastId"].ToString();
-                bci.Status = "ok";
-                bci.Error = "";
-
-            }catch (Exception Ex) //タイムアウトなど
-            {
-                //HttpRequestException
-                MessageBox.Show("GetPlayerAPIAsync() Error: \r\n" + Ex.Message);
-                return bci;
-            }
-
-            return bci;
         }
 
         //生放送ページから放送情報を取得
@@ -464,7 +385,6 @@ namespace NicoNamaRokuga.Net
             }
             catch (WebException Ex)
             {
-                //
                 tpi.Error = Ex.Status.ToString();
                 return tpi;
             }
@@ -504,7 +424,6 @@ namespace NicoNamaRokuga.Net
             }
             catch (WebException Ex)
             {
-                //
                 bci.Error = Ex.Status.ToString();
                 return bci;
             }
@@ -557,7 +476,8 @@ namespace NicoNamaRokuga.Net
                         if (!line.StartsWith("#")) result += line;
                     }
                 }
-            } catch (Exception Ex) //タイムアウトなど
+            }
+            catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
                 return result;
