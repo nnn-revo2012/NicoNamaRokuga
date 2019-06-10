@@ -273,13 +273,10 @@ namespace NicoNamaRokuga
             AddLog("wsUrl: " + bci.WsUrl, 9);
             AddLog("wsPermit: " + _nNetStream.GetPermit(bci.BcId, props.Protocol.ToString()), 9);
 
-            //textBox2.Text = tpi.Title;
-            //textBox3.Text = tpi.Provider_Name + "(" + tpi.Provider_Id + ")";
-            //textBox4.Text = tpi.Community_Title + "(" + tpi.Community_Id + ")";
-            //textBox5.Text = Props.GetProviderType(tpi.Provider_Type);
-            //if (IsTimeShift) textBox5.Text += "(TS)";
+            //放送情報を表示
+            DispHosoData(tpi, IsTimeShift);
 
-            //WebSocket4Net
+            //WebSocket接続開始
             _nNetStream.Connect();
 
             //5秒おきに状態を調べて処理する

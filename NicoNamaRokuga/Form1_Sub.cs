@@ -72,7 +72,8 @@ namespace NicoNamaRokuga
             }));
         }
 
-        public void DispLog(string s)
+        //実行プロセスのログ書き込み
+        public void AddExecLog(string s)
         {
             this.Invoke(new Action(() =>
             {
@@ -85,15 +86,25 @@ namespace NicoNamaRokuga
             }));
         }
 
-        //ＱＴを表示
-        public void DispLog2(string s)
+        //放送情報を表示
+        public void DispHosoData(TemplateInfo tpi, bool istimeshift)
         {
             this.Invoke(new Action(() =>
             {
-                lock (lockObject2)
-                {
-                    textBox6.Text = Props.Quality[Props.ParseQTypes(s)];
-                }
+                textBox2.Text = tpi.Title;
+                textBox3.Text = tpi.Provider_Name + "(" + tpi.Provider_Id + ")";
+                textBox4.Text = tpi.Community_Title + "(" + tpi.Community_Id + ")";
+                textBox5.Text = Props.GetProviderType(tpi.Provider_Type);
+                if (istimeshift) textBox5.Text += "(TS)";
+            }));
+        }
+
+        //画質情報を表示
+        public void DispQuality(string s)
+        {
+            this.Invoke(new Action(() =>
+            {
+                textBox6.Text = Props.Quality[Props.ParseQTypes(s)];
             }));
         }
 

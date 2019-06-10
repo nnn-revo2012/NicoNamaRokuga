@@ -164,7 +164,7 @@ namespace NicoNamaRokuga.Net
                         {
                             ttt = jtkn["currentStream"]["quality"].ToString();
                             _form.AddLog("Quarity: " + ttt, 9);
-                            _form.DispLog2(ttt);
+                            _form.DispQuality(ttt);
                             //ffmpegを実行する
                             ttt = (Form1._epi.Protocol == "rtmp") ?
                                 jtkn["currentStream"]["uri"].ToString() + "/" + jtkn["currentStream"]["name"].ToString() :

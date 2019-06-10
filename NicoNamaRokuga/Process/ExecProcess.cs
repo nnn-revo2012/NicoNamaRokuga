@@ -146,7 +146,7 @@ namespace NicoNamaRokuga.Proc
                 if (!string.IsNullOrEmpty(e.Data))
                 {
                     string text = e.Data + "\r\n";
-                    _form.DispLog(text);
+                    _form.AddExecLog(text);
                 }
             }
             catch (Exception Ex)
@@ -162,7 +162,7 @@ namespace NicoNamaRokuga.Proc
                 if (!string.IsNullOrEmpty(e.Data))
                 {
                     string text = e.Data + "\r\n";
-                    _form.DispLog(text);
+                    _form.AddExecLog(text);
                 }
             }
             catch (Exception Ex)
