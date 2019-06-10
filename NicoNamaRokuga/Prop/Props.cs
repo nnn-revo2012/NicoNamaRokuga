@@ -19,7 +19,7 @@ using SunokoLibrary.Application;
 namespace NicoNamaRokuga.Prop
 {
 
-    public enum IsLogin { none, always, necessary, };
+    public enum IsLogin { always, none, };
     public enum LoginMethod { login, cookie, };
     public enum QTypes { super_high, high, normal, low, super_low, };
     public enum Protocol { hls, rtmp, };

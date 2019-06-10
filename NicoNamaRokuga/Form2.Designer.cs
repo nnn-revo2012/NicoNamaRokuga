@@ -42,10 +42,11 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.rB_login = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rB_necessary = new System.Windows.Forms.RadioButton();
             this.rB_always = new System.Windows.Forms.RadioButton();
             this.rB_none = new System.Windows.Forms.RadioButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.rB_rtmp = new System.Windows.Forms.RadioButton();
             this.rB_hls = new System.Windows.Forms.RadioButton();
@@ -59,8 +60,6 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -216,7 +215,6 @@
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.rB_necessary);
             this.groupBox1.Controls.Add(this.rB_always);
             this.groupBox1.Controls.Add(this.rB_none);
             this.groupBox1.Location = new System.Drawing.Point(8, 18);
@@ -226,22 +224,11 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "ログイン設定";
             // 
-            // rB_necessary
-            // 
-            this.rB_necessary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.rB_necessary.AutoSize = true;
-            this.rB_necessary.Location = new System.Drawing.Point(214, 18);
-            this.rB_necessary.Name = "rB_necessary";
-            this.rB_necessary.Size = new System.Drawing.Size(138, 16);
-            this.rB_necessary.TabIndex = 2;
-            this.rB_necessary.Text = "必要な場合のみログイン";
-            this.rB_necessary.UseVisualStyleBackColor = true;
-            // 
             // rB_always
             // 
             this.rB_always.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.rB_always.AutoSize = true;
-            this.rB_always.Location = new System.Drawing.Point(109, 18);
+            this.rB_always.Location = new System.Drawing.Point(7, 18);
             this.rB_always.Name = "rB_always";
             this.rB_always.Size = new System.Drawing.Size(99, 16);
             this.rB_always.TabIndex = 1;
@@ -252,7 +239,7 @@
             // 
             this.rB_none.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.rB_none.AutoSize = true;
-            this.rB_none.Location = new System.Drawing.Point(15, 18);
+            this.rB_none.Location = new System.Drawing.Point(112, 18);
             this.rB_none.Name = "rB_none";
             this.rB_none.Size = new System.Drawing.Size(88, 16);
             this.rB_none.TabIndex = 0;
@@ -274,6 +261,26 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "基本設定";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox4
+            // 
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Location = new System.Drawing.Point(14, 208);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(216, 16);
+            this.checkBox4.TabIndex = 3;
+            this.checkBox4.Text = "エラーで録画開始できなかったら終了する";
+            this.checkBox4.UseVisualStyleBackColor = true;
+            // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(14, 175);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(171, 16);
+            this.checkBox3.TabIndex = 2;
+            this.checkBox3.Text = "コメントファイル(.xml)を出力する";
+            this.checkBox3.UseVisualStyleBackColor = true;
             // 
             // groupBox5
             // 
@@ -405,26 +412,6 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(14, 175);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(171, 16);
-            this.checkBox3.TabIndex = 2;
-            this.checkBox3.Text = "コメントファイル(.xml)を出力する";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(14, 208);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(216, 16);
-            this.checkBox4.TabIndex = 3;
-            this.checkBox4.Text = "エラーで録画開始できなかったら終了する";
-            this.checkBox4.UseVisualStyleBackColor = true;
-            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -472,7 +459,6 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.RadioButton rB_login;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton rB_necessary;
         private System.Windows.Forms.RadioButton rB_always;
         private System.Windows.Forms.RadioButton rB_none;
         private System.Windows.Forms.GroupBox groupBox5;
