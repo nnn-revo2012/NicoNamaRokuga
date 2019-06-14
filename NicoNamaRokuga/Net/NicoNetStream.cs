@@ -273,16 +273,18 @@ namespace NicoNamaRokuga.Net
 
         }
 
-        private string SelectQuality(string quality, JArray qualities)
+        private string SelectQuality(string quality, JArray qtypes)
         {
             string result = null;
-            if (string.IsNullOrEmpty(quality) || qualities.Count() <= 0) return result;
+            if (string.IsNullOrEmpty(quality) || qtypes.Count() <= 0) return result;
 
-            for (var i = qualities.Count() - 1; i >= 0; i--)
+            for (var i = qtypes.Count() - 1; i >= 0; i--)
             {
-                if (qualities[i].ToString() != "abr")
-                    result = qualities[i].ToString();
-                if (result == quality) break;
+                if (Props.IsQTypes(qtypes[i].ToString()))
+                {
+                    result = qtypes[i].ToString();
+                    if (result == quality) break;
+                }
             }
             return result;
         }

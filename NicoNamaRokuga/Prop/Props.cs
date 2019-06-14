@@ -97,9 +97,25 @@ namespace NicoNamaRokuga.Prop
             return (int)(Protocol)Enum.Parse(typeof(Protocol), str);
         }
 
+        public static bool IsProtocol(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return false;
+            else
+                return Enum.IsDefined(typeof(Protocol), str);
+        }
+
         public static int ParseQTypes(string str)
         {
             return (int)(QTypes)Enum.Parse(typeof(QTypes), str);
+        }
+
+        public static bool IsQTypes(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return false;
+            else
+                return Enum.IsDefined(typeof(QTypes), str);
         }
 
         public bool LoadData()
