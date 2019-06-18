@@ -28,40 +28,42 @@ namespace NicoNamaRokuga.Prop
     {
 
         //定数設定
-        public static string Version = "0.1.0.0";
-        public static string UserAgent = "Mozilla/5.0 (NicoNamaRokuga; " + Props.Version + ")";
-        //public static string UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36";
-        public static string NicoDomain = "https://nicovideo.jp/";
+        public static readonly string Version = "0.1.0.0";
+        public static readonly string UserAgent = "Mozilla/5.0 (NicoNamaRokuga; " + Props.Version + ")";
+        //public static readonly string UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36";
+        public static readonly string NicoDomain = "https://nicovideo.jp/";
 
-        public static string NicoLiveUrl = "https://live.nicovideo.jp/watch/";
-        public static string NicoCommUrl = "https://com.nicovideo.jp/community/";
-        public static string NicoChannelUrl = "https://ch.nicovideo.jp/";
-        public static string NicoUserUrl = "https://www.nicovideo.jp/user/";
+        public static readonly string NicoLiveUrl = "https://live.nicovideo.jp/watch/";
+        public static readonly string NicoCommUrl = "https://com.nicovideo.jp/community/";
+        public static readonly string NicoChannelUrl = "https://ch.nicovideo.jp/";
+        public static readonly string NicoUserUrl = "https://www.nicovideo.jp/user/";
 
-        public static string NicoLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico";
-        public static string NicoGetPlayerStatus = "https://ow.live.nicovideo.jp/api/getplayerstatus?v=";
-        public static string NicoWayBackKey = "https://live.nicovideo.jp/api/getwaybackkey";
-        //public static string NicoCasApi = "https://api.cas.nicovideo.jp/v1/services/live/programs/";
+        public static readonly string NicoLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico";
+        public static readonly string NicoGetPlayerStatus = "https://ow.live.nicovideo.jp/api/getplayerstatus?v=";
+        public static readonly string NicoWayBackKey = "https://live.nicovideo.jp/api/getwaybackkey";
+        //public static readonly string NicoCasApi = "https://api.cas.nicovideo.jp/v1/services/live/programs/";
 
-        public static string TIMESHIFT = "timeshift";
+        public static readonly string TIMESHIFT = "timeshift";
 
-        public static Dictionary<string, string> WsHeaderStream =
+        public static readonly Dictionary<string, string> WsHeaderStream =
             new Dictionary<string, string>()
             {{"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"}};
 
-        //public static Dictionary<string, string> WsHeaderStream =
+        //public static readonly Dictionary<string, string> WsHeaderStream =
         //    new Dictionary<string, string>()
         //    {{"User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"},
         //     {"Origin", "https://live2.nicovideo.jp"},
         //     {"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"}};
 
-        public static Dictionary<string, string> WsHeaderComment =
+        public static readonly Dictionary<string, string> WsHeaderComment =
             new Dictionary<string, string>()
             {{"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"},
              {"Sec-WebSocket-Protocol", "msg.nicovideo.jp#json"}};
 
-        public static string[] Quality =
+        public static readonly string[] Quality =
             { "3Mbps (suoer_high)","2Mbps (high)", "1Mbps (normal)", "384Kbps (low)", "192Kbps (super_low)" };
+
+        public static readonly string Commnet_SeetNo = "/hb ifseetno";
 
         public bool IsDebug { get; set; }
 

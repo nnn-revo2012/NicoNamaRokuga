@@ -53,9 +53,8 @@ namespace NicoNamaRokuga.Net
         private int _last_res = 0;                        //last_res
         private bool _chat_flg = true;                    //チャットデータの最初かどうか？
         private const int _MESSAGE_MAX = 1000;
-        private const string _COME_FILE = "xmltemp{000}";
-        private string _come_tempfolder = null;
-        private string _come_file = null;
+        private List<List<string>> _come_list = new List<List<string>>();
+        private List<string> _come_text = new List<string>();
 
         System.Threading.Timer _hbTimer;
 
@@ -74,10 +73,7 @@ namespace NicoNamaRokuga.Net
             _seq_no = 0;
             if (Form1.IsTimeShift)
             {
-                //_come_tempfolder = Path.Combine("D:\\home\\tmp", Path.GetRandomFileName());
-                _come_tempfolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-                if (!Directory.Exists(_come_tempfolder))
-                    Directory.CreateDirectory(_come_tempfolder);
+                _come_list.Clear();
             }
 
             this._form = fo;
@@ -206,6 +202,7 @@ namespace NicoNamaRokuga.Net
                         {
                             _form.AddLog("SEQ "+_seq_no+" num "+_last_res+" ", 1);
                             _seq_no++;
+                            _come_list.Add(_come_text);
                             if (_last_res < _MESSAGE_MAX)
                             {
                                 this.Close();
@@ -224,7 +221,8 @@ namespace NicoNamaRokuga.Net
                         {
                             _last_res = (int)jmes["thread"]["last_res"];
                             _form.AddLog(_last_res + " 個のコメントを読み込みます。", 1);
-                            _come_file = Path.Combine(_come_tempfolder, string.Format(_COME_FILE, _seq_no));
+                            var cmlist = new List<string>();
+                            _come_text = cmlist;
                             if (_seq_no == 0) StartHBTimer();
                         }
                         break;
@@ -234,7 +232,7 @@ namespace NicoNamaRokuga.Net
                             _when = (long)jmes["chat"]["date"] + 5L;
                             _chat_flg = false;
                         }
-                        System.IO.File.AppendAllText(_come_file, e.Message + "\r\n");
+                        _come_text.Add(e.Message);
                         break;
                 }
             } catch (Exception Ex)
@@ -324,34 +322,29 @@ namespace NicoNamaRokuga.Net
                     for (var i = _seq_no - 1; i >= 0; i--)
                     {
                         var write_flg = (come_time_prev == string.Empty) ? true : false;
-                        var r_file = Path.Combine(_come_tempfolder, string.Format(_COME_FILE, i));
-                        using (var sr = new StreamReader(r_file, enc))
+                        foreach (var line in _come_list.ToArray()[i])
                         {
-                            string line;
-                            while ((line = sr.ReadLine()) != null) // 1行ずつ読み出し
+                            var jmes = JObject.Parse(line);
+                            come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
+                            if (write_flg)
                             {
-                                var jmes = JObject.Parse(line);
-                                come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
-                                if (write_flg)
-                                {
-                                    sw.Write(Json2Xml(jmes));
-                                }
-                                else
-                                {
-                                    if (come_time == come_time_prev) write_flg = true;
-                                }
+                                sw.Write(Json2Xml(jmes));
+                            }
+                            else
+                            {
+                                if (come_time == come_time_prev) write_flg = true;
                             }
                         }
                         come_time_prev = come_time;
-                        File.Delete(r_file);
+                        _come_list.ToArray()[i].Clear();
+                        _come_list.ToArray()[i].TrimExcess();
                     }
                 }
                 EndXmlDoc();
                 _form.AddLog("コメントファイル出力終了", 1);
 
-                //一時フォルダを削除
-                if (Directory.Exists(_come_tempfolder))
-                    Directory.Delete(_come_tempfolder);
+                _come_list.Clear();
+                _come_list.TrimExcess();
 
             }
             catch (Exception Ex)
