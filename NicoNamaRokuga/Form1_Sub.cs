@@ -87,14 +87,14 @@ namespace NicoNamaRokuga
         }
 
         //放送情報を表示
-        public void DispHosoData(TemplateInfo tpi, bool istimeshift)
+        public void DispHosoData(BroadCastInfo bci, bool istimeshift)
         {
             this.Invoke(new Action(() =>
             {
-                textBox2.Text = tpi.Title;
-                textBox3.Text = tpi.Provider_Name + "(" + tpi.Provider_Id + ")";
-                textBox4.Text = tpi.Community_Title + "(" + tpi.Community_Id + ")";
-                textBox5.Text = Props.GetProviderType(tpi.Provider_Type);
+                textBox2.Text = bci.Title;
+                textBox3.Text = bci.Provider_Name + "(" + bci.Provider_Id + ")";
+                textBox4.Text = bci.Community_Title + "(" + bci.Community_Id + ")";
+                textBox5.Text = Props.GetProviderType(bci.Provider_Type);
                 if (istimeshift) textBox5.Text += "(TS)";
             }));
         }

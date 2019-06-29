@@ -65,6 +65,7 @@ namespace NicoNamaRokuga.Net
         public string VposBase_Time { set; get; }
         public string End_Time { set; get; }
         public string OnAirStatus { set; get; }
+        public string User_Id { set; get; }
 
         private static Regex RgxChNo = new Regex("/([^/]+)$", RegexOptions.Compiled);
 
@@ -320,6 +321,85 @@ namespace NicoNamaRokuga.Net
         }
 
         //生放送ページから放送情報を取得
+        public async Task<BroadCastInfo> GetNicoPageAsync(string nicoUrl)
+        {
+            var bci = new BroadCastInfo(null, null, null, null);
+            bci.Status = "fail";
+            bci.Error = "PARAMERROR";
+
+            try
+            {
+                var liveid = GetLiveID(nicoUrl);
+                if (string.IsNullOrEmpty(liveid)) return bci;
+
+                var providertype = "unama";
+                bci.Provider_Type = providertype;
+
+                var hs = await _wc.DownloadStringTaskAsync(Props.NicoLiveUrl + liveid);
+                if (string.IsNullOrEmpty(hs)) return bci;
+                if (hs.IndexOf("window.NicoGoogleTagManagerDataLayer = [];") > 0)
+                {
+                    bci.Error = "REQUIERED";
+                    return bci;
+                }
+                bci.User_Id = Regex.Match(hs, "\"user_id\":([^,]*),", RegexOptions.Compiled).Groups[1].Value;
+                providertype = Regex.Match(hs, "\"content_type\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
+                bci.Provider_Type = providertype;
+                var ttt = WebUtility.HtmlDecode(Regex.Match(hs, "<script +id=\"embedded-data\" +data-props=\"([^\"]*)\"></script>", RegexOptions.Compiled).Groups[1].Value);
+                bci.WsUrl = Regex.Match(ttt, @"""webSocketUrl"":""([^""]+)""").Groups[1].Value;
+                bci.AuTkn = Regex.Match(ttt, @"""audienceToken"":""([^""]+)""").Groups[1].Value; ;
+                bci.BcId = Regex.Match(ttt, @"""broadcastId"":""([^""]+)""").Groups[1].Value; ;
+                //Clipboard.SetText(ttt);
+                var dprops = JObject.Parse(ttt);
+                //Clipboard.SetText(dprops.ToString());
+                var dprogram = (JObject)dprops["program"];
+                bci.LiveId = dprogram["nicoliveProgramId"].ToString();
+                bci.Title = dprogram["title"].ToString();
+                bci.Description = dprogram["description"].ToString();
+                bci.Provider_Id = providertype;
+                bci.Provider_Name = "公式生放送";
+                bci.Community_Thumbnail = dprogram["thumbnail"]["small"].ToString();
+                JToken aaa;
+                if (dprogram.TryGetValue("supplier", out aaa))
+                {
+                    bci.Provider_Name = dprogram["supplier"]["name"].ToString();
+                    if (providertype == "user")
+                        bci.Provider_Id = TemplateInfo.GetChNo(dprogram["supplier"]["pageUrl"].ToString());
+                }
+                bci.FollowerOnly = (bool)dprogram["isFollowerOnly"];
+                bci.Open_Time = dprogram["openTime"].ToString();
+                bci.Begin_Time = dprogram["beginTime"].ToString();
+                bci.VposBase_Time = dprogram["vposBaseTime"].ToString();
+                bci.End_Time = dprogram["endTime"].ToString();
+                bci.OnAirStatus = dprogram["status"].ToString();
+
+                bci.Community_Id = providertype;
+                bci.Community_Title = "公式生放送";
+                if (dprops["socialGroup"].Count() > 0)
+                {
+                    bci.Community_Id = dprops["socialGroup"]["id"].ToString();
+                    bci.Community_Title = dprops["socialGroup"]["name"].ToString();
+                    //bci.Community_Thumbnail = dprops["socialGroup"]["thumbnailSmallImageUrl"].ToString();
+                }
+                bci.Status = "ok";
+                bci.Error = "";
+            }
+            catch (WebException Ex)
+            {
+                bci.Error = Ex.Status.ToString();
+                return bci;
+            }
+            catch (Exception Ex) //タイムアウトなど
+            {
+                //HttpRequestException
+                bci.Error = Ex.Message;
+                return bci;
+            }
+
+            return bci;
+        }
+
+        //生放送ページから放送情報を取得
         public async Task<TemplateInfo> GetTemplateAPIAsync(string nicoUrl)
         {
             var tpi = new TemplateInfo(null);
@@ -409,7 +489,7 @@ namespace NicoNamaRokuga.Net
         }
 
         //生放送ページから放送情報を取得
-        public async Task<BroadCastInfo> GetNicoPageAsync(string nicoUrl)
+        public async Task<BroadCastInfo> GetNicoPage2Async(string nicoUrl)
         {
             var bci = new BroadCastInfo(null, null, null, null);
             bci.Status = "fail";

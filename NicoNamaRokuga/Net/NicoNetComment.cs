@@ -58,12 +58,14 @@ namespace NicoNamaRokuga.Net
 
         System.Threading.Timer _hbTimer;
 
+        private CommentInfo _cmi = null;
+
         private Form1 _form = null;
         private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
 
         //放送情報
 
-        public NicoNetComment(Form1 fo)
+        public NicoNetComment(Form1 fo, CommentInfo cmi)
         {
             IsDebug = false;
 
@@ -76,6 +78,7 @@ namespace NicoNamaRokuga.Net
                 _come_list.Clear();
             }
 
+            this._cmi = cmi;
             this._form = fo;
 
         }
@@ -171,7 +174,7 @@ namespace NicoNamaRokuga.Net
                         }
                         break;
                     case "chat":
-                        System.IO.File.AppendAllText(Form1._cmi.SaveFile, Json2Xml(jmes));
+                        System.IO.File.AppendAllText(_cmi.SaveFile, Json2Xml(jmes));
                         break;
                 }
 
@@ -250,7 +253,7 @@ namespace NicoNamaRokuga.Net
         //生放送コメント取得
         public void StartGetComment()
         {
-            var ttt = SendThread(Form1._cmi.ThreadId, Form1._cmi.UserId, -1);
+            var ttt = SendThread(_cmi.ThreadId, _cmi.UserId, -1);
             _form.AddLog(ttt, 9);
         }
 
@@ -259,11 +262,11 @@ namespace NicoNamaRokuga.Net
         {
             if (_seq_no == 0)
             {
-                _waybackkey = _form._nLiveNet.GetWayBackKeyAsync(Form1._cmi.ThreadId).Result; //waybackkey取得
-                _when = long.Parse(Form1._cmi.EndTime.Substring(0, Form1._cmi.EndTime.Length - 3));
+                _waybackkey = _form._nLiveNet.GetWayBackKeyAsync(_cmi.ThreadId).Result; //waybackkey取得
+                _when = long.Parse(_cmi.EndTime.Substring(0, _cmi.EndTime.Length - 3));
                 _chat_flg = true;
             }
-            var ttt = SendThreadTS(Form1._cmi.ThreadId, Form1._cmi.UserId, -_MESSAGE_MAX, _when.ToString(), _waybackkey);
+            var ttt = SendThreadTS(_cmi.ThreadId, _cmi.UserId, -_MESSAGE_MAX, _when.ToString(), _waybackkey);
             _form.AddLog(ttt, 9);
         }
 
@@ -317,7 +320,7 @@ namespace NicoNamaRokuga.Net
             {
                 _form.AddLog("コメントファイル出力開始", 1);
                 BeginXmlDoc();
-                using (var sw = new StreamWriter(Form1._cmi.SaveFile, true, enc))
+                using (var sw = new StreamWriter(_cmi.SaveFile, true, enc))
                 {
                     for (var i = _seq_no - 1; i >= 0; i--)
                     {
@@ -357,13 +360,13 @@ namespace NicoNamaRokuga.Net
 
         public void BeginXmlDoc() 
         {
-            System.IO.File.AppendAllText(Form1._cmi.SaveFile, "<?xml version='1.0' encoding='UTF-8'?>\r\n");
-            System.IO.File.AppendAllText(Form1._cmi.SaveFile, "<packet>\r\n");
+            System.IO.File.AppendAllText(_cmi.SaveFile, "<?xml version='1.0' encoding='UTF-8'?>\r\n");
+            System.IO.File.AppendAllText(_cmi.SaveFile, "<packet>\r\n");
         }
 
         public void EndXmlDoc() 
         {
-            System.IO.File.AppendAllText(Form1._cmi.SaveFile, "</packet>\r\n");
+            System.IO.File.AppendAllText(_cmi.SaveFile, "</packet>\r\n");
         }
 
         private string Json2Xml(JObject jmes)

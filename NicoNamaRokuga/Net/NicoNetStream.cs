@@ -28,6 +28,21 @@ namespace NicoNamaRokuga.Net
         public string BcId { set; get; }
         public string AuTkn { set; get; }
         public string WsUrl { set; get; }
+        public string Title { set; get; }
+        public string Description { set; get; }
+        public string Provider_Type { set; get; }
+        public string Provider_Name { set; get; }
+        public string Provider_Id { set; get; }
+        public string Community_Title { set; get; }
+        public string Community_Id { set; get; }
+        public string Community_Thumbnail { set; get; }
+        public bool   FollowerOnly { set; get; }
+        public string Open_Time { set; get; }
+        public string Begin_Time { set; get; }
+        public string VposBase_Time { set; get; }
+        public string End_Time { set; get; }
+        public string OnAirStatus { set; get; }
+        public string User_Id { set; get; }
 
         public BroadCastInfo(string liveid, string bcid, string autkn, string wsurl)
         {
@@ -42,6 +57,43 @@ namespace NicoNamaRokuga.Net
         {
             return (WsUrl.IndexOf(Props.TIMESHIFT) > 0) ? true : false;
         }
+        //指定フォーマットに基づいて録画ファイル名を作る
+        public string SetRecFile(string recfile)
+        {
+            var result = string.Empty;
+
+            result = string.Format(recfile,
+                this.LiveId, this.Title, this.Provider_Name, this.Community_Id, this.Community_Title);
+
+            //時間情報付加
+            var date = DateTime.Now;
+            result = result.Replace("{Y}", date.ToString("yyyy"));
+            result = result.Replace("{y}", date.ToString("yy"));
+            result = result.Replace("{M}", date.ToString("MM"));
+            result = result.Replace("{D}", date.ToString("dd"));
+            result = result.Replace("{W}", date.ToString("ddd"));
+            result = result.Replace("{h}", date.ToString("HH"));
+            result = result.Replace("{m}", date.ToString("mm"));
+            result = result.Replace("{s}", date.ToString("ss"));
+
+            result = result.Replace("\\", "￥");
+            result = result.Replace("/", "／");
+            result = result.Replace(":", "：");
+            result = result.Replace("*", "＊");
+            result = result.Replace("??", "？");
+            result = result.Replace("?", "？");
+            result = result.Replace("\"", "”");
+            result = result.Replace("<", "＜");
+            result = result.Replace(">", "＞");
+            result = result.Replace("|", "｜");
+            result = result.Replace("+", "＋");
+            result = result.Replace(" ", "");
+            result = result.Replace("　", "");
+            result = result.Replace("\u3000", "");
+
+            return result;
+        }
+
     }
 
 
@@ -59,6 +111,8 @@ namespace NicoNamaRokuga.Net
         private int _wsStatus = -1;
 
         private BroadCastInfo _bci = null;
+        private CommentInfo _cmi = null;
+        private ExecPsInfo _epi = null;
 
         System.Threading.Timer _watchTimer;
 
@@ -66,7 +120,7 @@ namespace NicoNamaRokuga.Net
 
         //放送情報
 
-        public NicoNetStream(Form1 fo, string liveid, string bcid, string autkn, string wsurl)
+        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi)
         {
             IsDebug = false;
 
@@ -75,9 +129,9 @@ namespace NicoNamaRokuga.Net
             _wsStatus = -1;
 
             this._form = fo;
-
-            _bci = new BroadCastInfo(liveid, bcid, autkn, wsurl);
-
+            this._bci = bci;
+            this._cmi = cmi;
+            this._epi = epi;
         }
 
         ~NicoNetStream()
@@ -137,12 +191,6 @@ namespace NicoNamaRokuga.Net
                             _wsStatus = 2; //permit
                         break;
                     case "schedule":
-                        if (Form1.props.IsComment)
-                        {
-                            Form1._cmi.BeginTime = jtkn["update"]["begintime"].ToString();
-                            Form1._cmi.EndTime = jtkn["update"]["endtime"].ToString();
-                            _form.AddLog(string.Format("Begin: {0} End: {1} ", Form1._cmi.BeginTime, Form1._cmi.EndTime), 9);
-                        }
                         break;
                     case "currentstream":
                         if (_wsStatus == 2)
@@ -156,8 +204,8 @@ namespace NicoNamaRokuga.Net
                             if (string.IsNullOrEmpty(selqu))
                                 selqu = jtkn["currentStream"]["quality"].ToString();
                             _form.AddLog("Select: " + selqu, 9);
-                            Form1._epi.Quality = selqu;
-                            ttt = SendGetStream(selqu, Form1._epi.Protocol);
+                            _epi.Quality = selqu;
+                            ttt = SendGetStream(selqu, _epi.Protocol);
                             _form.AddLog(ttt, 9);
                         }
                         else
@@ -166,15 +214,15 @@ namespace NicoNamaRokuga.Net
                             _form.AddLog("Quarity: " + ttt, 9);
                             _form.DispQuality(ttt);
                             //ffmpegを実行する
-                            ttt = (Form1._epi.Protocol == "rtmp") ?
+                            ttt = (_epi.Protocol == "rtmp") ?
                                 jtkn["currentStream"]["uri"].ToString() + "/" + jtkn["currentStream"]["name"].ToString() :
                                 jtkn["currentStream"]["uri"].ToString();
                             _form.AddLog("Playerm3m8: " + ttt, 9);
-                            Form1._epi.SaveFile = ExecPsInfo.GetSaveFileNum(Form1._epi);
+                            _epi.SaveFile = ExecPsInfo.GetSaveFileNum(_epi);
                             if (Form1.props.IsComment)
-                                Form1._cmi.SaveFile = Form1._epi.SaveFile + Form1._epi.Xml;
-                            var argument = ExecPsInfo.SetOption(Form1._epi, ttt);
-                            _form._eProcess.ExecPs(Form1._epi.Exec, argument);
+                                _cmi.SaveFile = _epi.SaveFile + _epi.Xml;
+                            var argument = ExecPsInfo.SetOption(_epi, ttt);
+                            _form._eProcess.ExecPs(_epi.Exec, argument);
                         }
                         break;
                     case "currentroom":
@@ -182,11 +230,11 @@ namespace NicoNamaRokuga.Net
                         if (Form1.props.IsComment)
                         {
                             ttt = jtkn["room"]["messageServerUri"].ToString();
-                            Form1._cmi.WsUrl = ttt;
+                            _cmi.WsUrl = ttt;
                             _form.AddLog("CommentServer: " + ttt, 9);
                             ttt = jtkn["room"]["threadId"].ToString();
-                            Form1._cmi.ThreadId = ttt;
-                            _form._nNetComment.Connect(Form1._cmi.WsUrl);
+                            _cmi.ThreadId = ttt;
+                            _form._nNetComment.Connect(_cmi.WsUrl);
                             if (Form1.IsTimeShift)
                             {
                                 while (Form1.WsStatus[1] != 0) ;
@@ -226,7 +274,7 @@ namespace NicoNamaRokuga.Net
                     Form1.WsStatus[0] = 0; //接続中
                     ttt = SendVersion("leo");
                     _form.AddLog(ttt, 9);
-                    ttt = SendGetPermit(_bci.BcId, Form1._epi.Protocol);
+                    ttt = SendGetPermit(_bci.BcId, _epi.Protocol);
                     _form.AddLog(ttt, 9);
                     _wsStatus = 1; //getpermit送信
                 }

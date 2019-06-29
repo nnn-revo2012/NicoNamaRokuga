@@ -34,15 +34,14 @@ namespace NicoNamaRokuga
         public  static volatile int[] WsStatus;       //WebSocketの状態
         public  static volatile int PsStatus;         //実行ファイルの状態
 
-        public  NicoLiveNet _nLiveNet = null;         //WebClient
-        public  NicoNetStream _nNetStream = null;     //WebSocket(Stream)
-        public  NicoNetComment _nNetComment = null;   //WebSocket(Comment)
-        public  ExecProcess _eProcess = null;         //Process
+        public NicoLiveNet _nLiveNet = null;         //WebClient
+        public NicoNetStream _nNetStream = null;     //WebSocket(Stream)
+        public NicoNetComment _nNetComment = null;   //WebSocket(Comment)
+        public ExecProcess _eProcess = null;         //Process
 
-        public  static ExecPsInfo _epi = null;        //実行／保存ファイル情報
-
-        private BroadCastInfo bci;                    //ストリームサーバー情報
-        public  static CommentInfo _cmi = null;       //コメントサーバー情報
+        private BroadCastInfo bci = null;            //ストリームサーバー情報
+        private CommentInfo cmi = null;              //コメントサーバー情報
+        private ExecPsInfo epi = null;               //実行／保存ファイル情報
 
         private string liveId = null;
 
@@ -87,7 +86,7 @@ namespace NicoNamaRokuga
                 {
                     if (_eProcess != null)
                     {
-                        _eProcess.BreakProcess(_epi.BreakKey);
+                        _eProcess.BreakProcess(epi.BreakKey);
                     }
                     if (_nNetStream != null)
                     {
@@ -236,45 +235,39 @@ namespace NicoNamaRokuga
             bci = await _nLiveNet.GetNicoPageAsync(liveId);
             if (bci.Status != "ok")
             {
-                AddLog("PlayerAPI Error: " + bci.Error, 1);
+                AddLog("放送情報が取得できませんでした。", 1);
+                AddLog("Status: " + bci.Error, 1);
                 return;
             }
-            IsTimeShift = bci.IsTimeShift();
 
-            //各種放送情報
-            var tpi = await _nLiveNet.GetTemplateAPIAsync(liveId);
-            if (tpi.Status != "ok")
-            {
-                AddLog("TemplateAPI Error: " + tpi.Error, 1);
-                return;
-            }
+            IsTimeShift = bci.OnAirStatus == "ENDED" ? true : false;
 
             //保存ファイル名作成
-            _epi = new ExecPsInfo();
-            _epi.Sdir = props.SaveDir;
-            _epi.Exec = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
-            _epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
-            _epi.Sfile = tpi.SetRecFile(props.SaveFile);
-            _epi.Protocol = props.Protocol.ToString();
-            _epi.Seq = 0;
+            epi = new ExecPsInfo();
+            epi.Sdir = props.SaveDir;
+            epi.Exec = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
+            epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
+            epi.Sfile = bci.SetRecFile(props.SaveFile);
+            epi.Protocol = props.Protocol.ToString();
+            epi.Seq = 0;
 
             //コメント情報
             if (props.IsComment)
             {
-                _cmi = new CommentInfo(gpsi.User_Id);
-                _cmi.BeginTime = gpsi.Start_Time + "000";
-                _cmi.EndTime = gpsi.End_Time + "000";
-                _nNetComment = new NicoNetComment(this);
+                cmi = new CommentInfo(bci.User_Id);
+                cmi.BeginTime = bci.Open_Time + "000";
+                cmi.EndTime = bci.End_Time + "000";
+                _nNetComment = new NicoNetComment(this, cmi);
             }
 
-            _nNetStream = new NicoNetStream(this, bci.LiveId, bci.BcId, bci.AuTkn, bci.WsUrl);
+            _nNetStream = new NicoNetStream(this, bci, cmi, epi);
             _eProcess = new ExecProcess(this);
 
             AddLog("wsUrl: " + bci.WsUrl, 9);
             AddLog("wsPermit: " + _nNetStream.GetPermit(bci.BcId, props.Protocol.ToString()), 9);
 
             //放送情報を表示
-            DispHosoData(tpi, IsTimeShift);
+            DispHosoData(bci, IsTimeShift);
 
             //WebSocket接続開始
             _nNetStream.Connect();
@@ -294,7 +287,7 @@ namespace NicoNamaRokuga
             {
                     if (_eProcess != null)
                     {
-                        _eProcess.BreakProcess(_epi.BreakKey);
+                        _eProcess.BreakProcess(epi.BreakKey);
                     }
                     if (_nNetStream != null)
                     {
@@ -319,7 +312,7 @@ namespace NicoNamaRokuga
                 //WebSocket再接続処理開始
                     if (_eProcess != null)
                     {
-                        _eProcess.BreakProcess(_epi.BreakKey);
+                        _eProcess.BreakProcess(epi.BreakKey);
                     }
                     if (_nNetStream != null)
                     {
@@ -330,8 +323,8 @@ namespace NicoNamaRokuga
                         _nNetComment.Close();
                     }
                     AddLog("再接続します。", 1);
-                    _nNetStream = new NicoNetStream(this, bci.LiveId, bci.BcId, bci.AuTkn, bci.WsUrl);
-                    if (props.IsComment) _nNetComment = new NicoNetComment(this);
+                    _nNetStream = new NicoNetStream(this, bci, cmi, epi);
+                    if (props.IsComment) _nNetComment = new NicoNetComment(this, cmi);
                     _eProcess = new ExecProcess(this);
                     _nNetStream.Connect();
 
@@ -340,10 +333,10 @@ namespace NicoNamaRokuga
             {
                 //ffmpeg再起動処理
                     AddLog("再接続します。", 1);
-                    if (props.IsComment) _nNetComment = new NicoNetComment(this);
+                    if (props.IsComment) _nNetComment = new NicoNetComment(this, cmi);
                     _eProcess = new ExecProcess(this);
-                    _nNetComment.Connect(_cmi.WsUrl);
-                    _nNetStream.ReSendGetStream(_epi.Quality, _epi.Protocol);
+                    _nNetComment.Connect(cmi.WsUrl);
+                    _nNetStream.ReSendGetStream(epi.Quality, epi.Protocol);
 
             }
         }
