@@ -53,10 +53,18 @@ namespace NicoNamaRokuga.Net
             this.Status = null;
             this.Error = null;
         }
+
         public bool IsTimeShift()
         {
             return (WsUrl.IndexOf(Props.TIMESHIFT) > 0) ? true : false;
         }
+
+        private static readonly Regex RgxChNo = new Regex("/([^/]+)$", RegexOptions.Compiled);
+        public static string GetChNo(string url)
+        {
+            return RgxChNo.Match(url).Groups[1].Value;
+        }
+
         //指定フォーマットに基づいて録画ファイル名を作る
         public string SetRecFile(string recfile)
         {
