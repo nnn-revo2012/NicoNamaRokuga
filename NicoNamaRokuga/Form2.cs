@@ -39,49 +39,56 @@ namespace NicoNamaRokuga
         //変数→フォーム
         private async Task SetFormAsync()
         {
-
-            foreach (Control co in groupBox1.Controls)
+            try
             {
-                if (co.GetType().Name == "RadioButton")
+                foreach (Control co in groupBox1.Controls)
                 {
-                    if (rbRegex.Replace(co.Name.ToString(), "$1") == _props.IsLogin.ToString())
-                        ((RadioButton)co).Checked = true;
+                    if (co.GetType().Name == "RadioButton")
+                    {
+                        if (rbRegex.Replace(co.Name.ToString(), "$1") == _props.IsLogin.ToString())
+                            ((RadioButton)co).Checked = true;
+                    }
                 }
+                foreach (Control co in groupBox2.Controls)
+                {
+                    if (co.GetType().Name == "RadioButton")
+                    {
+                        if (rbRegex.Replace(co.Name.ToString(), "$1") == _props.LoginMethod.ToString())
+                            ((RadioButton)co).Checked = true;
+                    }
+                }
+                foreach (Control co in groupBox5.Controls)
+                {
+                    if (co.GetType().Name == "RadioButton")
+                    {
+                        if (rbRegex.Replace(co.Name.ToString(), "$1") == _props.Protocol.ToString())
+                            ((RadioButton)co).Checked = true;
+                    }
+                }
+
+                textBox1.Text = _props.UserID;
+                textBox2.Text = _props.Password;
+
+                checkBox1.Checked = _props.IsAllCookie;
+                comboBox1.SelectedIndex =
+                    await ShowCookiesAsync(!_props.IsAllCookie, _props.SelectedCookie);
+
+                textBox3.Text = _props.SaveDir;
+                textBox4.Text = _props.SaveFile;
+
+                comboBox2.Items.Clear();
+                foreach (var qu in Props.Quality.ToArray())
+                    comboBox2.Items.Add(qu);
+                comboBox2.SelectedIndex = (int)_props.QuarityType;
+
+                checkBox2.Checked = _props.IsLogging;
+                checkBox3.Checked = _props.IsComment;
             }
-            foreach (Control co in groupBox2.Controls)
+            catch (Exception Ex)
             {
-                if (co.GetType().Name == "RadioButton")
-                {
-                    if (rbRegex.Replace(co.Name.ToString(), "$1") == _props.LoginMethod.ToString())
-                        ((RadioButton)co).Checked = true;
-                }
+                DebugWrite.Writeln(nameof(SetFormAsync), Ex);
+                return;
             }
-            foreach (Control co in groupBox5.Controls)
-            {
-                if (co.GetType().Name == "RadioButton")
-                {
-                    if (rbRegex.Replace(co.Name.ToString(), "$1") == _props.Protocol.ToString())
-                        ((RadioButton)co).Checked = true;
-                }
-            }
-
-            textBox1.Text = _props.UserID;
-            textBox2.Text = _props.Password;
-
-            checkBox1.Checked = _props.IsAllCookie;
-            comboBox1.SelectedIndex =
-                await ShowCookiesAsync(!_props.IsAllCookie, _props.SelectedCookie);
-
-            textBox3.Text = _props.SaveDir;
-            textBox4.Text = _props.SaveFile;
-
-            comboBox2.Items.Clear();
-            foreach (var qu in Props.Quality.ToArray())
-                comboBox2.Items.Add(qu);
-            comboBox2.SelectedIndex = (int)_props.QuarityType;
-
-            checkBox2.Checked = _props.IsLogging;
-            checkBox3.Checked = _props.IsComment;
 
             return;
         }
@@ -89,50 +96,57 @@ namespace NicoNamaRokuga
         //フォーム→変数
         private async Task GetFormAsync()
         {
-
-            foreach (Control co in groupBox1.Controls)
+            try
             {
-                if (co.GetType().Name == "RadioButton")
+                foreach (Control co in groupBox1.Controls)
                 {
-                    if ((bool)((RadioButton)co).Checked)
-                        _props.IsLogin =
-                            (IsLogin)Enum.Parse(typeof(IsLogin), rbRegex.Replace(co.Name.ToString(), "$1"));
+                    if (co.GetType().Name == "RadioButton")
+                    {
+                        if ((bool)((RadioButton)co).Checked)
+                            _props.IsLogin =
+                                (IsLogin)Enum.Parse(typeof(IsLogin), rbRegex.Replace(co.Name.ToString(), "$1"));
+                    }
                 }
+                foreach (Control co in groupBox2.Controls)
+                {
+                    if (co.GetType().Name == "RadioButton")
+                    {
+                        if ((bool)((RadioButton)co).Checked)
+                            _props.LoginMethod =
+                                (LoginMethod)Enum.Parse(typeof(LoginMethod), rbRegex.Replace(co.Name.ToString(), "$1"));
+                    }
+                }
+                foreach (Control co in this.groupBox5.Controls)
+                {
+                    if (co.GetType().Name == "RadioButton")
+                    {
+                        if ((bool)((RadioButton)co).Checked)
+                            _props.Protocol =
+                                (Protocol)Enum.Parse(typeof(Protocol), rbRegex.Replace(co.Name.ToString(), "$1"));
+                    }
+                }
+
+                _props.UserID = textBox1.Text;
+                _props.Password = textBox2.Text;
+
+                _props.IsAllCookie = checkBox1.Checked;
+                _props.SaveDir = textBox3.Text;
+                _props.SaveFile = textBox4.Text;
+
+                _props.QuarityType =
+                    (QTypes)Enum.ToObject(typeof(QTypes), comboBox2.SelectedIndex);
+
+                _props.IsLogging = checkBox2.Checked;
+                _props.IsComment = checkBox3.Checked;
+
+                _props.SelectedCookie =
+                    await NicoLiveNet.GetCookieSource(!checkBox1.Checked, comboBox1.SelectedIndex);
             }
-            foreach (Control co in groupBox2.Controls)
+            catch (Exception Ex)
             {
-                if (co.GetType().Name == "RadioButton")
-                {
-                    if ((bool)((RadioButton)co).Checked)
-                        _props.LoginMethod =
-                            (LoginMethod)Enum.Parse(typeof(LoginMethod), rbRegex.Replace(co.Name.ToString(), "$1"));
-                }
+                DebugWrite.Writeln(nameof(GetFormAsync), Ex);
+                return;
             }
-            foreach (Control co in this.groupBox5.Controls)
-            {
-                if (co.GetType().Name == "RadioButton")
-                {
-                    if ((bool)((RadioButton)co).Checked)
-                        _props.Protocol =
-                            (Protocol)Enum.Parse(typeof(Protocol), rbRegex.Replace(co.Name.ToString(), "$1"));
-                }
-            }
-
-            _props.UserID = textBox1.Text;
-            _props.Password = textBox2.Text;
-
-            _props.IsAllCookie = checkBox1.Checked;
-            _props.SaveDir = textBox3.Text;
-            _props.SaveFile = textBox4.Text;
-
-            _props.QuarityType =
-                (QTypes)Enum.ToObject(typeof(QTypes), comboBox2.SelectedIndex);
-
-            _props.IsLogging = checkBox2.Checked;
-            _props.IsComment = checkBox3.Checked;
-
-            _props.SelectedCookie =
-                await NicoLiveNet.GetCookieSource(!checkBox1.Checked, comboBox1.SelectedIndex);
 
             return;
         }
@@ -158,9 +172,10 @@ namespace NicoNamaRokuga
                 comboBox1.Text = comboBox1.Items[0].ToString();
             }catch (Exception Ex)
             {
-                MessageBox.Show("ShowCookiesAsync Error: \r\n"+Ex.Message);
+                DebugWrite.Writeln(nameof(ShowCookiesAsync), Ex);
                 return result;
             }
+
             return result;
         }
 

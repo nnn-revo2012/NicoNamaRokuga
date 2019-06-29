@@ -113,6 +113,8 @@ namespace NicoNamaRokuga.Net
         //Debug
         public bool IsDebug { get; set; }
 
+        public volatile int WsStatus = -1; //WebSocketの状態
+
         //WebSocket
         private WebSocket _ws = null;
         private bool _wsconnect = false;
@@ -139,12 +141,14 @@ namespace NicoNamaRokuga.Net
             _wsconnect = false;
             _wsStatus = -1;
 
+            WsStatus = -1;
             this._nNetComment = nNetComment;
             this._eProcess = eProcess;
             this._bci = bci;
             this._cmi = cmi;
             this._epi = epi;
             this._form = fo;
+
         }
 
         ~NicoNetStream()
@@ -188,10 +192,10 @@ namespace NicoNamaRokuga.Net
                     //_form.AddLog(ttt + "\r\n");
                     return;
                 }
+
                 if (jtkn.ToString() == "error") return;
 
-
-                    if (!jmes.TryGetValue("body", out jtkn))
+                if (!jmes.TryGetValue("body", out jtkn))
                 {
                     _form.AddLog("body Error: " + e.Message, 9);
                     return;
@@ -250,7 +254,7 @@ namespace NicoNamaRokuga.Net
                             _nNetComment.Connect(_cmi.WsUrl);
                             if (_bci.IsTimeShift())
                             {
-                                while (Form1.WsStatus[1] != 0) ;
+                                while (_nNetComment.WsStatus != 0) ;
                                 _nNetComment.StartGetTSComment();
                             }
                         }
@@ -267,9 +271,9 @@ namespace NicoNamaRokuga.Net
                         ttt = par[1].ToString();
                         _form.AddLog("Disconnect: " + ttt, 9);
                         if (ttt == "TAKEOVER") //追い出し
-                            Form1.WsStatus[0] = 1; //再接続あり
+                            WsStatus = 1; //再接続あり
                         else if (ttt == "END_PROGRAM") //放送終了
-                            Form1.WsStatus[0] = 2; //再接続なし
+                            WsStatus = 2; //再接続なし
                         break;
                     default:
                         break;
@@ -284,7 +288,7 @@ namespace NicoNamaRokuga.Net
                 if (_wsconnect == false)
                 {
                     _wsconnect = true;
-                    Form1.WsStatus[0] = 0; //接続中
+                    WsStatus = 0; //接続中
                     ttt = SendVersion("leo");
                     _form.AddLog(ttt, 9);
                     ttt = SendGetPermit(_bci.BcId, _epi.Protocol);
@@ -296,7 +300,7 @@ namespace NicoNamaRokuga.Net
             /// 接続断の発生
             _ws.Error += (s, e) =>
             {
-                Form1.WsStatus[0] = 2; //再接続なし
+                WsStatus = 2; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
@@ -307,8 +311,8 @@ namespace NicoNamaRokuga.Net
             _ws.Closed += (s, e) =>
             {
                 StopWatchTimer();   //タイマー終了
-                if (Form1.WsStatus[0] == 0)
-                    Form1.WsStatus[0] = 2; //再接続なし
+                if (WsStatus == 0)
+                    WsStatus = 2; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;

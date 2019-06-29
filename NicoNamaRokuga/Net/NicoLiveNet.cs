@@ -164,14 +164,14 @@ namespace NicoNamaRokuga.Net
             }
             catch (WebException Ex)
             {
-                MessageBox.Show("LoginNico() Error: \r\n" + Ex.Status.ToString());
-                return false;
+                DebugWrite.WriteWebln(nameof(LoginNico), Ex);
+                return flag;
             }
             catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
-                MessageBox.Show("LoginNico() Error: \r\n" + Ex.Message);
-                return false;
+                DebugWrite.Writeln(nameof(LoginNico), Ex);
+                return flag;
             }
 
             return flag;
@@ -232,12 +232,14 @@ namespace NicoNamaRokuga.Net
             }
             catch (WebException Ex)
             {
+                DebugWrite.WriteWebln(nameof(GetPlayerStatusAsync), Ex);
                 gpsi.Error = Ex.Status.ToString();
                 return gpsi;
             }
             catch (Exception Ex) //タイムアウトなど
             {
-                MessageBox.Show("GetPlayerStatusAsync() Error: \r\n" + Ex.Message);
+                DebugWrite.Writeln(nameof(GetPlayerStatusAsync), Ex);
+                gpsi.Error = Ex.Message;
                 return gpsi;
             }
 
@@ -311,12 +313,14 @@ namespace NicoNamaRokuga.Net
             }
             catch (WebException Ex)
             {
+                DebugWrite.WriteWebln(nameof(GetNicoPageAsync), Ex);
                 bci.Error = Ex.Status.ToString();
                 return bci;
             }
             catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
+                DebugWrite.Writeln(nameof(GetNicoPageAsync), Ex);
                 bci.Error = Ex.Message;
                 return bci;
             }
@@ -338,8 +342,10 @@ namespace NicoNamaRokuga.Net
             catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
+                DebugWrite.Writeln(nameof(GetWayBackKeyAsync), Ex);
                 return result;
             }
+
             return result;
         }
 
@@ -367,6 +373,7 @@ namespace NicoNamaRokuga.Net
             catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
+                DebugWrite.Writeln(nameof(GetPlayerM3u8Async), Ex);
                 return result;
             }
             return result;
@@ -387,7 +394,7 @@ namespace NicoNamaRokuga.Net
                     result.Add(ib.SourceInfo.BrowserName);
             }catch (Exception Ex)
             {
-                MessageBox.Show("GetCookieBrowsers Error: \r\n" + Ex.Message);
+                DebugWrite.Writeln(nameof(GetCookieBrowsers), Ex);
                 return result;
             }
             return result;
@@ -446,6 +453,7 @@ namespace NicoNamaRokuga.Net
             catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
+                DebugWrite.Writeln(nameof(SetNicoCookie), Ex);
                 return false;	
             }
 

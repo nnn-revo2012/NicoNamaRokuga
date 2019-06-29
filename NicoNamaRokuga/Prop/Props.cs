@@ -149,7 +149,7 @@ namespace NicoNamaRokuga.Prop
             }
             catch (Exception Ex)
             {
-                MessageBox.Show("LoadData Error: " + Ex.Message);
+                DebugWrite.Writeln(nameof(LoadData), Ex);
                 return false;
             }
             return true;
@@ -180,7 +180,7 @@ namespace NicoNamaRokuga.Prop
                 Properties.Settings.Default.Save();
             }catch(Exception Ex)
             {
-                MessageBox.Show("SaveData Error: " + Ex.Message);
+                DebugWrite.Writeln(nameof(SaveData), Ex);
                 return false;
             }
             return true;
@@ -274,7 +274,6 @@ namespace NicoNamaRokuga.Prop
             }
             return result;
         }
-
 
     }
 }

@@ -44,6 +44,8 @@ namespace NicoNamaRokuga.Net
         //Debug
         public bool IsDebug { get; set; }
 
+        public volatile int WsStatus = -1; //WebSocketの状態
+
         //WebSocket
         private WebSocket _ws = null;
         private bool _wsconnect = false;
@@ -75,6 +77,7 @@ namespace NicoNamaRokuga.Net
             _ws = null;
             _wsconnect = false;
 
+            WsStatus = -1;
             this._nLiveNet = nLiveNet;
             this._bci = bci;
             this._cmi = cmi;
@@ -117,7 +120,7 @@ namespace NicoNamaRokuga.Net
                 if (_wsconnect == false)
                 {
                     _wsconnect = true;
-                    Form1.WsStatus[1] = 0; //接続中
+                    WsStatus = 0; //接続中
                 }
             };
 
@@ -125,7 +128,7 @@ namespace NicoNamaRokuga.Net
             _ws.Error += (s, e) =>
             {
                 StopHBTimer();   //タイマー終了
-                Form1.WsStatus[1] = 2; //再接続なし
+                WsStatus = 2; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
@@ -136,8 +139,8 @@ namespace NicoNamaRokuga.Net
             _ws.Closed += (s, e) =>
             {
                 StopHBTimer();   //タイマー終了
-                if (Form1.WsStatus[1] == 0)
-                    Form1.WsStatus[1] = 2; //再接続なし
+                if (WsStatus == 0)
+                    WsStatus = 2; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
@@ -181,11 +184,11 @@ namespace NicoNamaRokuga.Net
                         break;
                 }
 
-            } catch (Exception Ex)
-            {
-                MessageBox.Show(Ex.Message);
             }
-
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(wsReceived), Ex);
+            }
         }
 
         /// 文字列受信(TS)
@@ -241,9 +244,10 @@ namespace NicoNamaRokuga.Net
                         _come_text.Add(e.Message);
                         break;
                 }
-            } catch (Exception Ex)
+            }
+            catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message);
+                DebugWrite.Writeln(nameof(wsReceivedTS), Ex);
             }
         }
 
@@ -263,14 +267,22 @@ namespace NicoNamaRokuga.Net
         //TSコメント取得
         public void StartGetTSComment()
         {
-            if (_seq_no == 0)
+            try
             {
-                _waybackkey = _nLiveNet.GetWayBackKeyAsync(_cmi.ThreadId).Result; //waybackkey取得
-                _when = long.Parse(_cmi.EndTime.Substring(0, _cmi.EndTime.Length - 3));
-                _chat_flg = true;
+                if (_seq_no == 0)
+                {
+                    _waybackkey = _nLiveNet.GetWayBackKeyAsync(_cmi.ThreadId).Result; //waybackkey取得
+                    _when = long.Parse(_cmi.EndTime.Substring(0, _cmi.EndTime.Length - 3));
+                    _chat_flg = true;
+                }
+                var ttt = SendThreadTS(_cmi.ThreadId, _cmi.UserId, -_MESSAGE_MAX, _when.ToString(), _waybackkey);
+                _form.AddLog(ttt, 9);
+
             }
-            var ttt = SendThreadTS(_cmi.ThreadId, _cmi.UserId, -_MESSAGE_MAX, _when.ToString(), _waybackkey);
-            _form.AddLog(ttt, 9);
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(StartGetTSComment), Ex);
+            }
         }
 
         //生放送コメント取得
@@ -355,7 +367,7 @@ namespace NicoNamaRokuga.Net
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message);
+                DebugWrite.Writeln(nameof(AppendComment), Ex);
             }
 
         }

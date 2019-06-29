@@ -69,6 +69,7 @@ namespace NicoNamaRokuga.Proc
         //Debug
         public bool IsDebug { get; set; }
 
+        public volatile int PsStatus = -1; //実行ファイルの状態
         private Process _ps = null;
 
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
@@ -79,6 +80,7 @@ namespace NicoNamaRokuga.Proc
         {
             IsDebug = false;
 
+            PsStatus = -1;
             this._nNetComment = nNetComment;
             this._bci = bci;
             this._form = fo;
@@ -127,20 +129,21 @@ namespace NicoNamaRokuga.Proc
                 _form.AddLog(string.Format("実行ファイル: {0}", _ps.StartInfo.FileName), 9);
                 _form.AddLog(string.Format("パラメーター: {0}", _ps.StartInfo.Arguments), 9);
                 _form.AddLog("プロセス実行中です。", 1);
-                Form1.PsStatus = 0; //実行中
+                PsStatus = 0; //実行中
                 //EnableButton(false);
 
                 //生放送の場合コメント出力開始
                 if (Form1.props.IsComment && !_bci.IsTimeShift())
                 {
-                    while (Form1.WsStatus[1] != 0) ;
+                    while (_nNetComment.WsStatus != 0) ;
                     _nNetComment.StartGetComment();
                 }
                 _ps.BeginOutputReadLine();
                 _ps.BeginErrorReadLine();
-            }catch (Exception Ex)
+            }
+            catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DebugWrite.Writeln(nameof(ExecPs), Ex);
             }
         }
 
@@ -157,7 +160,7 @@ namespace NicoNamaRokuga.Proc
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DebugWrite.Writeln(nameof(receivedPs), Ex);
             }
         }
 
@@ -173,7 +176,7 @@ namespace NicoNamaRokuga.Proc
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DebugWrite.Writeln(nameof(receivedErrorPs), Ex);
             }
         }
 
@@ -185,7 +188,7 @@ namespace NicoNamaRokuga.Proc
                 var proc = (Process)sender;
 
                 _form.AddLog(string.Format("プロセス終了しました。コード: {0} ", proc.ExitCode), 1);
-                Form1.PsStatus = (proc.ExitCode == 0) ? 1 : 2; //1:正常終了 2:異常終了
+                PsStatus = (proc.ExitCode == 0) ? 1 : 2; //1:正常終了 2:異常終了
                 //EnableButton(true);
                 _ps.CancelOutputRead(); // 使い終わったら止める
                 _ps.CancelErrorRead();
@@ -196,18 +199,21 @@ namespace NicoNamaRokuga.Proc
                 }
 
                 //生放送の場合プロセスが終了したらコメントサーバーを切断する。
-                if (Form1.props.IsComment && !_bci.IsTimeShift() && Form1.WsStatus[1] == 0)
+                if (Form1.props.IsComment)
                 {
-                    _nNetComment?.Close();
-                    _form.AddLog("コメントファイル出力終了", 1);
-                    _nNetComment.EndXmlDoc();
-                    _nNetComment?.Dispose();
-                    Form1.WsStatus[1] = 2;  //再接続なし
+                    if (!_bci.IsTimeShift() && _nNetComment.WsStatus == 0)
+                    {
+                        _nNetComment?.Close();
+                        _form.AddLog("コメントファイル出力終了", 1);
+                        _nNetComment.EndXmlDoc();
+                        _nNetComment?.Dispose();
+                        _nNetComment.WsStatus = 2;  //再接続なし
+                    }
                 }
             }
             catch (Exception Ex)
             {
-                MessageBox.Show(Ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DebugWrite.Writeln(nameof(exitedPs), Ex);
             }
         }
 
