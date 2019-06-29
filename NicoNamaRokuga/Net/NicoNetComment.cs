@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using WebSocket4Net;
 
 using NicoNamaRokuga.Prop;
+using NicoNamaRokuga.Net;
 
 namespace NicoNamaRokuga.Net
 {
@@ -58,6 +59,7 @@ namespace NicoNamaRokuga.Net
 
         System.Threading.Timer _hbTimer;
 
+        private BroadCastInfo _bci = null;
         private CommentInfo _cmi = null;
 
         private Form1 _form = null;
@@ -65,21 +67,20 @@ namespace NicoNamaRokuga.Net
 
         //放送情報
 
-        public NicoNetComment(Form1 fo, CommentInfo cmi)
+        public NicoNetComment(Form1 fo, BroadCastInfo bci, CommentInfo cmi)
         {
             IsDebug = false;
 
             _ws = null;
             _wsconnect = false;
 
-            _seq_no = 0;
-            if (Form1.IsTimeShift)
-            {
-                _come_list.Clear();
-            }
-
+            this._bci = bci;
             this._cmi = cmi;
             this._form = fo;
+
+            _seq_no = 0;
+            if (_bci.IsTimeShift())
+                _come_list.Clear();
 
         }
 
@@ -101,10 +102,10 @@ namespace NicoNamaRokuga.Net
             }
 
             /// 文字列受信
-            if (!Form1.IsTimeShift)
-                _ws.MessageReceived += wsReceived;
-            else
+            if (_bci.IsTimeShift())
                 _ws.MessageReceived += wsReceivedTS;
+            else
+                _ws.MessageReceived += wsReceived;
 
             /// サーバー接続完了
             _ws.Opened += (s, e) =>

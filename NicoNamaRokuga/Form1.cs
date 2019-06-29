@@ -28,20 +28,19 @@ namespace NicoNamaRokuga
 
         public  static Props props;                   //設定
 
-        public  static bool IsBatchMode { get; set; } //引数指定で実行か？
-        public  static bool IsTimeShift { get; set; } //タイムシフトかどうか
+        private static bool IsBatchMode { get; set; } //引数指定で実行か？
 
         public  static volatile int[] WsStatus;       //WebSocketの状態
         public  static volatile int PsStatus;         //実行ファイルの状態
 
-        public NicoLiveNet _nLiveNet = null;         //WebClient
-        public NicoNetStream _nNetStream = null;     //WebSocket(Stream)
-        public NicoNetComment _nNetComment = null;   //WebSocket(Comment)
-        public ExecProcess _eProcess = null;         //Process
+        public NicoLiveNet _nLiveNet = null;          //WebClient
+        public NicoNetStream _nNetStream = null;      //WebSocket(Stream)
+        public NicoNetComment _nNetComment = null;    //WebSocket(Comment)
+        public ExecProcess _eProcess = null;          //Process
 
-        private BroadCastInfo bci = null;            //ストリームサーバー情報
-        private CommentInfo cmi = null;              //コメントサーバー情報
-        private ExecPsInfo epi = null;               //実行／保存ファイル情報
+        private BroadCastInfo bci = null;             //ストリームサーバー情報
+        private CommentInfo cmi = null;               //コメントサーバー情報
+        private ExecPsInfo epi = null;                //実行／保存ファイル情報
 
         private string liveId = null;
 
@@ -178,7 +177,6 @@ namespace NicoNamaRokuga
             WsStatus[0] = -1;
             WsStatus[1] = -1;
             PsStatus = -1;
-            IsTimeShift = false;
             _nLiveNet = new NicoLiveNet();
 
             //if (_nLiveNet.IsLoginStatus == true)
@@ -240,8 +238,6 @@ namespace NicoNamaRokuga
                 return;
             }
 
-            IsTimeShift = bci.OnAirStatus == "ENDED" ? true : false;
-
             //保存ファイル名作成
             epi = new ExecPsInfo();
             epi.Sdir = props.SaveDir;
@@ -257,17 +253,17 @@ namespace NicoNamaRokuga
                 cmi = new CommentInfo(bci.User_Id);
                 cmi.BeginTime = bci.Open_Time + "000";
                 cmi.EndTime = bci.End_Time + "000";
-                _nNetComment = new NicoNetComment(this, cmi);
+                _nNetComment = new NicoNetComment(this, bci, cmi);
             }
 
             _nNetStream = new NicoNetStream(this, bci, cmi, epi);
-            _eProcess = new ExecProcess(this);
+            _eProcess = new ExecProcess(this, bci);
 
             AddLog("wsUrl: " + bci.WsUrl, 9);
             AddLog("wsPermit: " + _nNetStream.GetPermit(bci.BcId, props.Protocol.ToString()), 9);
 
             //放送情報を表示
-            DispHosoData(bci, IsTimeShift);
+            DispHosoData(bci);
 
             //WebSocket接続開始
             _nNetStream.Connect();
@@ -324,8 +320,8 @@ namespace NicoNamaRokuga
                     }
                     AddLog("再接続します。", 1);
                     _nNetStream = new NicoNetStream(this, bci, cmi, epi);
-                    if (props.IsComment) _nNetComment = new NicoNetComment(this, cmi);
-                    _eProcess = new ExecProcess(this);
+                    if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi);
+                    _eProcess = new ExecProcess(this, bci);
                     _nNetStream.Connect();
 
             }
@@ -333,8 +329,8 @@ namespace NicoNamaRokuga
             {
                 //ffmpeg再起動処理
                     AddLog("再接続します。", 1);
-                    if (props.IsComment) _nNetComment = new NicoNetComment(this, cmi);
-                    _eProcess = new ExecProcess(this);
+                    if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi);
+                    _eProcess = new ExecProcess(this, bci);
                     _nNetComment.Connect(cmi.WsUrl);
                     _nNetStream.ReSendGetStream(epi.Quality, epi.Protocol);
 

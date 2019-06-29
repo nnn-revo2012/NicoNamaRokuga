@@ -56,7 +56,7 @@ namespace NicoNamaRokuga.Net
 
         public bool IsTimeShift()
         {
-            return (WsUrl.IndexOf(Props.TIMESHIFT) > 0) ? true : false;
+            return OnAirStatus == "ON_AIR" ? false : true;
         }
 
         private static readonly Regex RgxChNo = new Regex("/([^/]+)$", RegexOptions.Compiled);
@@ -243,7 +243,7 @@ namespace NicoNamaRokuga.Net
                             ttt = jtkn["room"]["threadId"].ToString();
                             _cmi.ThreadId = ttt;
                             _form._nNetComment.Connect(_cmi.WsUrl);
-                            if (Form1.IsTimeShift)
+                            if (_bci.IsTimeShift())
                             {
                                 while (Form1.WsStatus[1] != 0) ;
                                 _form._nNetComment.StartGetTSComment();

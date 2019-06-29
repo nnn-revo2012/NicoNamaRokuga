@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
+using NicoNamaRokuga.Net;
+
 namespace NicoNamaRokuga.Proc
 {
     public class ExecPsInfo
@@ -69,13 +71,15 @@ namespace NicoNamaRokuga.Proc
 
         private Process _ps = null;
 
+        private BroadCastInfo _bci = null;
         private Form1 _form = null;
 
-        public ExecProcess(Form1 fo)
+        public ExecProcess(Form1 fo, BroadCastInfo bci)
         {
             IsDebug = false;
 
-            _form = fo;
+            this._bci = bci;
+            this._form = fo;
         }
 
         ~ExecProcess()
@@ -125,7 +129,7 @@ namespace NicoNamaRokuga.Proc
                 //EnableButton(false);
 
                 //生放送の場合コメント出力開始
-                if (Form1.props.IsComment && !Form1.IsTimeShift)
+                if (Form1.props.IsComment && !_bci.IsTimeShift())
                 {
                     while (Form1.WsStatus[1] != 0) ;
                     _form._nNetComment.StartGetComment();
@@ -190,7 +194,7 @@ namespace NicoNamaRokuga.Proc
                 }
 
                 //生放送の場合プロセスが終了したらコメントサーバーを切断する。
-                if (Form1.props.IsComment && !Form1.IsTimeShift && Form1.WsStatus[1] == 0)
+                if (Form1.props.IsComment && !_bci.IsTimeShift() && Form1.WsStatus[1] == 0)
                 {
                     _form._nNetComment?.Close();
                     _form.AddLog("コメントファイル出力終了", 1);
