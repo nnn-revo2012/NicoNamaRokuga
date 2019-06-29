@@ -59,15 +59,18 @@ namespace NicoNamaRokuga.Net
         public string Community_Title { set; get; }
         public string Community_Id { set; get; }
         public string Community_Thumbnail { set; get; }
-        public string Start_Time { set; get; }
+        public bool   FollowerOnly { set; get; }
+        public string Open_Time { set; get; }
+        public string Begin_Time { set; get; }
+        public string VposBase_Time { set; get; }
         public string End_Time { set; get; }
+        public string OnAirStatus { set; get; }
 
         private static Regex RgxChNo = new Regex("/([^/]+)$", RegexOptions.Compiled);
 
-        public TemplateInfo(string liveid, string provider_type)
+        public TemplateInfo(string liveid)
         {
             this.LiveId = liveid;
-            this.Provider_Type = provider_type;
             this.Status = null;
             this.Error = null;
         }
@@ -319,7 +322,7 @@ namespace NicoNamaRokuga.Net
         //生放送ページから放送情報を取得
         public async Task<TemplateInfo> GetTemplateAPIAsync(string nicoUrl)
         {
-            var tpi = new TemplateInfo(null, null);
+            var tpi = new TemplateInfo(null);
             tpi.Status = "fail";
             tpi.Error = "PARAMERROR";
 
@@ -372,7 +375,13 @@ namespace NicoNamaRokuga.Net
                             tpi.Provider_Id = TemplateInfo.GetChNo(dprogram["supplier"]["pageUrl"].ToString());
                     }
                 }
-                //tpi.Community_Only = dprogram["isFollowerOnly"].ToString();
+                tpi.FollowerOnly = (bool)dprogram["isFollowerOnly"];
+                tpi.Open_Time = dprogram["openTime"].ToString();
+                tpi.Begin_Time = dprogram["beginTime"].ToString();
+                tpi.VposBase_Time = dprogram["vposBaseTime"].ToString();
+                tpi.End_Time = dprogram["endTime"].ToString();
+                tpi.OnAirStatus = dprogram["status"].ToString();
+
                 tpi.Community_Id = providertype;
                 tpi.Community_Title = "公式生放送";
                 if (dprops["socialGroup"].Count() > 0)
@@ -382,6 +391,7 @@ namespace NicoNamaRokuga.Net
                     //tpi.Community_Thumbnail = dprops["socialGroup"]["thumbnailSmallImageUrl"].ToString();
                 }
                 tpi.Status = "ok";
+                tpi.Error = "";
             }
             catch (WebException Ex)
             {
