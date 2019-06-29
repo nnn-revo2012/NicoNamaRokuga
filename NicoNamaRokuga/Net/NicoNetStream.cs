@@ -122,13 +122,16 @@ namespace NicoNamaRokuga.Net
         private CommentInfo _cmi = null;
         private ExecPsInfo _epi = null;
 
+        private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
+        private ExecProcess _eProcess = null;         //Process
+
         System.Threading.Timer _watchTimer;
 
         private Form1 _form = null;
 
         //放送情報
 
-        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi)
+        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi, NicoNetComment nNetComment, ExecProcess eProcess)
         {
             IsDebug = false;
 
@@ -136,10 +139,12 @@ namespace NicoNamaRokuga.Net
             _wsconnect = false;
             _wsStatus = -1;
 
-            this._form = fo;
+            this._nNetComment = nNetComment;
+            this._eProcess = eProcess;
             this._bci = bci;
             this._cmi = cmi;
             this._epi = epi;
+            this._form = fo;
         }
 
         ~NicoNetStream()
@@ -230,7 +235,7 @@ namespace NicoNamaRokuga.Net
                             if (Form1.props.IsComment)
                                 _cmi.SaveFile = _epi.SaveFile + _epi.Xml;
                             var argument = ExecPsInfo.SetOption(_epi, ttt);
-                            _form._eProcess.ExecPs(_epi.Exec, argument);
+                            _eProcess.ExecPs(_epi.Exec, argument);
                         }
                         break;
                     case "currentroom":
@@ -242,11 +247,11 @@ namespace NicoNamaRokuga.Net
                             _form.AddLog("CommentServer: " + ttt, 9);
                             ttt = jtkn["room"]["threadId"].ToString();
                             _cmi.ThreadId = ttt;
-                            _form._nNetComment.Connect(_cmi.WsUrl);
+                            _nNetComment.Connect(_cmi.WsUrl);
                             if (_bci.IsTimeShift())
                             {
                                 while (Form1.WsStatus[1] != 0) ;
-                                _form._nNetComment.StartGetTSComment();
+                                _nNetComment.StartGetTSComment();
                             }
                         }
                         break;

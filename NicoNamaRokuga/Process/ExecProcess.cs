@@ -71,13 +71,15 @@ namespace NicoNamaRokuga.Proc
 
         private Process _ps = null;
 
+        private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
         private BroadCastInfo _bci = null;
         private Form1 _form = null;
 
-        public ExecProcess(Form1 fo, BroadCastInfo bci)
+        public ExecProcess(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment)
         {
             IsDebug = false;
 
+            this._nNetComment = nNetComment;
             this._bci = bci;
             this._form = fo;
         }
@@ -132,7 +134,7 @@ namespace NicoNamaRokuga.Proc
                 if (Form1.props.IsComment && !_bci.IsTimeShift())
                 {
                     while (Form1.WsStatus[1] != 0) ;
-                    _form._nNetComment.StartGetComment();
+                    _nNetComment.StartGetComment();
                 }
                 _ps.BeginOutputReadLine();
                 _ps.BeginErrorReadLine();
@@ -196,10 +198,10 @@ namespace NicoNamaRokuga.Proc
                 //生放送の場合プロセスが終了したらコメントサーバーを切断する。
                 if (Form1.props.IsComment && !_bci.IsTimeShift() && Form1.WsStatus[1] == 0)
                 {
-                    _form._nNetComment?.Close();
+                    _nNetComment?.Close();
                     _form.AddLog("コメントファイル出力終了", 1);
-                    _form._nNetComment.EndXmlDoc();
-                    _form._nNetComment?.Dispose();
+                    _nNetComment.EndXmlDoc();
+                    _nNetComment?.Dispose();
                     Form1.WsStatus[1] = 2;  //再接続なし
                 }
             }

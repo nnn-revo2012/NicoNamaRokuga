@@ -61,19 +61,21 @@ namespace NicoNamaRokuga.Net
 
         private BroadCastInfo _bci = null;
         private CommentInfo _cmi = null;
+        private NicoLiveNet _nLiveNet = null;         //WebClient
 
         private Form1 _form = null;
         private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
 
         //放送情報
 
-        public NicoNetComment(Form1 fo, BroadCastInfo bci, CommentInfo cmi)
+        public NicoNetComment(Form1 fo, BroadCastInfo bci, CommentInfo cmi, NicoLiveNet nLiveNet)
         {
             IsDebug = false;
 
             _ws = null;
             _wsconnect = false;
 
+            this._nLiveNet = nLiveNet;
             this._bci = bci;
             this._cmi = cmi;
             this._form = fo;
@@ -263,7 +265,7 @@ namespace NicoNamaRokuga.Net
         {
             if (_seq_no == 0)
             {
-                _waybackkey = _form._nLiveNet.GetWayBackKeyAsync(_cmi.ThreadId).Result; //waybackkey取得
+                _waybackkey = _nLiveNet.GetWayBackKeyAsync(_cmi.ThreadId).Result; //waybackkey取得
                 _when = long.Parse(_cmi.EndTime.Substring(0, _cmi.EndTime.Length - 3));
                 _chat_flg = true;
             }
