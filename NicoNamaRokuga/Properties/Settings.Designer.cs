@@ -273,5 +273,17 @@ namespace NicoNamaRokuga.Properties {
                 this["IsComment"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsSeetNo {
+            get {
+                return ((bool)(this["IsSeetNo"]));
+            }
+            set {
+                this["IsSeetNo"] = value;
+            }
+        }
     }
 }

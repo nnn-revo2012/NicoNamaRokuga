@@ -83,6 +83,7 @@ namespace NicoNamaRokuga
 
                 checkBox2.Checked = _props.IsLogging;
                 checkBox3.Checked = _props.IsComment;
+                checkBox6.Checked = _props.IsSeetNo;
             }
             catch (Exception Ex)
             {
@@ -138,6 +139,7 @@ namespace NicoNamaRokuga
 
                 _props.IsLogging = checkBox2.Checked;
                 _props.IsComment = checkBox3.Checked;
+                _props.IsSeetNo = checkBox6.Checked;
 
                 _props.SelectedCookie =
                     await NicoLiveNet.GetCookieSource(!checkBox1.Checked, comboBox1.SelectedIndex);

@@ -85,6 +85,7 @@ namespace NicoNamaRokuga.Prop
         public int ReConnectTime2 { get; set; }
         public bool IsLogging { get; set; }
         public bool IsComment { get; set; }
+        public bool IsSeetNo { get; set; }
 
 
         public Props()
@@ -146,6 +147,7 @@ namespace NicoNamaRokuga.Prop
                 this.ReConnectTime2 = Properties.Settings.Default.ReConnectTime2;
                 this.IsLogging = Properties.Settings.Default.IsLogging;
                 this.IsComment = Properties.Settings.Default.IsComment;
+                this.IsSeetNo = Properties.Settings.Default.IsSeetNo;
             }
             catch (Exception Ex)
             {
@@ -177,6 +179,7 @@ namespace NicoNamaRokuga.Prop
                 Properties.Settings.Default.Retry = this.Retry;
                 Properties.Settings.Default.IsLogging = this.IsLogging;
                 Properties.Settings.Default.IsComment = this.IsComment;
+                Properties.Settings.Default.IsSeetNo = this.IsSeetNo;
                 Properties.Settings.Default.Save();
             }catch(Exception Ex)
             {

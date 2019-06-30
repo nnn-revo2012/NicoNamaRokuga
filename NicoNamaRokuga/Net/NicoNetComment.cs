@@ -159,6 +159,12 @@ namespace NicoNamaRokuga.Net
             if (string.IsNullOrEmpty(e.Message))
                 return;
 
+            if (Form1.props.IsSeetNo)
+            {
+                if (e.Message.Contains(Props.Commnet_SeetNo))
+                    return;
+            }
+
             try
             {
                 //_form.AddLog(e.Message + "\r\n");
@@ -346,6 +352,11 @@ namespace NicoNamaRokuga.Net
                             come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
                             if (write_flg)
                             {
+                                if (Form1.props.IsSeetNo)
+                                {
+                                    if (line.Contains(Props.Commnet_SeetNo))
+                                        continue;
+                                }
                                 sw.Write(Json2Xml(jmes));
                             }
                             else

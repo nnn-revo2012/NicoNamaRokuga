@@ -60,6 +60,9 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -74,6 +77,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -90,7 +94,7 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(416, 335);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "ログイン設定";
+            this.tabPage1.Text = "アカウント設定";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // groupBox2
@@ -248,6 +252,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkBox6);
+            this.tabPage2.Controls.Add(this.checkBox5);
             this.tabPage2.Controls.Add(this.checkBox4);
             this.tabPage2.Controls.Add(this.checkBox3);
             this.tabPage2.Controls.Add(this.groupBox5);
@@ -265,7 +271,7 @@
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(14, 208);
+            this.checkBox4.Location = new System.Drawing.Point(14, 197);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(216, 16);
             this.checkBox4.TabIndex = 3;
@@ -275,11 +281,11 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(14, 175);
+            this.checkBox3.Location = new System.Drawing.Point(14, 219);
             this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(171, 16);
+            this.checkBox3.Size = new System.Drawing.Size(230, 16);
             this.checkBox3.TabIndex = 2;
-            this.checkBox3.Text = "コメントファイル(.xml)を出力する";
+            this.checkBox3.Text = "コメントを取得してファイル (.xml) に出力する";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
             // groupBox5
@@ -334,7 +340,7 @@
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(14, 304);
+            this.checkBox2.Location = new System.Drawing.Point(14, 263);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(118, 16);
             this.checkBox2.TabIndex = 0;
@@ -412,6 +418,36 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Location = new System.Drawing.Point(14, 175);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(206, 16);
+            this.checkBox5.TabIndex = 4;
+            this.checkBox5.Text = "自動起動時に最小化状態で起動する";
+            this.checkBox5.UseVisualStyleBackColor = true;
+            // 
+            // checkBox6
+            // 
+            this.checkBox6.AutoSize = true;
+            this.checkBox6.Location = new System.Drawing.Point(14, 241);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.Size = new System.Drawing.Size(242, 16);
+            this.checkBox6.TabIndex = 5;
+            this.checkBox6.Text = "追い出しコメント (/hb ifseetno) は出力しない";
+            this.checkBox6.UseVisualStyleBackColor = true;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(416, 335);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "詳細設定";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -475,5 +511,8 @@
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.CheckBox checkBox6;
+        private System.Windows.Forms.CheckBox checkBox5;
+        private System.Windows.Forms.TabPage tabPage3;
     }
 }
