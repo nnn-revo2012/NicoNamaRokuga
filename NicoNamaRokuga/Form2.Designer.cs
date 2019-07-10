@@ -45,10 +45,13 @@
             this.rB_always = new System.Windows.Forms.RadioButton();
             this.rB_none = new System.Windows.Forms.RadioButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.rB_rtmp = new System.Windows.Forms.RadioButton();
+            this.rB_native = new System.Windows.Forms.RadioButton();
             this.rB_hls = new System.Windows.Forms.RadioButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
@@ -57,12 +60,10 @@
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -268,6 +269,26 @@
             this.tabPage2.Text = "基本設定";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // checkBox6
+            // 
+            this.checkBox6.AutoSize = true;
+            this.checkBox6.Location = new System.Drawing.Point(14, 241);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.Size = new System.Drawing.Size(242, 16);
+            this.checkBox6.TabIndex = 5;
+            this.checkBox6.Text = "追い出しコメント (/hb ifseetno) は出力しない";
+            this.checkBox6.UseVisualStyleBackColor = true;
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Location = new System.Drawing.Point(14, 175);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(206, 16);
+            this.checkBox5.TabIndex = 4;
+            this.checkBox5.Text = "自動起動時に最小化状態で起動する";
+            this.checkBox5.UseVisualStyleBackColor = true;
+            // 
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
@@ -291,32 +312,33 @@
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.rB_rtmp);
+            this.groupBox5.Controls.Add(this.rB_native);
             this.groupBox5.Controls.Add(this.rB_hls);
-            this.groupBox5.Location = new System.Drawing.Point(262, 112);
+            this.groupBox5.Location = new System.Drawing.Point(159, 112);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(138, 47);
+            this.groupBox5.Size = new System.Drawing.Size(241, 47);
             this.groupBox5.TabIndex = 1;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "プロトコル設定";
             // 
-            // rB_rtmp
+            // rB_native
             // 
-            this.rB_rtmp.AutoSize = true;
-            this.rB_rtmp.Location = new System.Drawing.Point(69, 18);
-            this.rB_rtmp.Name = "rB_rtmp";
-            this.rB_rtmp.Size = new System.Drawing.Size(54, 16);
-            this.rB_rtmp.TabIndex = 1;
-            this.rB_rtmp.Text = "RTMP";
-            this.rB_rtmp.UseVisualStyleBackColor = true;
+            this.rB_native.AutoSize = true;
+            this.rB_native.Location = new System.Drawing.Point(82, 18);
+            this.rB_native.Name = "rB_native";
+            this.rB_native.Size = new System.Drawing.Size(93, 16);
+            this.rB_native.TabIndex = 1;
+            this.rB_native.Text = "HLS(NATIVE)";
+            this.rB_native.UseVisualStyleBackColor = true;
             // 
             // rB_hls
             // 
             this.rB_hls.AutoSize = true;
-            this.rB_hls.Location = new System.Drawing.Point(19, 18);
+            this.rB_hls.Location = new System.Drawing.Point(6, 18);
             this.rB_hls.Name = "rB_hls";
-            this.rB_hls.Size = new System.Drawing.Size(44, 16);
+            this.rB_hls.Size = new System.Drawing.Size(76, 16);
             this.rB_hls.TabIndex = 0;
-            this.rB_hls.Text = "HLS";
+            this.rB_hls.Text = "HLS(外部)";
             this.rB_hls.UseVisualStyleBackColor = true;
             // 
             // groupBox4
@@ -324,7 +346,7 @@
             this.groupBox4.Controls.Add(this.comboBox2);
             this.groupBox4.Location = new System.Drawing.Point(8, 112);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(238, 47);
+            this.groupBox4.Size = new System.Drawing.Size(145, 47);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "画質設定";
@@ -334,7 +356,7 @@
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(8, 18);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(161, 20);
+            this.comboBox2.Size = new System.Drawing.Size(129, 20);
             this.comboBox2.TabIndex = 2;
             // 
             // checkBox2
@@ -383,6 +405,16 @@
             this.textBox3.Size = new System.Drawing.Size(327, 19);
             this.textBox3.TabIndex = 0;
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(416, 335);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "詳細設定";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -418,35 +450,15 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // checkBox5
+            // rB_rtmp
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(14, 175);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(206, 16);
-            this.checkBox5.TabIndex = 4;
-            this.checkBox5.Text = "自動起動時に最小化状態で起動する";
-            this.checkBox5.UseVisualStyleBackColor = true;
-            // 
-            // checkBox6
-            // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.Location = new System.Drawing.Point(14, 241);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(242, 16);
-            this.checkBox6.TabIndex = 5;
-            this.checkBox6.Text = "追い出しコメント (/hb ifseetno) は出力しない";
-            this.checkBox6.UseVisualStyleBackColor = true;
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(416, 335);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "詳細設定";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.rB_rtmp.AutoSize = true;
+            this.rB_rtmp.Location = new System.Drawing.Point(181, 18);
+            this.rB_rtmp.Name = "rB_rtmp";
+            this.rB_rtmp.Size = new System.Drawing.Size(54, 16);
+            this.rB_rtmp.TabIndex = 2;
+            this.rB_rtmp.Text = "RTMP";
+            this.rB_rtmp.UseVisualStyleBackColor = true;
             // 
             // Form2
             // 
@@ -499,6 +511,7 @@
         private System.Windows.Forms.RadioButton rB_none;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.RadioButton rB_rtmp;
+        private System.Windows.Forms.RadioButton rB_native;
         private System.Windows.Forms.RadioButton rB_hls;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.GroupBox groupBox3;
