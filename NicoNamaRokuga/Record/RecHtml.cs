@@ -9,6 +9,7 @@ using System.IO;
 using System.Net;
 
 using NicoNamaRokuga.Net;
+using NicoNamaRokuga.Proc;
 using NicoNamaRokuga.Prop;
 
 namespace NicoNamaRokuga.Rec
@@ -66,7 +67,7 @@ namespace NicoNamaRokuga.Rec
         public string sUrl { set; get; }
     }
 
-    public class RecHtml : IDisposable
+    public class RecHtml : EProcess, IDisposable
     {
 
         private bool disposedValue = false; // 重複する呼び出しを検知するには
@@ -94,7 +95,7 @@ namespace NicoNamaRokuga.Rec
         //Debug
         public bool IsDebug { get; set; }
 
-        public volatile int PsStatus = -1; //実行ファイルの状態
+        //public volatile int PsStatus = -1; //実行ファイルの状態
 
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
         private BroadCastInfo _bci = null;
@@ -122,15 +123,20 @@ namespace NicoNamaRokuga.Rec
             this.Dispose();
         }
 
-        public async Task ExecPs(string masterfile, string outfile)
+        public override void ExecPs(string masterfile, string outfile)
+        {
+            PsStatus = 0; //実行中
+            Task.Run(() => HtmlRecordTS(masterfile, outfile));
+        }
+
+        private async Task HtmlRecordTS(string masterfile, string outfile)
         {
 
-            PsStatus = 0; //実行中
             // masterファイルをGet
             var pli = await GetMasterM3u8Async(masterfile, "");
             if (pli.Status != "Ok" || pli.Player.Count() <= 0) EndPs();
             // playerファイルをGet
-            var sgi = await GetPlayerM3u8Async(masterfile, "");
+            var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl, "");
             if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0) EndPs();
 
             // 指定秒ごとにSegmentファイルを取得
@@ -147,7 +153,7 @@ namespace NicoNamaRokuga.Rec
 
         }
 
-        public void BreakProcess(string breakkey)
+        public override void BreakProcess(string breakkey)
         {
             EndPs();
         }
@@ -155,7 +161,7 @@ namespace NicoNamaRokuga.Rec
         //master.m3u8からplayer.m3u8のURLを取得
         public async Task<PlayListInfo> GetMasterM3u8Async(string url, string referer)
         {
-            _form.AddExecLog("GetMasterFile");
+            _form.AddExecLog("GetMasterFile\r\n");
             var pli = new PlayListInfo();
             pli.Status = "Error";
             pli.Error = "PARAMERROR";
@@ -173,14 +179,14 @@ namespace NicoNamaRokuga.Rec
                     int bw;
                     while ((line = sr.ReadLine()) != null) // 1行ずつ読み出し。
                     {
-                        _form.AddExecLog(line);
+                        _form.AddExecLog(line + "\r\n");
                         if (line.IndexOf("#EXT-X-STREAM-INF") >= 0)
                         {
                             var pi = new PlayerInfo();
                             if (int.TryParse(Regex.Match(line, @"BANDWIDTH=(\d+)").Groups[1].Value, out bw))
                                 pi.Bandwidth = bw;
                             line = sr.ReadLine();
-                            _form.AddExecLog(line);
+                            _form.AddExecLog(line + "\r\n");
                             if (!string.IsNullOrEmpty(line))
                             {
                                 pi.pUrl = pli.BaseUrl + line;
@@ -205,7 +211,7 @@ namespace NicoNamaRokuga.Rec
         //player.m3u8からsegment情報を取得
         public async Task<SegmentInfo> GetPlayerM3u8Async(string url, string referer)
         {
-            _form.AddExecLog("GetPlayerFile");
+            _form.AddExecLog("GetPlayerFile\r\n");
             var sgi = new SegmentInfo();
             sgi.Status = "Error";
             sgi.Error = "PARAMERROR";
@@ -224,7 +230,7 @@ namespace NicoNamaRokuga.Rec
                     string line;
                     while ((line = sr.ReadLine()) != null) // 1行ずつ読み出し。
                     {
-                        _form.AddExecLog(line);
+                        _form.AddExecLog(line + "\r\n");
                         var ttt = line.Split(':');
                         switch (ttt[0])
                         {
@@ -245,7 +251,7 @@ namespace NicoNamaRokuga.Rec
                                 if (float.TryParse(ttt[1], out ei))
                                     sg.ExtInfo = ei;
                                 line = sr.ReadLine();
-                                _form.AddExecLog(line);
+                                _form.AddExecLog(line + "\r\n");
                                 if (!string.IsNullOrEmpty(line))
                                 {
                                     sg.sUrl = sgi.BaseUrl + line;
@@ -273,7 +279,7 @@ namespace NicoNamaRokuga.Rec
         //segmentファイルを取得
         public async Task<byte[]> GetSegmentAsync(string url, string referer, int seqno, int bw)
         {
-            _form.AddExecLog("GetSegmentFile");
+            _form.AddExecLog("GetSegmentFile\r\n");
             byte[] data = null;
             if (string.IsNullOrEmpty(url)) return data;
 

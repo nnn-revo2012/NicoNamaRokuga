@@ -19,6 +19,7 @@ using Newtonsoft.Json.Linq;
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Net;
 using NicoNamaRokuga.Proc;
+using NicoNamaRokuga.Rec;
 
 
 namespace NicoNamaRokuga
@@ -34,6 +35,7 @@ namespace NicoNamaRokuga
         private NicoNetStream _nNetStream = null;     //WebSocket(Stream)
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
         private ExecProcess _eProcess = null;         //Process
+        private RecHtml _rHtml = null;                //RecHtml
 
         private BroadCastInfo bci = null;             //ストリームサーバー情報
         private CommentInfo cmi = null;               //コメントサーバー情報
@@ -75,6 +77,10 @@ namespace NicoNamaRokuga
                 //中断処理
                 if (button1.Text == "中断")
                 {
+                    if (_rHtml != null)
+                    {
+                        _rHtml.BreakProcess("");
+                    }
                     if (_eProcess != null)
                     {
                         _eProcess.BreakProcess(epi.BreakKey);
@@ -234,7 +240,10 @@ namespace NicoNamaRokuga
                 epi.Exec = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
                 epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
                 epi.Sfile = bci.SetRecFile(props.SaveFile);
-                epi.Protocol = props.Protocol.ToString();
+                if (props.Protocol == Protocol.native)
+                    epi.Protocol = Protocol.hls.ToString();
+                else
+                    epi.Protocol = props.Protocol.ToString();
                 epi.Seq = 0;
 
                 //コメント情報
@@ -246,8 +255,11 @@ namespace NicoNamaRokuga
                     _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
                 }
 
-                _eProcess = new ExecProcess(this, bci, _nNetComment);
-                _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess);
+                if (props.Protocol == Protocol.native)
+                    _rHtml = new RecHtml(this, bci, _nNetComment);
+                else
+                    _eProcess = new ExecProcess(this, bci, _nNetComment);
+                _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
 
                 AddLog("wsUrl: " + bci.WsUrl, 9);
                 AddLog("wsPermit: " + _nNetStream.GetPermit(bci.BcId, props.Protocol.ToString()), 9);
@@ -278,11 +290,20 @@ namespace NicoNamaRokuga
         private void CheckStatus()
         {
             var WsCommentStatus = -1;
+            var ExecStatus = -1;
             if (props.IsComment) WsCommentStatus = _nNetComment.WsStatus;
+            if (props.Protocol == Protocol.native)
+                ExecStatus = _rHtml.PsStatus;
+            else
+                ExecStatus = _eProcess.PsStatus;
             try
             {
-                if (_eProcess.PsStatus >= 1) //終了処理
+                if (ExecStatus >= 1) //終了処理
                 {
+                    if (_rHtml != null)
+                    {
+                        _rHtml.BreakProcess("");
+                    }
                     if (_eProcess != null)
                     {
                         _eProcess.BreakProcess(epi.BreakKey);
@@ -308,6 +329,10 @@ namespace NicoNamaRokuga
                 if (_nNetStream.WsStatus == 1 || WsCommentStatus == 1)
                 {
                     //WebSocket再接続処理開始
+                    if (_rHtml != null)
+                    {
+                        _rHtml.BreakProcess("");
+                    }
                     if (_eProcess != null)
                     {
                         _eProcess.BreakProcess(epi.BreakKey);
@@ -322,17 +347,23 @@ namespace NicoNamaRokuga
                     }
                     AddLog("再接続します。", 1);
                     if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
-                    _eProcess = new ExecProcess(this, bci, _nNetComment);
-                    _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess);
+                    if (props.Protocol == Protocol.native)
+                        _rHtml = new RecHtml(this, bci, _nNetComment);
+                    else
+                        _eProcess = new ExecProcess(this, bci, _nNetComment);
+                    _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
                     _nNetStream.Connect();
 
                 }
-                else if (_eProcess.PsStatus == 1 && (_nNetStream.WsStatus == 0 || WsCommentStatus == 0))
+                else if (ExecStatus == 1 && (_nNetStream.WsStatus == 0 || WsCommentStatus == 0))
                 {
                     //ffmpeg再起動処理
                     AddLog("再接続します。", 1);
                     if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
-                    _eProcess = new ExecProcess(this, bci, _nNetComment);
+                    if (props.Protocol == Protocol.native)
+                        _rHtml = new RecHtml(this, bci, _nNetComment);
+                    else
+                        _eProcess = new ExecProcess(this, bci, _nNetComment);
                     _nNetComment.Connect(cmi.WsUrl);
                     _nNetStream.ReSendGetStream(epi.Quality, epi.Protocol);
 
@@ -347,6 +378,11 @@ namespace NicoNamaRokuga
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (_rHtml != null)
+            {
+                _rHtml.Dispose();
+                _rHtml = null;
+            }
             if (_eProcess != null)
             {
                 _eProcess.Dispose();

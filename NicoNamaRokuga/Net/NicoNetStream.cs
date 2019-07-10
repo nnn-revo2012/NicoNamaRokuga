@@ -16,6 +16,7 @@ using WebSocket4Net;
 
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Proc;
+using NicoNamaRokuga.Rec;
 
 namespace NicoNamaRokuga.Net
 {
@@ -126,6 +127,7 @@ namespace NicoNamaRokuga.Net
 
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
         private ExecProcess _eProcess = null;         //Process
+        private RecHtml _rHtml = null;                //RecHtml
 
         System.Threading.Timer _watchTimer;
 
@@ -133,7 +135,7 @@ namespace NicoNamaRokuga.Net
 
         //放送情報
 
-        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi, NicoNetComment nNetComment, ExecProcess eProcess)
+        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi, NicoNetComment nNetComment, ExecProcess eProcess, RecHtml rHtml)
         {
             IsDebug = false;
 
@@ -144,6 +146,7 @@ namespace NicoNamaRokuga.Net
             WsStatus = -1;
             this._nNetComment = nNetComment;
             this._eProcess = eProcess;
+            this._rHtml = rHtml;
             this._bci = bci;
             this._cmi = cmi;
             this._epi = epi;
@@ -239,7 +242,10 @@ namespace NicoNamaRokuga.Net
                             if (Form1.props.IsComment)
                                 _cmi.SaveFile = _epi.SaveFile + _epi.Xml;
                             var argument = ExecPsInfo.SetOption(_epi, ttt);
-                            _eProcess.ExecPs(_epi.Exec, argument);
+                            if (Form1.props.Protocol == Protocol.native)
+                                _rHtml.ExecPs(ttt, _cmi.SaveFile);
+                            else
+                                _eProcess.ExecPs(_epi.Exec, argument);
                         }
                         break;
                     case "currentroom":

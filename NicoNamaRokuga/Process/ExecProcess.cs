@@ -61,7 +61,7 @@ namespace NicoNamaRokuga.Proc
         }
     }
 
-    public class ExecProcess : IDisposable
+    public class ExecProcess : EProcess, IDisposable
     {
 
         private bool disposedValue = false; // 重複する呼び出しを検知するには
@@ -69,7 +69,7 @@ namespace NicoNamaRokuga.Proc
         //Debug
         public bool IsDebug { get; set; }
 
-        public volatile int PsStatus = -1; //実行ファイルの状態
+        //public volatile int PsStatus = -1; //実行ファイルの状態
         private Process _ps = null;
 
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
@@ -91,7 +91,7 @@ namespace NicoNamaRokuga.Proc
             this.Dispose();
         }
 
-        public void ExecPs(string exefile, string argument)
+        public override void ExecPs(string exefile, string argument)
         {
             try
             {
@@ -217,7 +217,7 @@ namespace NicoNamaRokuga.Proc
             }
         }
 
-        public void BreakProcess(string breakkey) 
+        public override void BreakProcess(string breakkey) 
         {
             if (_ps != null && !_ps.HasExited)
             {
