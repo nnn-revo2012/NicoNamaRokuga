@@ -59,6 +59,16 @@ namespace NicoNamaRokuga.Proc
 
             return (!File.Exists(fn1) && !File.Exists(fn2)) ? false : true;
         }
+
+        //Sqlite3用の保存ファイル名
+        public static string GetSaveFileSqlite3(ExecPsInfo epi)
+        {
+            var ff = Path.GetFileNameWithoutExtension(epi.Sfile);
+            ff = Path.Combine(epi.Sdir, ff);
+
+            return ff;
+        }
+
     }
 
     public class ExecProcess : EProcess, IDisposable

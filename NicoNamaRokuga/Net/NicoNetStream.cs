@@ -238,12 +238,15 @@ namespace NicoNamaRokuga.Net
                                 jtkn["currentStream"]["uri"].ToString() + "/" + jtkn["currentStream"]["name"].ToString() :
                                 jtkn["currentStream"]["uri"].ToString();
                             _form.AddLog("Playerm3m8: " + ttt, 9);
-                            _epi.SaveFile = ExecPsInfo.GetSaveFileNum(_epi);
+                            if (Form1.props.Protocol == Protocol.native)
+                                _epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3(_epi);
+                            else
+                                _epi.SaveFile = ExecPsInfo.GetSaveFileNum(_epi);
                             if (Form1.props.IsComment)
                                 _cmi.SaveFile = _epi.SaveFile + _epi.Xml;
                             var argument = ExecPsInfo.SetOption(_epi, ttt);
                             if (Form1.props.Protocol == Protocol.native)
-                                _rHtml.ExecPs(ttt, _cmi.SaveFile);
+                                _rHtml.ExecPs(ttt, _epi.SaveFile);
                             else
                                 _eProcess.ExecPs(_epi.Exec, argument);
                         }

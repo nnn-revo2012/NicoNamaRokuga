@@ -26,15 +26,15 @@ namespace NicoNamaRokuga.Rec
 
         private Form1 _form = null;
 
-        public NicoDb(Form1 fo)
+        public NicoDb(Form1 fo, string dbfile)
         {
             IsDebug = false;
 
             this._form = fo;
 
-            //var wc = new WebClientEx();
-            //_wc = wc;
-
+            CreateDbMedia(dbfile);
+            CreateDbComment(dbfile);
+            CreateDbKvs(dbfile);
         }
 
         ~NicoDb()
@@ -50,19 +50,19 @@ namespace NicoNamaRokuga.Rec
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
                 {
-                    command.CommandText = "CREATE TABLE media ("
-                                        + "seqno     INTEGER PRIMARY KEY NOT NULL UNIQUE,"
-                                        + "current   INTEGER,"
-                                        + "position  REAL,"
-                                        + "notfound  INTEGER,"
-                                        + "bandwidth INTEGER,"
-                                        + "size      INTEGER,"
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS media (\n"
+                                        + "seqno     INTEGER PRIMARY KEY NOT NULL UNIQUE,\n"
+                                        + "current   INTEGER,\n"
+                                        + "position  REAL,\n"
+                                        + "notfound  INTEGER,\n"
+                                        + "bandwidth INTEGER,\n"
+                                        + "size      INTEGER,\n"
                                         + "data      BLOB)";
                     command.ExecuteNonQuery();
-                    command.CommandText = "CREATE UNIQUE INDEX media0 ON media(seqno);"
-                                        + "CREATE INDEX media1 ON media(position);"
-                                        + "CREATE INDEX media100 ON media(size);"
-                                        + "CREATE INDEX media101 ON media(notfound)";
+                    command.CommandText = "CREATE UNIQUE INDEX IF NOT EXISTS media0 ON media(seqno);"
+                                        + "CREATE INDEX IF NOT EXISTS media1 ON media(position);"
+                                        + "CREATE INDEX IF NOT EXISTS media100 ON media(size);"
+                                        + "CREATE INDEX IF NOT EXISTS media101 ON media(notfound)";
                     command.ExecuteNonQuery();
                 }
                 conn.Close();
@@ -70,7 +70,7 @@ namespace NicoNamaRokuga.Rec
 
         }
 
-        public void WriteDbMedia(string DbFile)
+        public void WriteDbMedia(string DbFile, Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng)
         {
 
             using (var conn = new SQLiteConnection("Data Source=" + DbFile))
@@ -78,10 +78,17 @@ namespace NicoNamaRokuga.Rec
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO media ("
-                                        + "seqno,current,position,notfound,bandwidth,size,data) VALUES ("
-//
-                                        + ")";
+                    command.CommandText = "INSERT INTO media (\n"
+                                        + "seqno,current,position,bandwidth,size,data) VALUES (\n"
+                                        + sgi.SeqNo.ToString() + ",\n"
+                                        + pli.SeqNo.ToString() + ",\n"
+                                        + sgi.Position.ToString() + ",\n"
+                                        + pli.Player.FirstOrDefault().Bandwidth.ToString() + ",\n"
+                                        + leng.ToString() + ",\n"
+                                        + "@data)";
+                    var param = new SQLiteParameter("@data", System.Data.DbType.Binary);
+                    param.Value = data;
+                    command.Parameters.Add(param);
                     command.ExecuteNonQuery();
                 }
                 conn.Close();
@@ -97,26 +104,26 @@ namespace NicoNamaRokuga.Rec
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
                 {
-                    command.CommandText = "CREATE TABLE comment ("
-                                        + "vpos      INTEGER NOT NULL,"
-                                        + "date      INTEGER NOT NULL,"
-                                        + "date_usec INTEGER NOT NULL,"
-                                        + "date2     INTEGER NOT NULL,"
-                                        + "no        INTEGER,"
-                                        + "anonymity INTEGER,"
-                                        + "user_id   TEXT NOT NULL,"
-                                        + "content   TEXT NOT NULL,"
-                                        + "mail      TEXT,"
-                                        + "premium   INTEGER,"
-                                        + "score     INTEGER,"
-                                        + "thread    INTEGER,"
-                                        + "origin    TEXT,"
-                                        + "locale    TEXT,"
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS comment (\n"
+                                        + "vpos      INTEGER NOT NULL,\n"
+                                        + "date      INTEGER NOT NULL,\n"
+                                        + "date_usec INTEGER NOT NULL,\n"
+                                        + "date2     INTEGER NOT NULL,\n"
+                                        + "no        INTEGER,\n"
+                                        + "anonymity INTEGER,\n"
+                                        + "user_id   TEXT NOT NULL,\n"
+                                        + "content   TEXT NOT NULL,\n"
+                                        + "mail      TEXT,\n"
+                                        + "premium   INTEGER,\n"
+                                        + "score     INTEGER,\n"
+                                        + "thread    INTEGER,\n"
+                                        + "origin    TEXT,\n"
+                                        + "locale    TEXT,\n"
                                         + "hash      TEXT UNIQUE NOT NULL)";
                     command.ExecuteNonQuery();
-                    command.CommandText = "CREATE UNIQUE INDEX comment0 ON comment(hash);"
-                                        + "CREATE INDEX comment100 ON comment(date2);"
-                                        + "CREATE INDEX comment101 ON comment(no)";
+                    command.CommandText = "CREATE UNIQUE INDEX IF NOT EXISTS comment0 ON comment(hash);"
+                                        + "CREATE INDEX IF NOT EXISTS comment100 ON comment(date2);"
+                                        + "CREATE INDEX IF NOT EXISTS comment101 ON comment(no)";
                     command.ExecuteNonQuery();
                 }
                 conn.Close();
@@ -132,11 +139,11 @@ namespace NicoNamaRokuga.Rec
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
                 {
-                    command.CommandText = "CREATE TABLE kvs ("
-                                        + "k TEXT PRIMARY KEY NOT NULL UNIQUE,"
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS kvs (\n"
+                                        + "k TEXT PRIMARY KEY NOT NULL UNIQUE,\n"
                                         + "v BLOB)";
                     command.ExecuteNonQuery();
-                    command.CommandText = "CREATE UNIQUE INDEX kvs0 ON kvs(k)";
+                    command.CommandText = "CREATE UNIQUE INDEX IF NOT EXISTS kvs0 ON kvs(k)";
                     command.ExecuteNonQuery();
                 }
                 conn.Close();

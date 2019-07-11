@@ -21,17 +21,19 @@ namespace NicoNamaRokuga.Rec
         public string BaseUrl { set; get; }
         public string MasterUrl { set; get; }
         public ICollection<PlayerInfo> Player { private set; get; }
-        public string NextTime { set; get; }
+        public double NextTime { set; get; }
         public string Format { set; get; }
         public string WithoutFormat { set; get; }
         public int SeqNo { set; get; }
-        public float Position { set; get; }
+        public double Position { set; get; }
 
         public PlayListInfo()
         {
             this.Status = "";
             this.Error = "";
             this.Player = new List<PlayerInfo>();
+            this.SeqNo = -1;
+            this.Position = -1.0;
         }
     }
 
@@ -47,24 +49,26 @@ namespace NicoNamaRokuga.Rec
         public string Error { set; get; }
         public string BaseUrl { set; get; }
         public ICollection<Segment> Seg { private set; get; }
-        public string NextTime { set; get; }
-        public string Format { set; get; }
-        public string WithoutFormat { set; get; }
+        //public string NextTime { set; get; }
+        //public string Format { set; get; }
+        //public string WithoutFormat { set; get; }
         public int SeqNo { set; get; }
-        public float Position { set; get; }
+        public double Position { set; get; }
 
         public SegmentInfo()
         {
             this.Status = "";
             this.Error = "";
             this.Seg = new List<Segment>();
+            this.SeqNo = -1;
         }
     }
 
     public class Segment
     {
-        public float ExtInfo { set; get; }
+        public double ExtInfo { set; get; }
         public string sUrl { set; get; }
+        public string sFile { set; get; }
     }
 
     public class RecHtml : EProcess, IDisposable
@@ -73,6 +77,7 @@ namespace NicoNamaRokuga.Rec
         private bool disposedValue = false; // 重複する呼び出しを検知するには
 
         private WebClientEx _wc = null;
+        private NicoDb _nd = null;
 
         private class WebClientEx : WebClient
         {
@@ -132,16 +137,46 @@ namespace NicoNamaRokuga.Rec
         private async Task HtmlRecordTS(string masterfile, string outfile)
         {
 
+            var file = outfile + ".sqlite3";
+            _form.AddExecLog("Output: " + file + "\r\n");
+            var nd = new NicoDb(_form, file);
+            _nd = nd;
+
             // masterファイルをGet
             var pli = await GetMasterM3u8Async(masterfile, "");
             if (pli.Status != "Ok" || pli.Player.Count() <= 0) EndPs();
-            // playerファイルをGet
-            var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl, "");
-            if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0) EndPs();
+            await Task.Delay(1000);
 
-            // 指定秒ごとにSegmentファイルを取得
+            while (PsStatus == 0)
+            {
+                // playerファイルをGet
+                var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl, "");
+                if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0) EndPs();
+                if (pli.SeqNo < 0)
+                {
+                    pli.SeqNo = sgi.SeqNo;
+                    pli.Position = sgi.Position;
+                }
+                await Task.Delay(1000);
 
-            // ループ
+                // 指定秒ごとにSegmentファイルを取得
+                foreach (var item in sgi.Seg)
+                {
+                    if (sgi.SeqNo >= pli.SeqNo)
+                    {
+                        await GetSegmentAsync(item, "", file, pli, sgi);
+                        sgi.SeqNo++;
+                        pli.SeqNo = sgi.SeqNo;
+                        await Task.Delay(2000);
+                    }
+                    else
+                    {
+                        sgi.SeqNo++;
+                        await Task.Delay(1000);
+                    }
+                }
+            }
+
             EndPs();
 
         }
@@ -169,6 +204,7 @@ namespace NicoNamaRokuga.Rec
 
             try
             {
+                pli.MasterUrl = url;
                 var idx = url.IndexOf("master.m3u8");
                 if (idx >= 0) pli.BaseUrl = url.Substring(0, idx);
                 var str = await _wc.DownloadStringTaskAsync(url);
@@ -180,10 +216,10 @@ namespace NicoNamaRokuga.Rec
                     while ((line = sr.ReadLine()) != null) // 1行ずつ読み出し。
                     {
                         _form.AddExecLog(line + "\r\n");
-                        if (line.IndexOf("#EXT-X-STREAM-INF") >= 0)
+                        if (line.Contains("#EXT-X-STREAM-INF"))
                         {
                             var pi = new PlayerInfo();
-                            if (int.TryParse(Regex.Match(line, @"BANDWIDTH=(\d+)").Groups[1].Value, out bw))
+                            if (int.TryParse(Regex.Match(line, @"[:,]BANDWIDTH=(\d+)").Groups[1].Value, out bw))
                                 pi.Bandwidth = bw;
                             line = sr.ReadLine();
                             _form.AddExecLog(line + "\r\n");
@@ -219,14 +255,14 @@ namespace NicoNamaRokuga.Rec
 
             try
             {
-                var idx = url.IndexOf("player.m3u8");
+                var idx = url.IndexOf("playlist.m3u8");
                 if (idx >= 0) sgi.BaseUrl = url.Substring(0, idx);
                 var str = await _wc.DownloadStringTaskAsync(url);
                 using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(str), false))
                 using (var sr = new StreamReader(stream, Encoding.UTF8))
                 {
                     int sn;
-                    float ei;
+                    double ei;
                     string line;
                     while ((line = sr.ReadLine()) != null) // 1行ずつ読み出し。
                     {
@@ -239,21 +275,22 @@ namespace NicoNamaRokuga.Rec
                                     sgi.SeqNo = sn;
                                 break;
                             case "#CURRENT-POSITION":
-                                if (float.TryParse(ttt[1], out ei))
+                                if (double.TryParse(ttt[1], out ei))
                                     sgi.Position = ei;
                                 break;
                             case "#DMC-CURRENT-POSITION":
-                                if (float.TryParse(ttt[1], out ei))
+                                if (double.TryParse(ttt[1], out ei))
                                     sgi.Position = ei;
                                 break;
                             case "#EXTINF":
                                 var sg = new Segment();
-                                if (float.TryParse(ttt[1], out ei))
+                                if (double.TryParse(ttt[1].Split(',')[0], out ei))
                                     sg.ExtInfo = ei;
                                 line = sr.ReadLine();
                                 _form.AddExecLog(line + "\r\n");
                                 if (!string.IsNullOrEmpty(line))
                                 {
+                                    sg.sFile = line.Split('?')[0];
                                     sg.sUrl = sgi.BaseUrl + line;
                                     sgi.Seg.Add(sg);
                                 }
@@ -277,24 +314,31 @@ namespace NicoNamaRokuga.Rec
         }
 
         //segmentファイルを取得
-        public async Task<byte[]> GetSegmentAsync(string url, string referer, int seqno, int bw)
+        public async Task<bool> GetSegmentAsync(Segment seg, string referer, string outfile, PlayListInfo pli, SegmentInfo sgi)
         {
             _form.AddExecLog("GetSegmentFile\r\n");
             byte[] data = null;
-            if (string.IsNullOrEmpty(url)) return data;
+            if (string.IsNullOrEmpty(seg.sUrl)) return false;
 
             try
             {
-                //data = await _wc.DownloadDataTaskAsync(url);
-                //var aaa = _wc.ResponseHeaders["Content-Length"].FirstOrDefault();
+                var file = outfile + "_" + seg.sFile;
+                data = await _wc.DownloadDataTaskAsync(seg.sUrl);
+                string ll = _wc.ResponseHeaders.Get("Content-Length");
+                _form.AddExecLog("Input: " + seg.sUrl + "\r\n");
+                _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " Size: " + data.Length.ToString() + " Content-Length: " + ll + "\r\n");
+
+                //データーをSqlite3に書き込み
+                _nd.WriteDbMedia(outfile, seg, pli, sgi, data, data.Length);
+
             }
             catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
                 DebugWrite.Writeln(nameof(GetSegmentAsync), Ex);
-                return data;
+                return false;
             }
-            return data;
+            return true;
         }
 
 
@@ -306,6 +350,7 @@ namespace NicoNamaRokuga.Rec
                 {
                     // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
                     _wc?.Dispose();
+                    _nd?.Dispose();
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
