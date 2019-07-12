@@ -21,7 +21,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SaveFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">{2}_{3}({4})_{0}({1})</Value>
+      <Value Profile="(Default)">{0}-{2}-{1}</Value>
     </Setting>
     <Setting Name="QualityType" Type="System.String" Scope="User">
       <Value Profile="(Default)">normal</Value>
@@ -39,7 +39,7 @@
       <Value Profile="(Default)">%HEADERS% -i "%PARA%" -c copy "%FILE%";%HEADERS% -i "%PARA%" -c copy "%FILE%"</Value>
     </Setting>
     <Setting Name="DefaultSaveFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">{2}_{3}({4})_{0}({1})</Value>
+      <Value Profile="(Default)">{0}-{2}-{1}</Value>
     </Setting>
     <Setting Name="DefaultExecFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">ffmpeg.exe;ffmpeg.exe</Value>

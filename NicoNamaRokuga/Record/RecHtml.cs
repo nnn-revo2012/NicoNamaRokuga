@@ -25,6 +25,7 @@ namespace NicoNamaRokuga.Rec
         public string Format { set; get; }
         public string WithoutFormat { set; get; }
         public int SeqNo { set; get; }
+        public int CurrentNo { set; get; }
         public double Position { set; get; }
 
         public PlayListInfo()
@@ -137,7 +138,9 @@ namespace NicoNamaRokuga.Rec
         private async Task HtmlRecordTS(string masterfile, string outfile)
         {
 
-            var file = outfile + ".sqlite3";
+            var file = outfile;
+            if (_bci.IsTimeShift()) file += Props.TIMESHIFT;
+            file += ".sqlite3";
             _form.AddExecLog("Output: " + file + "\r\n");
             var nd = new NicoDb(_form, file);
             _nd = nd;
@@ -155,6 +158,7 @@ namespace NicoNamaRokuga.Rec
                 if (pli.SeqNo < 0)
                 {
                     pli.SeqNo = sgi.SeqNo;
+                    pli.CurrentNo = sgi.SeqNo;
                     pli.Position = sgi.Position;
                 }
                 await Task.Delay(1000);
@@ -162,19 +166,26 @@ namespace NicoNamaRokuga.Rec
                 // 指定秒ごとにSegmentファイルを取得
                 foreach (var item in sgi.Seg)
                 {
+                    if (PsStatus > 0) break;
                     if (sgi.SeqNo >= pli.SeqNo)
                     {
                         await GetSegmentAsync(item, "", file, pli, sgi);
+                        if (PsStatus > 0) break;
                         sgi.SeqNo++;
-                        pli.SeqNo = sgi.SeqNo;
+                        sgi.Position += item.ExtInfo;
                         await Task.Delay(2000);
                     }
                     else
                     {
+                        if (PsStatus > 0) break;
                         sgi.SeqNo++;
+                        sgi.Position += item.ExtInfo;
                         await Task.Delay(1000);
                     }
                 }
+                pli.SeqNo = sgi.SeqNo;
+                pli.CurrentNo = sgi.SeqNo;
+                pli.Position = sgi.Position;
             }
 
             EndPs();

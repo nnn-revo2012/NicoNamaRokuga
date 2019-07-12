@@ -43,7 +43,7 @@ namespace NicoNamaRokuga.Prop
         public static readonly string NicoWayBackKey = "https://live.nicovideo.jp/api/getwaybackkey";
         //public static readonly string NicoCasApi = "https://api.cas.nicovideo.jp/v1/services/live/programs/";
 
-        public static readonly string TIMESHIFT = "timeshift";
+        public static readonly string TIMESHIFT = "(TS)";
 
         public static readonly Dictionary<string, string> WsHeaderStream =
             new Dictionary<string, string>()

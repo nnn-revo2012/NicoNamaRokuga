@@ -96,9 +96,9 @@ namespace NicoNamaRokuga.Net
             result = result.Replace(">", "＞");
             result = result.Replace("|", "｜");
             result = result.Replace("+", "＋");
-            result = result.Replace(" ", "");
-            result = result.Replace("　", "");
-            result = result.Replace("\u3000", "");
+            //result = result.Replace(" ", "");
+            //result = result.Replace("　", "");
+            result = result.Replace("\u3000", "　");
 
             return result;
         }

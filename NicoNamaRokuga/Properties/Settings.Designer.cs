@@ -96,7 +96,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("{2}_{3}({4})_{0}({1})")]
+        [global::System.Configuration.DefaultSettingValueAttribute("{0}-{2}-{1}")]
         public string SaveFile {
             get {
                 return ((string)(this["SaveFile"]));
@@ -168,7 +168,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("{2}_{3}({4})_{0}({1})")]
+        [global::System.Configuration.DefaultSettingValueAttribute("{0}-{2}-{1}")]
         public string DefaultSaveFile {
             get {
                 return ((string)(this["DefaultSaveFile"]));
