@@ -234,10 +234,18 @@ namespace NicoNamaRokuga.Net
                             _form.AddLog("Quarity: " + ttt, 9);
                             _form.DispQuality(ttt);
                             //ffmpegを実行する
-                            ttt = (_epi.Protocol == "rtmp") ?
-                                jtkn["currentStream"]["uri"].ToString() + "/" + jtkn["currentStream"]["name"].ToString() :
-                                jtkn["currentStream"]["uri"].ToString();
-                            _form.AddLog("Playerm3m8: " + ttt, 9);
+                            if (_epi.Protocol == "rtmp")
+                            {
+                                ttt = jtkn["currentStream"]["uri"].ToString() + "/" + jtkn["currentStream"]["name"].ToString();
+                                _form.AddLog("RTMPFILE: " + ttt, 9);
+                            }
+                            else
+                            {
+                                ttt = jtkn["currentStream"]["uri"].ToString();
+                                if (_bci.IsTimeShift())
+                                    ttt += "&start=0.0";
+                                _form.AddLog("Masterm3u8: " + ttt, 9);
+                            }
                             if (Form1.props.Protocol == Protocol.native)
                                 _epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3(_epi);
                             else
