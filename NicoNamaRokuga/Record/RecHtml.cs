@@ -340,7 +340,7 @@ namespace NicoNamaRokuga.Rec
                 _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " Size: " + data.Length.ToString() + " Content-Length: " + ll + "\r\n");
 
                 //データーをSqlite3に書き込み
-                _nd.WriteDbMedia(outfile, seg, pli, sgi, data, data.Length);
+                _nd.WriteDbMedia(outfile, seg, pli, sgi, data, data.Length, 0);
 
             }
             catch (Exception Ex) //タイムアウトなど

@@ -70,7 +70,7 @@ namespace NicoNamaRokuga.Rec
 
         }
 
-        public void WriteDbMedia(string DbFile, Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng)
+        public void WriteDbMedia(string DbFile, Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
         {
 
             using (var conn = new SQLiteConnection("Data Source=" + DbFile))
@@ -78,15 +78,22 @@ namespace NicoNamaRokuga.Rec
                 conn.Open();
                 using (SQLiteCommand command = conn.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO media (\n"
-                                        + "seqno,current,position,bandwidth,size,data) VALUES (\n"
-                                        + sgi.SeqNo.ToString() + ",\n"
-                                        + pli.SeqNo.ToString() + ",\n"
-                                        + sgi.Position.ToString() + ",\n"
-                                        + pli.Player.FirstOrDefault().Bandwidth.ToString() + ",\n"
-                                        + leng.ToString() + ",\n"
-                                        + "@data)";
-                    var param = new SQLiteParameter("@data", System.Data.DbType.Binary);
+                    command.CommandText = "INSERT INTO media \n";
+                    if (notfound > 0)
+                        command.CommandText += "(seqno,current,position,bandwidth,size,data,notfound) VALUES (\n";
+                    else
+                        command.CommandText += "(seqno,current,position,bandwidth,size,data) VALUES (\n";
+                    command.CommandText += sgi.SeqNo.ToString() + ",\n"
+                                         + pli.SeqNo.ToString() + ",\n"
+                                         + sgi.Position.ToString() + ",\n"
+                                         + pli.Player.FirstOrDefault().Bandwidth.ToString() + ",\n"
+                                         + leng.ToString() + ",\n";
+                    if (notfound > 0)
+                        command.CommandText += "@data," + notfound.ToString() + ");";
+                    else
+                        command.CommandText += "@data);";
+
+                        var param = new SQLiteParameter("@data", System.Data.DbType.Binary);
                     param.Value = data;
                     command.Parameters.Add(param);
                     command.ExecuteNonQuery();
