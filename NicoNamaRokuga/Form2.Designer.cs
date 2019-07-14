@@ -51,7 +51,6 @@
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.rB_rtmp = new System.Windows.Forms.RadioButton();
-            this.rB_native = new System.Windows.Forms.RadioButton();
             this.rB_hls = new System.Windows.Forms.RadioButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
@@ -67,9 +66,10 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.rB_native = new System.Windows.Forms.RadioButton();
+            this.rB_ext1 = new System.Windows.Forms.RadioButton();
+            this.rB_ext2 = new System.Windows.Forms.RadioButton();
+            this.rB_ext3 = new System.Windows.Forms.RadioButton();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
@@ -499,10 +499,10 @@
             // groupBox6
             // 
             this.groupBox6.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.groupBox6.Controls.Add(this.radioButton3);
-            this.groupBox6.Controls.Add(this.radioButton1);
-            this.groupBox6.Controls.Add(this.radioButton2);
             this.groupBox6.Controls.Add(this.rB_native);
+            this.groupBox6.Controls.Add(this.rB_ext1);
+            this.groupBox6.Controls.Add(this.rB_ext2);
+            this.groupBox6.Controls.Add(this.rB_ext3);
             this.groupBox6.Location = new System.Drawing.Point(293, 185);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(117, 113);
@@ -510,35 +510,35 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "HLS録画方法";
             // 
-            // radioButton2
+            // rB_ext2
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(6, 62);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(100, 16);
-            this.radioButton2.TabIndex = 0;
-            this.radioButton2.Text = "外部プログラム２";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.rB_ext2.AutoSize = true;
+            this.rB_ext2.Location = new System.Drawing.Point(6, 62);
+            this.rB_ext2.Name = "rB_ext2";
+            this.rB_ext2.Size = new System.Drawing.Size(100, 16);
+            this.rB_ext2.TabIndex = 0;
+            this.rB_ext2.Text = "外部プログラム２";
+            this.rB_ext2.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // rB_ext1
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(6, 40);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(100, 16);
-            this.radioButton1.TabIndex = 2;
-            this.radioButton1.Text = "外部プログラム１";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.rB_ext1.AutoSize = true;
+            this.rB_ext1.Location = new System.Drawing.Point(6, 40);
+            this.rB_ext1.Name = "rB_ext1";
+            this.rB_ext1.Size = new System.Drawing.Size(100, 16);
+            this.rB_ext1.TabIndex = 2;
+            this.rB_ext1.Text = "外部プログラム１";
+            this.rB_ext1.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // rB_ext3
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(6, 84);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(100, 16);
-            this.radioButton3.TabIndex = 3;
-            this.radioButton3.Text = "外部プログラム３";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.rB_ext3.AutoSize = true;
+            this.rB_ext3.Location = new System.Drawing.Point(6, 84);
+            this.rB_ext3.Name = "rB_ext3";
+            this.rB_ext3.Size = new System.Drawing.Size(100, 16);
+            this.rB_ext3.TabIndex = 3;
+            this.rB_ext3.Text = "外部プログラム３";
+            this.rB_ext3.UseVisualStyleBackColor = true;
             // 
             // button6
             // 
@@ -637,9 +637,9 @@
         private System.Windows.Forms.CheckBox checkBox5;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton rB_ext3;
+        private System.Windows.Forms.RadioButton rB_ext1;
+        private System.Windows.Forms.RadioButton rB_ext2;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button6;

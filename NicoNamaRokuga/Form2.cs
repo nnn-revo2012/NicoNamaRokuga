@@ -65,6 +65,14 @@ namespace NicoNamaRokuga
                             ((RadioButton)co).Checked = true;
                     }
                 }
+                foreach (Control co in groupBox6.Controls)
+                {
+                    if (co.GetType().Name == "RadioButton")
+                    {
+                        if (rbRegex.Replace(co.Name.ToString(), "$1") == _props.UseExternal.ToString())
+                            ((RadioButton)co).Checked = true;
+                    }
+                }
 
                 textBox1.Text = _props.UserID;
                 textBox2.Text = _props.Password;
@@ -75,6 +83,7 @@ namespace NicoNamaRokuga
 
                 textBox3.Text = _props.SaveDir;
                 textBox4.Text = _props.SaveFile;
+                textBox5.Text = _props.SaveFolder;
 
                 comboBox2.Items.Clear();
                 foreach (var qu in Props.Quality.ToArray())
@@ -126,6 +135,15 @@ namespace NicoNamaRokuga
                                 (Protocol)Enum.Parse(typeof(Protocol), rbRegex.Replace(co.Name.ToString(), "$1"));
                     }
                 }
+                foreach (Control co in this.groupBox6.Controls)
+                {
+                    if (co.GetType().Name == "RadioButton")
+                    {
+                        if ((bool)((RadioButton)co).Checked)
+                            _props.UseExternal =
+                                (UseExternal)Enum.Parse(typeof(UseExternal), rbRegex.Replace(co.Name.ToString(), "$1"));
+                    }
+                }
 
                 _props.UserID = textBox1.Text;
                 _props.Password = textBox2.Text;
@@ -133,6 +151,7 @@ namespace NicoNamaRokuga
                 _props.IsAllCookie = checkBox1.Checked;
                 _props.SaveDir = textBox3.Text;
                 _props.SaveFile = textBox4.Text;
+                _props.SaveFolder = textBox5.Text;
 
                 _props.QuarityType =
                     (QTypes)Enum.ToObject(typeof(QTypes), comboBox2.SelectedIndex);

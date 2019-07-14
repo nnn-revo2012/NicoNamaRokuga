@@ -36,7 +36,7 @@
       <Value Profile="(Default)">hls</Value>
     </Setting>
     <Setting Name="UseExternal" Type="System.String" Scope="User">
-      <Value Profile="(Default)">no</Value>
+      <Value Profile="(Default)">native</Value>
     </Setting>
     <Setting Name="ExecFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">ffmpeg.exe;ffmpeg.exe</Value>

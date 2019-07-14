@@ -228,10 +228,7 @@ namespace NicoNamaRokuga
                 epi.Exec = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
                 epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
                 epi.Sfile = bci.SetRecFile(props.SaveFile);
-                if (props.Protocol == Protocol.native)
-                    epi.Protocol = Protocol.hls.ToString();
-                else
-                    epi.Protocol = props.Protocol.ToString();
+                epi.Protocol = props.Protocol.ToString();
                 epi.Seq = 0;
 
                 //コメント情報
@@ -243,7 +240,7 @@ namespace NicoNamaRokuga
                     _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
                 }
 
-                if (props.Protocol == Protocol.native)
+                if (props.UseExternal == UseExternal.native)
                     _rHtml = new RecHtml(this, bci, _nNetComment);
                 else
                     _eProcess = new ExecProcess(this, bci, _nNetComment);
@@ -280,7 +277,7 @@ namespace NicoNamaRokuga
             var WsCommentStatus = -1;
             var ExecStatus = -1;
             if (props.IsComment) WsCommentStatus = _nNetComment.WsStatus;
-            if (props.Protocol == Protocol.native)
+            if (props.UseExternal == UseExternal.native)
                 ExecStatus = _rHtml.PsStatus;
             else
                 ExecStatus = _eProcess.PsStatus;
@@ -335,7 +332,7 @@ namespace NicoNamaRokuga
                     }
                     AddLog("再接続します。", 1);
                     if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
-                    if (props.Protocol == Protocol.native)
+                    if (props.UseExternal == UseExternal.native)
                         _rHtml = new RecHtml(this, bci, _nNetComment);
                     else
                         _eProcess = new ExecProcess(this, bci, _nNetComment);
@@ -348,7 +345,7 @@ namespace NicoNamaRokuga
                     //ffmpeg再起動処理
                     AddLog("再接続します。", 1);
                     if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
-                    if (props.Protocol == Protocol.native)
+                    if (props.UseExternal == UseExternal.native)
                         _rHtml = new RecHtml(this, bci, _nNetComment);
                     else
                         _eProcess = new ExecProcess(this, bci, _nNetComment);

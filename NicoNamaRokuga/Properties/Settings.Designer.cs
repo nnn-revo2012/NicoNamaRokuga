@@ -156,7 +156,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("no")]
+        [global::System.Configuration.DefaultSettingValueAttribute("native")]
         public string UseExternal {
             get {
                 return ((string)(this["UseExternal"]));

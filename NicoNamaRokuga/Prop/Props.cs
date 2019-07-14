@@ -11,7 +11,7 @@ namespace NicoNamaRokuga.Prop
     public enum IsLogin { always, none, };
     public enum LoginMethod { login, cookie, };
     public enum QTypes { super_high, high, normal, low, super_low, };
-    public enum Protocol { hls, native, rtmp, };
+    public enum Protocol { hls, rtmp, };
     public enum UseExternal { native, ext1, ext2, ext3, };
 
     public class Props
