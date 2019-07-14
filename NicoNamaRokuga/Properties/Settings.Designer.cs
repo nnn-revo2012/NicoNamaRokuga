@@ -61,6 +61,18 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("login")]
+        public string LoginMethod {
+            get {
+                return ((string)(this["LoginMethod"]));
+            }
+            set {
+                this["LoginMethod"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         public global::SunokoLibrary.Application.CookieSourceInfo SelectedCookie {
             get {
                 return ((global::SunokoLibrary.Application.CookieSourceInfo)(this["SelectedCookie"]));
@@ -91,6 +103,18 @@ namespace NicoNamaRokuga.Properties {
             }
             set {
                 this["SaveDir"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("rec")]
+        public string SaveFolder {
+            get {
+                return ((string)(this["SaveFolder"]));
+            }
+            set {
+                this["SaveFolder"] = value;
             }
         }
         
@@ -132,6 +156,18 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("no")]
+        public string UseExternal {
+            get {
+                return ((string)(this["UseExternal"]));
+            }
+            set {
+                this["UseExternal"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ffmpeg.exe;ffmpeg.exe")]
         public string ExecFile {
             get {
@@ -144,18 +180,6 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("login")]
-        public string LoginMethod {
-            get {
-                return ((string)(this["LoginMethod"]));
-            }
-            set {
-                this["LoginMethod"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%HEADERS% -i \"%PARA%\" -c copy \"%FILE%\";%HEADERS% -i \"%PARA%\" -c copy \"%FILE%\"")]
         public string ExecCommand {
             get {
@@ -163,6 +187,30 @@ namespace NicoNamaRokuga.Properties {
             }
             set {
                 this["ExecCommand"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("q;q")]
+        public string BreakCommand {
+            get {
+                return ((string)(this["BreakCommand"]));
+            }
+            set {
+                this["BreakCommand"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("rec")]
+        public string DefaultSaveFolder {
+            get {
+                return ((string)(this["DefaultSaveFolder"]));
+            }
+            set {
+                this["DefaultSaveFolder"] = value;
             }
         }
         
@@ -216,6 +264,54 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2000")]
+        public int Timeout1 {
+            get {
+                return ((int)(this["Timeout1"]));
+            }
+            set {
+                this["Timeout1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8000")]
+        public int Timeout2 {
+            get {
+                return ((int)(this["Timeout2"]));
+            }
+            set {
+                this["Timeout2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsComment {
+            get {
+                return ((bool)(this["IsComment"]));
+            }
+            set {
+                this["IsComment"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsSeetNo {
+            get {
+                return ((bool)(this["IsSeetNo"]));
+            }
+            set {
+                this["IsSeetNo"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public int ReConnectTime1 {
             get {
@@ -247,42 +343,6 @@ namespace NicoNamaRokuga.Properties {
             }
             set {
                 this["ReConnectTime2"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("q;q")]
-        public string BreakCommand {
-            get {
-                return ((string)(this["BreakCommand"]));
-            }
-            set {
-                this["BreakCommand"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsComment {
-            get {
-                return ((bool)(this["IsComment"]));
-            }
-            set {
-                this["IsComment"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool IsSeetNo {
-            get {
-                return ((bool)(this["IsSeetNo"]));
-            }
-            set {
-                this["IsSeetNo"] = value;
             }
         }
     }

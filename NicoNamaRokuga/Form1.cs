@@ -1,20 +1,8 @@
 ﻿using System;
-using System.Net;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
-using System.Configuration;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Net;
@@ -215,8 +203,7 @@ namespace NicoNamaRokuga
                         break;
                 }
 
-                //将来的には番組情報・放送情報も放送ページから取得
-                //番組情報を取得する
+                //番組情報を取得する(旧API)
                 var gpsi = await _nLiveNet.GetPlayerStatusAsync(liveId);
                 if (gpsi.Status != "ok")
                 {
@@ -226,6 +213,7 @@ namespace NicoNamaRokuga
                 }
                 AddLog(string.Format("Provider_Type: {0}", gpsi.Provider_Type), 1);
 
+                //番組情報を取得する
                 bci = await _nLiveNet.GetNicoPageAsync(liveId);
                 if (bci.Status != "ok")
                 {

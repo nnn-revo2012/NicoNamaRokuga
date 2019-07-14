@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Net;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Configuration;
-
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Diagnostics;
 using System.IO;
 
 using SunokoLibrary.Application;
@@ -23,6 +12,7 @@ namespace NicoNamaRokuga.Prop
     public enum LoginMethod { login, cookie, };
     public enum QTypes { super_high, high, normal, low, super_low, };
     public enum Protocol { hls, native, rtmp, };
+    public enum UseExternal { native, ext1, ext2, ext3, };
 
     public class Props
     {
@@ -33,7 +23,7 @@ namespace NicoNamaRokuga.Prop
         //public static readonly string UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36";
         public static readonly string NicoDomain = "https://nicovideo.jp/";
 
-        public static readonly string NicoLiveUrl = "https://live.nicovideo.jp/watch/";
+        public static readonly string NicoLiveUrl = "https://live2.nicovideo.jp/watch/";
         public static readonly string NicoCommUrl = "https://com.nicovideo.jp/community/";
         public static readonly string NicoChannelUrl = "https://ch.nicovideo.jp/";
         public static readonly string NicoUserUrl = "https://www.nicovideo.jp/user/";
@@ -74,15 +64,19 @@ namespace NicoNamaRokuga.Prop
         public CookieSourceInfo SelectedCookie { get; set; }
         public bool IsAllCookie { get; set; }
         public string SaveDir { get; set; }
+        public string SaveFolder { get; set; }
         public string SaveFile { get; set; }
         public QTypes QuarityType { get; set; }
         public Protocol Protocol { get; set; }
+        public UseExternal UseExternal { get; set; }
         public string[] ExecFile { get; set; }
         public string[] ExecCommand { get; set; }
         public string[] BreakCommand { get; set; }
-        public int ReConnectTime1 { get; set; }
         public int Retry { get; set; }
+        public int ReConnectTime1 { get; set; }
         public int ReConnectTime2 { get; set; }
+        public int Timeout1 { get; set; }
+        public int Timeout2 { get; set; }
         public bool IsLogging { get; set; }
         public bool IsComment { get; set; }
         public bool IsSeetNo { get; set; }
@@ -106,6 +100,19 @@ namespace NicoNamaRokuga.Prop
                 return false;
             else
                 return Enum.IsDefined(typeof(Protocol), str);
+        }
+
+        public static int ParseUseExternal(string str)
+        {
+            return (int)(UseExternal)Enum.Parse(typeof(UseExternal), str);
+        }
+
+        public static bool IsUseExternal(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+                return false;
+            else
+                return Enum.IsDefined(typeof(UseExternal), str);
         }
 
         public static int ParseQTypes(string str)
@@ -134,17 +141,22 @@ namespace NicoNamaRokuga.Prop
                 this.SelectedCookie = Properties.Settings.Default.SelectedCookie;
                 this.IsAllCookie = Properties.Settings.Default.IsAllCookie;
                 this.SaveDir = Properties.Settings.Default.SaveDir;
+                this.SaveFolder = Properties.Settings.Default.SaveFolder;
                 this.SaveFile = Properties.Settings.Default.SaveFile;
                 this.QuarityType =
                     (QTypes)Enum.Parse(typeof(QTypes), Properties.Settings.Default.QualityType);
                 this.Protocol =
                     (Protocol)Enum.Parse(typeof(Protocol), Properties.Settings.Default.Protocol);
+                this.UseExternal =
+                    (UseExternal)Enum.Parse(typeof(UseExternal), Properties.Settings.Default.UseExternal);
                 this.ExecFile = Properties.Settings.Default.ExecFile.Split(';');
                 this.ExecCommand = Properties.Settings.Default.ExecCommand.Split(';');
                 this.BreakCommand = Properties.Settings.Default.BreakCommand.Split(';');
-                this.ReConnectTime1 = Properties.Settings.Default.ReConnectTime1;
                 this.Retry = Properties.Settings.Default.Retry;
+                this.ReConnectTime1 = Properties.Settings.Default.ReConnectTime1;
                 this.ReConnectTime2 = Properties.Settings.Default.ReConnectTime2;
+                this.Timeout1 = Properties.Settings.Default.Timeout1;
+                this.Timeout2 = Properties.Settings.Default.Timeout2;
                 this.IsLogging = Properties.Settings.Default.IsLogging;
                 this.IsComment = Properties.Settings.Default.IsComment;
                 this.IsSeetNo = Properties.Settings.Default.IsSeetNo;
@@ -168,15 +180,19 @@ namespace NicoNamaRokuga.Prop
                 Properties.Settings.Default.SelectedCookie = this.SelectedCookie;
                 Properties.Settings.Default.IsAllCookie = this.IsAllCookie;
                 Properties.Settings.Default.SaveDir = this.SaveDir;
+                Properties.Settings.Default.SaveFolder = this.SaveFolder;
                 Properties.Settings.Default.SaveFile = this.SaveFile;
                 Properties.Settings.Default.QualityType = this.QuarityType.ToString().ToLower();
                 Properties.Settings.Default.Protocol = this.Protocol.ToString().ToLower();
+                Properties.Settings.Default.UseExternal = this.UseExternal.ToString().ToLower();
                 Properties.Settings.Default.ExecFile = String.Join(";", this.ExecFile);
                 Properties.Settings.Default.ExecCommand = String.Join(";", this.ExecCommand);
                 Properties.Settings.Default.BreakCommand = String.Join(";", this.BreakCommand);
+                Properties.Settings.Default.Retry = this.Retry;
                 Properties.Settings.Default.ReConnectTime1 = this.ReConnectTime1;
                 Properties.Settings.Default.ReConnectTime2 = this.ReConnectTime2;
-                Properties.Settings.Default.Retry = this.Retry;
+                Properties.Settings.Default.Timeout1 = this.Timeout1;
+                Properties.Settings.Default.Timeout2 = this.Timeout2;
                 Properties.Settings.Default.IsLogging = this.IsLogging;
                 Properties.Settings.Default.IsComment = this.IsComment;
                 Properties.Settings.Default.IsSeetNo = this.IsSeetNo;
