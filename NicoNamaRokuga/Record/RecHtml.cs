@@ -131,65 +131,79 @@ namespace NicoNamaRokuga.Rec
 
         public override void ExecPs(string masterfile, string outfile)
         {
-            PsStatus = 0; //実行中
-            Task.Run(() => HtmlRecordTS(masterfile, outfile));
+            try
+            {
+                PsStatus = 0; //実行中
+                if (_bci.IsTimeShift())
+                    Task.Run(() => HtmlRecordTS(masterfile, outfile));
+                else
+                    Task.Run(() => HtmlRecord(masterfile, outfile));
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(ExecPs), Ex);
+            }
         }
 
         private async Task HtmlRecordTS(string masterfile, string outfile)
         {
-
-            var file = outfile;
-            if (_bci.IsTimeShift()) file += Props.TIMESHIFT;
-            file += ".sqlite3";
-            _form.AddExecLog("Output: " + file + "\r\n");
-            var nd = new NicoDb(_form, file);
-            _nd = nd;
-
-            // masterファイルをGet
-            var pli = await GetMasterM3u8Async(masterfile, "");
-            if (pli.Status != "Ok" || pli.Player.Count() <= 0) EndPs();
-            await Task.Delay(1000);
-
-            while (PsStatus == 0)
+            try
             {
-                // playerファイルをGet
-                var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl, "");
-                if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0) EndPs();
-                if (pli.SeqNo < 0)
+                var file = outfile;
+                if (_bci.IsTimeShift()) file += Props.TIMESHIFT;
+                file += ".sqlite3";
+                _form.AddExecLog("Output: " + file + "\r\n");
+                var nd = new NicoDb(_form, file);
+                _nd = nd;
+
+                // masterファイルをGet
+                var pli = await GetMasterM3u8Async(masterfile, "");
+                if (pli.Status != "Ok" || pli.Player.Count() <= 0) EndPs();
+                await Task.Delay(1000);
+
+                while (PsStatus == 0)
                 {
+                    // playerファイルをGet
+                    var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl, "");
+                    if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0) EndPs();
+                    if (pli.SeqNo < 0)
+                    {
+                        pli.SeqNo = sgi.SeqNo;
+                        pli.CurrentNo = sgi.SeqNo;
+                        pli.Position = sgi.Position;
+                    }
+                    await Task.Delay(1000);
+
+                    // 指定秒ごとにSegmentファイルを取得
+                    foreach (var item in sgi.Seg)
+                    {
+                        if (PsStatus > 0) break;
+                        if (sgi.SeqNo >= pli.SeqNo)
+                        {
+                            await GetSegmentAsync(item, "", file, pli, sgi);
+                            if (PsStatus > 0) break;
+                            sgi.SeqNo++;
+                            sgi.Position += item.ExtInfo;
+                            await Task.Delay(2000);
+                        }
+                        else
+                        {
+                            if (PsStatus > 0) break;
+                            sgi.SeqNo++;
+                            sgi.Position += item.ExtInfo;
+                            await Task.Delay(1000);
+                        }
+                    }
                     pli.SeqNo = sgi.SeqNo;
                     pli.CurrentNo = sgi.SeqNo;
                     pli.Position = sgi.Position;
                 }
-                await Task.Delay(1000);
-
-                // 指定秒ごとにSegmentファイルを取得
-                foreach (var item in sgi.Seg)
-                {
-                    if (PsStatus > 0) break;
-                    if (sgi.SeqNo >= pli.SeqNo)
-                    {
-                        await GetSegmentAsync(item, "", file, pli, sgi);
-                        if (PsStatus > 0) break;
-                        sgi.SeqNo++;
-                        sgi.Position += item.ExtInfo;
-                        await Task.Delay(2000);
-                    }
-                    else
-                    {
-                        if (PsStatus > 0) break;
-                        sgi.SeqNo++;
-                        sgi.Position += item.ExtInfo;
-                        await Task.Delay(1000);
-                    }
-                }
-                pli.SeqNo = sgi.SeqNo;
-                pli.CurrentNo = sgi.SeqNo;
-                pli.Position = sgi.Position;
+                EndPs();
             }
-
-            EndPs();
-
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(ExecPs), Ex);
+            }
         }
 
         public void EndPs()
@@ -197,6 +211,65 @@ namespace NicoNamaRokuga.Rec
 
             PsStatus = 2;
 
+        }
+        private async Task HtmlRecord(string masterfile, string outfile)
+        {
+            try
+            {
+                var file = outfile;
+                file += ".sqlite3";
+                _form.AddExecLog("Output: " + file + "\r\n");
+                var nd = new NicoDb(_form, file);
+                _nd = nd;
+
+                // masterファイルをGet
+                var pli = await GetMasterM3u8Async(masterfile, "");
+                if (pli.Status != "Ok" || pli.Player.Count() <= 0) EndPs();
+                await Task.Delay(200);
+
+                while (PsStatus == 0)
+                {
+                    // playerファイルをGet
+                    var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl, "");
+                    if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0) EndPs();
+                    if (pli.SeqNo < 0)
+                    {
+                        pli.SeqNo = sgi.SeqNo;
+                        pli.CurrentNo = sgi.SeqNo;
+                        pli.Position = sgi.Position;
+                    }
+                    await Task.Delay(200);
+
+                    // 指定秒ごとにSegmentファイルを取得
+                    foreach (var item in sgi.Seg)
+                    {
+                        if (PsStatus > 0) break;
+                        if (sgi.SeqNo >= pli.SeqNo)
+                        {
+                            await GetSegmentAsync(item, "", file, pli, sgi);
+                            if (PsStatus > 0) break;
+                            sgi.SeqNo++;
+                            sgi.Position += item.ExtInfo;
+                            await Task.Delay(200);
+                        }
+                        else
+                        {
+                            if (PsStatus > 0) break;
+                            sgi.SeqNo++;
+                            sgi.Position += item.ExtInfo;
+                            await Task.Delay(100);
+                        }
+                    }
+                    pli.SeqNo = sgi.SeqNo;
+                    pli.CurrentNo = sgi.SeqNo;
+                    pli.Position = sgi.Position;
+                }
+                EndPs();
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(ExecPs), Ex);
+            }
         }
 
         public override void BreakProcess(string breakkey)
@@ -340,7 +413,7 @@ namespace NicoNamaRokuga.Rec
                 _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " Size: " + data.Length.ToString() + " Content-Length: " + ll + "\r\n");
 
                 //データーをSqlite3に書き込み
-                _nd.WriteDbMedia(outfile, seg, pli, sgi, data, data.Length, 0);
+                _nd.WriteDbMedia(seg, pli, sgi, data, data.Length, 0);
 
             }
             catch (Exception Ex) //タイムアウトなど

@@ -31,6 +31,8 @@ namespace NicoNamaRokuga.Rec
             IsDebug = false;
 
             this._form = fo;
+            var conn = new SQLiteConnection("Data Source=" + dbfile);
+            _cn = conn;
 
             CreateDbMedia(dbfile);
             CreateDbComment(dbfile);
@@ -44,11 +46,10 @@ namespace NicoNamaRokuga.Rec
 
         public void CreateDbMedia(string DbFile)
         {
-
-            using (var conn = new SQLiteConnection("Data Source=" + DbFile))
+            try
             {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
+                _cn.Open();
+                using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "CREATE TABLE IF NOT EXISTS media (\n"
                                         + "seqno     INTEGER PRIMARY KEY NOT NULL UNIQUE,\n"
@@ -65,18 +66,22 @@ namespace NicoNamaRokuga.Rec
                                         + "CREATE INDEX IF NOT EXISTS media101 ON media(notfound)";
                     command.ExecuteNonQuery();
                 }
-                conn.Close();
+                _cn.Close();
             }
-
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(CreateDbMedia), Ex);
+                _cn.Close();
+            }
         }
 
-        public void WriteDbMedia(string DbFile, Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
+        public void WriteDbMedia(Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
         {
 
-            using (var conn = new SQLiteConnection("Data Source=" + DbFile))
+            try 
             {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
+                _cn.Open();
+                using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "INSERT INTO media \n";
                     if (notfound > 0)
@@ -98,18 +103,21 @@ namespace NicoNamaRokuga.Rec
                     command.Parameters.Add(param);
                     command.ExecuteNonQuery();
                 }
-                conn.Close();
+                _cn.Close();
             }
-
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(WriteDbMedia), Ex);
+                _cn.Close();
+            }
         }
 
         public void CreateDbComment(string DbFile)
         {
-
-            using (var conn = new SQLiteConnection("Data Source=" + DbFile))
+            try
             {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
+                _cn.Open();
+                using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "CREATE TABLE IF NOT EXISTS comment (\n"
                                         + "vpos      INTEGER NOT NULL,\n"
@@ -133,18 +141,21 @@ namespace NicoNamaRokuga.Rec
                                         + "CREATE INDEX IF NOT EXISTS comment101 ON comment(no)";
                     command.ExecuteNonQuery();
                 }
-                conn.Close();
+                _cn.Close();
             }
-
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(CreateDbComment), Ex);
+                _cn.Close();
+            }
         }
 
         public void CreateDbKvs(string DbFile)
         {
-
-            using (var conn = new SQLiteConnection("Data Source=" + DbFile))
+            try
             {
-                conn.Open();
-                using (SQLiteCommand command = conn.CreateCommand())
+                _cn.Open();
+                using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "CREATE TABLE IF NOT EXISTS kvs (\n"
                                         + "k TEXT PRIMARY KEY NOT NULL UNIQUE,\n"
@@ -153,9 +164,13 @@ namespace NicoNamaRokuga.Rec
                     command.CommandText = "CREATE UNIQUE INDEX IF NOT EXISTS kvs0 ON kvs(k)";
                     command.ExecuteNonQuery();
                 }
-                conn.Close();
+                _cn.Close();
             }
-
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(CreateDbKvs), Ex);
+                _cn.Close();
+            }
         }
 
 
