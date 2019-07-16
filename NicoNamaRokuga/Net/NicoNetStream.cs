@@ -393,7 +393,7 @@ namespace NicoNamaRokuga.Net
         {
             //getstream
             var s = @"{""type"":""watch"",""body"":{""command"":""getstream"",""requirement"":"
-                  + @"{""protocol"":""%%proto%%"",""quality"":""%%quality%%""}}}";
+                  + @"{""protocol"":""%%proto%%"",""quality"":""%%quality%%"",""isLowLatency"":false}}}";
             s = s.Replace("%%quality%%", quality);
             s = s.Replace("%%proto%%", protocol);
             _ws.Send(s);
