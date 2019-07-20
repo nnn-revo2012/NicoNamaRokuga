@@ -347,35 +347,6 @@ namespace NicoNamaRokuga.Net
             return result;
         }
 
-        //master.m3u8からplayer.m3u8のURLを取得
-        public async Task<string> GetPlayerM3u8Async(string url, string referer)
-        {
-            var result = string.Empty;
-            if (string.IsNullOrEmpty(url)) return result;
-
-            try
-            {
-                var idx = url.IndexOf("master.m3u8");
-                if (idx >= 0) result = url.Substring(0, idx);
-                var str = await _wc.DownloadStringTaskAsync(url);
-                using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(str), false))
-                using (var sr = new StreamReader(stream, Encoding.UTF8))
-                {
-                    string line;
-                    while ((line = sr.ReadLine()) != null) // 1行ずつ読み出し。
-                    {
-                        if (!line.StartsWith("#")) result += line;
-                    }
-                }
-            }
-            catch (Exception Ex) //タイムアウトなど
-            {
-                //HttpRequestException
-                DebugWrite.Writeln(nameof(GetPlayerM3u8Async), Ex);
-                return result;
-            }
-            return result;
-        }
 
         //*************** Cookie用 *******************
 

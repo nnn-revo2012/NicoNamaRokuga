@@ -264,7 +264,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2500")]
         public int Timeout1 {
             get {
                 return ((int)(this["Timeout1"]));
@@ -324,7 +324,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public int Retry {
             get {
                 return ((int)(this["Retry"]));

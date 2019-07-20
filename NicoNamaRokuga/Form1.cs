@@ -255,12 +255,12 @@ namespace NicoNamaRokuga
                 //WebSocket接続開始
                 _nNetStream.Connect();
 
-                //5秒おきに状態を調べて処理する
+                //3秒おきに状態を調べて処理する
                 start_flg = true;
                 while (start_flg == true)
                 {
                     CheckStatus();
-                    await Task.Delay(5000);
+                    await Task.Delay(3000);
                 }
 
             }
