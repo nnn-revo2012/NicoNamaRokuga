@@ -225,7 +225,7 @@ namespace NicoNamaRokuga.Rec
                 // masterファイルをGet
                 var pli = await GetMasterM3u8Async(masterfile, "");
                 if (pli.Status != "Ok" || pli.Player.Count() <= 0) EndPs();
-                await Task.Delay(200);
+                await Task.Delay(250);
 
                 while (PsStatus == 0)
                 {
@@ -236,9 +236,9 @@ namespace NicoNamaRokuga.Rec
                     {
                         pli.SeqNo = sgi.SeqNo;
                         pli.CurrentNo = sgi.SeqNo;
-                        pli.Position = sgi.Position;
+                        //pli.Position = sgi.Position;
                     }
-                    await Task.Delay(200);
+                    await Task.Delay(250);
 
                     // 指定秒ごとにSegmentファイルを取得
                     foreach (var item in sgi.Seg)
@@ -249,20 +249,20 @@ namespace NicoNamaRokuga.Rec
                             await GetSegmentAsync(item, "", file, pli, sgi);
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
-                            sgi.Position += item.ExtInfo;
-                            await Task.Delay(200);
+                            //sgi.Position += item.ExtInfo;
+                            await Task.Delay(500);
                         }
                         else
                         {
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
-                            sgi.Position += item.ExtInfo;
-                            await Task.Delay(100);
+                            //sgi.Position += item.ExtInfo;
+                            await Task.Delay(500);
                         }
                     }
                     pli.SeqNo = sgi.SeqNo;
                     pli.CurrentNo = sgi.SeqNo;
-                    pli.Position = sgi.Position;
+                    //pli.Position = sgi.Position;
                 }
                 EndPs();
             }

@@ -55,6 +55,27 @@ namespace NicoNamaRokuga.Prop
 
         public static readonly string Commnet_SeetNo = "/hb ifseetno";
 
+        private readonly string[][] ReplaceWords =
+            {
+            new[] {"?PID?","lv1234567","ProgramId。lv1234567のような文字列。"},
+            new[] {"?UNAME?","ユーザ名","ユーザ名。公式の場合、official"},
+            new[] {"?UID?","ユーザID","ユーザID。nicovideo.jp/user/に続く数字の列。公式の場合、official"},
+            new[] {"?CNAME?","コミュニティ名","コミュニティ名。公式の場合、official"},
+            new[] {"?CID?","コミュニティID","コミュニティID。co1234のような文字列。公式の場合、official"},
+            new[] {"?TITLE?","放送タイトル","放送タイトル。"},
+            new[] {"?YEAR?","2019","年4桁(開演時刻)"},
+            new[] {"?MONTH?","09","月2桁(開演時刻)"},
+            new[] {"?DAY?","01","日2桁(開演時刻)"},
+            new[] {"?DAY8?","20190901","年4桁,月2桁,日2桁"},
+            new[] {"?DAY6?","190901","年2桁,月2桁,日2桁"},
+            new[] {"?HOUR?","18","時2桁"},
+            new[] {"?MINUTE?","31","分2桁"},
+            new[] {"?SECOND?","02","秒2桁"},
+            new[] {"?TIME6?","183102","時2桁,分2桁,秒2桁"},
+            new[] {"?TIME4?","3102","時2桁,分2桁"}
+            //new[] {"", "",""}
+            };
+
         public bool IsDebug { get; set; }
 
         public IsLogin IsLogin { get; set; }
