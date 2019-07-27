@@ -103,6 +103,11 @@ namespace NicoNamaRokuga.Net
             return result.ToList();
         }
 
+        public CookieContainer  GetCookieContainer()
+        {
+            return _wc.cookieContainer;
+        }
+
         //*************** URL系 *******************
 
         //放送URLから放送IDをゲット(lv00000000000)

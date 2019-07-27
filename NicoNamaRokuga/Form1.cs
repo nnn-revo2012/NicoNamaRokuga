@@ -241,7 +241,7 @@ namespace NicoNamaRokuga
                 }
 
                 if (props.UseExternal == UseExternal.native)
-                    _rHtml = new RecHtml(this, bci, _nNetComment);
+                    _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer());
                 else
                     _eProcess = new ExecProcess(this, bci, _nNetComment);
                 _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
@@ -333,7 +333,7 @@ namespace NicoNamaRokuga
                     AddLog("再接続します。", 1);
                     if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
                     if (props.UseExternal == UseExternal.native)
-                        _rHtml = new RecHtml(this, bci, _nNetComment);
+                        _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer());
                     else
                         _eProcess = new ExecProcess(this, bci, _nNetComment);
                     _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
@@ -346,7 +346,7 @@ namespace NicoNamaRokuga
                     AddLog("再接続します。", 1);
                     if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
                     if (props.UseExternal == UseExternal.native)
-                        _rHtml = new RecHtml(this, bci, _nNetComment);
+                        _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer());
                     else
                         _eProcess = new ExecProcess(this, bci, _nNetComment);
                     _nNetComment.Connect(cmi.WsUrl);

@@ -8,6 +8,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using NicoNamaRokuga.Net;
 using NicoNamaRokuga.Proc;
 using NicoNamaRokuga.Prop;
@@ -18,12 +21,10 @@ namespace NicoNamaRokuga.Rec
     {
         public string Status { set; get; }
         public string Error { set; get; }
-        public string BaseUrl { set; get; }
         public string MasterUrl { set; get; }
+        public string BaseUrl { set; get; }
+        public double StartTime { set; get; }
         public ICollection<PlayerInfo> Player { private set; get; }
-        public double NextTime { set; get; }
-        public string Format { set; get; }
-        public string WithoutFormat { set; get; }
         public int SeqNo { set; get; }
         public int CurrentNo { set; get; }
         public double Position { set; get; }
@@ -50,9 +51,6 @@ namespace NicoNamaRokuga.Rec
         public string Error { set; get; }
         public string BaseUrl { set; get; }
         public ICollection<Segment> Seg { private set; get; }
-        //public string NextTime { set; get; }
-        //public string Format { set; get; }
-        //public string WithoutFormat { set; get; }
         public int SeqNo { set; get; }
         public double Position { set; get; }
 
@@ -114,7 +112,7 @@ namespace NicoNamaRokuga.Rec
         private BroadCastInfo _bci = null;
         private Form1 _form = null;
 
-        public RecHtml(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment)
+        public RecHtml(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment, CookieContainer cc)
         {
             IsDebug = false;
 
@@ -130,7 +128,15 @@ namespace NicoNamaRokuga.Rec
 
             _wc.Encoding = Encoding.UTF8;
             _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
-
+            _wc.Headers.Add(HttpRequestHeader.Referer, Props.GetLiveUrl(_bci.LiveId));
+            _wc.cookieContainer = cc;
+            if (IsDebug)
+            {
+                foreach (Cookie ck in cc.GetCookies(new Uri(Props.NicoDomain)))
+                    Debug.WriteLine(ck.Name.ToString() + ": " + ck.Value.ToString());
+                for (int i = 0; i < _wc.Headers.Count; i++)
+                    Debug.WriteLine(_wc.Headers.GetKey(i).ToString() + ": " + _wc.Headers.Get(i));
+            }
         }
 
         ~RecHtml()
@@ -166,7 +172,7 @@ namespace NicoNamaRokuga.Rec
                 _nd = nd;
 
                 // masterファイルをGet
-                var pli = await GetMasterM3u8Async(masterfile, "");
+                var pli = await GetMasterM3u8Async(masterfile);
                 if (pli.Status != "Ok" || pli.Player.Count() <= 0)
                 {
                     _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
@@ -174,14 +180,16 @@ namespace NicoNamaRokuga.Rec
                 }
                 await Task.Delay(1000);
 
+                await SetPlayControlAsync(2, pli);
+
                 while (PsStatus == 0)
                 {
                     // playerファイルをGet
-                    var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl, "");
+                    var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl);
                     if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0)
                     {
                         _form.AddExecLog("GetPlayerM3u8 Error: " + sgi.Error + "\r\n");
-                        EndPs(2);
+                        EndPs(2); //Retry
                     }
                     if (pli.SeqNo < 0)
                     {
@@ -197,8 +205,8 @@ namespace NicoNamaRokuga.Rec
                         if (PsStatus > 0) break;
                         if (sgi.SeqNo >= pli.SeqNo)
                         {
-                            if (!await GetSegmentAsync(item, "", file, pli, sgi))
-                                EndPs(2);
+                            if (!await GetSegmentAsync(item, file, pli, sgi))
+                                EndPs(2); //Retry
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
                             sgi.Position += item.ExtInfo;
@@ -241,15 +249,23 @@ namespace NicoNamaRokuga.Rec
                 _nd = nd;
 
                 // masterファイルをGet
-                var pli = await GetMasterM3u8Async(masterfile, "");
-                if (pli.Status != "Ok" || pli.Player.Count() <= 0) EndPs(1);
+                var pli = await GetMasterM3u8Async(masterfile);
+                if (pli.Status != "Ok" || pli.Player.Count() <= 0)
+                {
+                    _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
+                    EndPs(1);
+                }
                 await Task.Delay(250);
 
                 while (PsStatus == 0)
                 {
                     // playerファイルをGet
-                    var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl, "");
-                    if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0) EndPs(2);
+                    var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl);
+                    if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0)
+                    {
+                        _form.AddExecLog("GetPlayerM3u8 Error: " + sgi.Error + "\r\n");
+                        EndPs(2); //Retry
+                    }
                     if (pli.SeqNo < 0)
                     {
                         pli.SeqNo = sgi.SeqNo;
@@ -264,7 +280,8 @@ namespace NicoNamaRokuga.Rec
                         if (PsStatus > 0) break;
                         if (sgi.SeqNo >= pli.SeqNo)
                         {
-                            await GetSegmentAsync(item, "", file, pli, sgi);
+                            if (!await GetSegmentAsync(item, file, pli, sgi))
+                                EndPs(2); //Retry
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
                             //sgi.Position += item.ExtInfo;
@@ -296,7 +313,7 @@ namespace NicoNamaRokuga.Rec
         }
 
         //master.m3u8からplayer.m3u8のURLを取得
-        public async Task<PlayListInfo> GetMasterM3u8Async(string url, string referer)
+        public async Task<PlayListInfo> GetMasterM3u8Async(string url)
         {
             _form.AddExecLog("GetMasterFile\r\n");
             var pli = new PlayListInfo();
@@ -359,7 +376,7 @@ namespace NicoNamaRokuga.Rec
         }
 
         //player.m3u8からsegment情報を取得
-        public async Task<SegmentInfo> GetPlayerM3u8Async(string url, string referer)
+        public async Task<SegmentInfo> GetPlayerM3u8Async(string url)
         {
             _form.AddExecLog("GetPlayerFile\r\n");
             var sgi = new SegmentInfo();
@@ -440,7 +457,7 @@ namespace NicoNamaRokuga.Rec
         }
 
         //segmentファイルを取得
-        public async Task<bool> GetSegmentAsync(Segment seg, string referer, string outfile, PlayListInfo pli, SegmentInfo sgi)
+        public async Task<bool> GetSegmentAsync(Segment seg, string outfile, PlayListInfo pli, SegmentInfo sgi)
         {
             _form.AddExecLog("GetSegmentFile\r\n");
             byte[] data = null;
@@ -468,13 +485,50 @@ namespace NicoNamaRokuga.Rec
                     if (errres != null)
                         errno = (int)errres.StatusCode;
                 }
-                _form.AddExecLog("GetSegment Error: " + Ex.Status.ToString() + " ("+ errno + ")\r\n");
+                _form.AddExecLog("GetSegment Error: " + Ex.Status.ToString() + " (" + errno + ")\r\n");
                 return false;
             }
             catch (Exception Ex) //タイムアウトなど
             {
                 //HttpRequestException
                 DebugWrite.Writeln(nameof(GetSegmentAsync), Ex);
+                return false;
+            }
+            return true;
+        }
+
+        //速度変更
+        public async Task<bool> SetPlayControlAsync(double speed, PlayListInfo pli)
+        {
+            _form.AddExecLog("SetPlayControlAsync\r\n");
+
+            try
+            {
+                var ttt = pli.MasterUrl.Split('?')[1].Split('&').FirstOrDefault(s => s.StartsWith("ht2_nicolive="));
+                var url = pli.BaseUrl + "play_control.json?" + ttt + "&play_speed=2";
+                _form.AddExecLog(url + "\r\n");
+                var str = await _wc.DownloadStringTaskAsync(url);
+                var result = JObject.Parse(str);
+                //{ "meta":{ "status":200,"message":"ok"},"data":{ "play_control":{ "play_speed":0.25} } }
+                _form.AddExecLog(str + "\r\n");
+            }
+            catch (WebException Ex)
+            {
+                DebugWrite.WriteWebln(nameof(SetPlayControlAsync), Ex);
+                int errno = 0;
+                if (Ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    var errres = (HttpWebResponse)Ex.Response;
+                    if (errres != null)
+                        errno = (int)errres.StatusCode;
+                }
+                _form.AddExecLog("SetPlayControlAsync Error: " + Ex.Status.ToString() + " (" + errno + ")\r\n");
+                return false;
+            }
+            catch (Exception Ex) //タイムアウトなど
+            {
+                //HttpRequestException
+                DebugWrite.Writeln(nameof(SetPlayControlAsync), Ex);
                 return false;
             }
             return true;
