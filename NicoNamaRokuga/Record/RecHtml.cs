@@ -178,8 +178,9 @@ namespace NicoNamaRokuga.Rec
                     _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
                     EndPs(1);
                 }
-                await Task.Delay(1000);
+                await Task.Delay(500);
 
+                //速度 X2.0
                 await SetPlayControlAsync(2, pli);
 
                 while (PsStatus == 0)
@@ -197,7 +198,7 @@ namespace NicoNamaRokuga.Rec
                         pli.CurrentNo = sgi.SeqNo;
                         pli.Position = sgi.Position;
                     }
-                    await Task.Delay(1000);
+                    await Task.Delay(500);
 
                     // 指定秒ごとにSegmentファイルを取得
                     foreach (var item in sgi.Seg)
@@ -210,14 +211,14 @@ namespace NicoNamaRokuga.Rec
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
                             sgi.Position += item.ExtInfo;
-                            await Task.Delay(2000);
+                            await Task.Delay(500);
                         }
                         else
                         {
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
                             sgi.Position += item.ExtInfo;
-                            await Task.Delay(1000);
+                            await Task.Delay(500);
                         }
                     }
                     pli.SeqNo = sgi.SeqNo;
