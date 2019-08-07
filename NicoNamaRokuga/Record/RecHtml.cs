@@ -27,6 +27,8 @@ namespace NicoNamaRokuga.Rec
         public ICollection<PlayerInfo> Player { private set; get; }
         public int SeqNo { set; get; }
         public int CurrentNo { set; get; }
+        public int LastSeqNo { set; get; }
+        public bool EndList { set; get; }
         public double Position { set; get; }
 
         public PlayListInfo()
@@ -35,6 +37,8 @@ namespace NicoNamaRokuga.Rec
             this.Error = "";
             this.Player = new List<PlayerInfo>();
             this.SeqNo = -1;
+            this.LastSeqNo = -1;
+            this.EndList = false;
             this.Position = -1.0;
         }
     }
@@ -52,6 +56,7 @@ namespace NicoNamaRokuga.Rec
         public string BaseUrl { set; get; }
         public ICollection<Segment> Seg { private set; get; }
         public int SeqNo { set; get; }
+        public bool EndList { set; get; }
         public double Position { set; get; }
 
         public SegmentInfo()
@@ -60,6 +65,7 @@ namespace NicoNamaRokuga.Rec
             this.Error = "";
             this.Seg = new List<Segment>();
             this.SeqNo = -1;
+            this.EndList = false;
         }
     }
 
@@ -148,7 +154,14 @@ namespace NicoNamaRokuga.Rec
         {
             try
             {
+                _form.AddLog("プロセス実行中です。", 1);
                 PsStatus = 0; //実行中
+                //生放送の場合コメント出力開始
+                if (Form1.props.IsComment && !_bci.IsTimeShift())
+                {
+                    while (_nNetComment.WsStatus != 0) ;
+                    _nNetComment.StartGetComment();
+                }
                 if (_bci.IsTimeShift())
                     Task.Run(() => HtmlRecordTS(masterfile, outfile));
                 else
@@ -185,6 +198,11 @@ namespace NicoNamaRokuga.Rec
 
                 while (PsStatus == 0)
                 {
+                    if (pli.EndList)
+                    {
+                         EndPs(1);
+                         break;
+                    }
                     // playerファイルをGet
                     var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl);
                     if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0)
@@ -224,6 +242,11 @@ namespace NicoNamaRokuga.Rec
                     pli.SeqNo = sgi.SeqNo;
                     pli.CurrentNo = sgi.SeqNo;
                     pli.Position = sgi.Position;
+                    if (sgi.EndList)
+                    {
+                        pli.EndList = true;
+                         EndPs(1);
+                    }
                 }
                 EndPs(1);
             }
@@ -237,8 +260,20 @@ namespace NicoNamaRokuga.Rec
         {
             //1:正常終了 2:異常終了
             PsStatus = status;
-
+            //生放送の場合プロセスが終了したらコメントサーバーを切断する。
+            if (Form1.props.IsComment)
+            {
+                if (!_bci.IsTimeShift() && _nNetComment.WsStatus == 0)
+                {
+                    _nNetComment?.Close();
+                    _form.AddLog("コメントファイル出力終了", 1);
+                    _nNetComment.EndXmlDoc();
+                    _nNetComment?.Dispose();
+                    _nNetComment.WsStatus = 2;  //再接続なし
+                }
+            }
         }
+
         private async Task HtmlRecord(string masterfile, string outfile)
         {
             try
@@ -260,6 +295,11 @@ namespace NicoNamaRokuga.Rec
 
                 while (PsStatus == 0)
                 {
+                    if (pli.EndList)
+                    {
+                         EndPs(1);
+                         break;
+                    }
                     // playerファイルをGet
                     var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl);
                     if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0)
@@ -299,6 +339,11 @@ namespace NicoNamaRokuga.Rec
                     pli.SeqNo = sgi.SeqNo;
                     pli.CurrentNo = sgi.SeqNo;
                     //pli.Position = sgi.Position;
+                    if (sgi.EndList)
+                    {
+                        pli.EndList = true;
+                         EndPs(1);
+                    }
                 }
                 EndPs(1);
             }
@@ -413,6 +458,9 @@ namespace NicoNamaRokuga.Rec
                             case "#DMC-CURRENT-POSITION":
                                 if (double.TryParse(ttt[1], out ei))
                                     sgi.Position = ei;
+                                break;
+                            case "#EXT-X-ENDLIST":
+                                sgi.EndList = true;
                                 break;
                             case "#EXTINF":
                                 var sg = new Segment();
