@@ -58,6 +58,7 @@ namespace NicoNamaRokuga.Net
         private const int _MESSAGE_MAX = 1000;
         private List<List<string>> _come_list = new List<List<string>>();
         private List<string> _come_text = new List<string>();
+        private StreamWriter _sw = null;
 
         System.Threading.Timer _hbTimer;
 
@@ -132,6 +133,8 @@ namespace NicoNamaRokuga.Net
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
+                _sw?.Dispose();
+                _sw = null;
                 _form.AddLog("コメントサーバーから切断されました。", 1);
             };
 
@@ -144,6 +147,8 @@ namespace NicoNamaRokuga.Net
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
+                _sw?.Dispose();
+                _sw = null;
                 _form.AddLog("コメントサーバーから切断しました。", 1);
             };
 
@@ -180,13 +185,20 @@ namespace NicoNamaRokuga.Net
                         //_form.AddLog(e.Message + "\r\n");
                         if ((int)jmes["thread"]["resultcode"] == 0)
                         {
+                            var enc = new System.Text.UTF8Encoding(false);
+                            var sw = new StreamWriter(_cmi.SaveFile, true, enc);
+                            _sw = sw;
                             _form.AddLog("コメントファイル出力開始", 1);
                             BeginXmlDoc();
-                            if (_seq_no == 0) StartHBTimer();
+                            if (_seq_no == 0)
+                            {
+                                StartHBTimer();
+                            }
                         }
                         break;
                     case "chat":
-                        System.IO.File.AppendAllText(_cmi.SaveFile, Json2Xml(jmes));
+                        //System.IO.File.AppendAllText(_cmi.SaveFile, Json2Xml(jmes));
+                        _sw.Write(Json2Xml(jmes));
                         break;
                 }
 
@@ -340,9 +352,10 @@ namespace NicoNamaRokuga.Net
             try
             {
                 _form.AddLog("コメントファイル出力開始", 1);
-                BeginXmlDoc();
                 using (var sw = new StreamWriter(_cmi.SaveFile, true, enc))
                 {
+                    _sw = sw;
+                    BeginXmlDoc();
                     for (var i = _seq_no - 1; i >= 0; i--)
                     {
                         var write_flg = (come_time_prev == string.Empty) ? true : false;
@@ -368,8 +381,9 @@ namespace NicoNamaRokuga.Net
                         _come_list.ToArray()[i].Clear();
                         _come_list.ToArray()[i].TrimExcess();
                     }
+                    EndXmlDoc();
+                    _sw = null;
                 }
-                EndXmlDoc();
                 _form.AddLog("コメントファイル出力終了", 1);
 
                 _come_list.Clear();
@@ -386,13 +400,13 @@ namespace NicoNamaRokuga.Net
 
         public void BeginXmlDoc() 
         {
-            System.IO.File.AppendAllText(_cmi.SaveFile, "<?xml version='1.0' encoding='UTF-8'?>\r\n");
-            System.IO.File.AppendAllText(_cmi.SaveFile, "<packet>\r\n");
+            _sw.Write("<?xml version='1.0' encoding='UTF-8'?>\r\n");
+            _sw.Write("<packet>\r\n");
         }
 
-        public void EndXmlDoc() 
+        public void EndXmlDoc()
         {
-            System.IO.File.AppendAllText(_cmi.SaveFile, "</packet>\r\n");
+            _sw.Write("</packet>\r\n");
         }
 
         private string Json2Xml(JObject jmes)
@@ -451,6 +465,7 @@ namespace NicoNamaRokuga.Net
                 {
                     // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
                     _ws?.Dispose();
+                    _sw?.Dispose();
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
