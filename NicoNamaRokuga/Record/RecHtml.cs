@@ -189,7 +189,7 @@ namespace NicoNamaRokuga.Rec
                 if (pli.Status != "Ok" || pli.Player.Count() <= 0)
                 {
                     _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
-                    EndPs(1);
+                    EndPs(2);
                 }
                 await Task.Delay(500);
 
@@ -248,7 +248,6 @@ namespace NicoNamaRokuga.Rec
                          EndPs(1);
                     }
                 }
-                EndPs(1);
             }
             catch (Exception Ex)
             {
@@ -269,7 +268,7 @@ namespace NicoNamaRokuga.Rec
                     _form.AddLog("コメントファイル出力終了", 1);
                     _nNetComment.EndXmlDoc();
                     _nNetComment?.Dispose();
-                    _nNetComment.WsStatus = 2;  //再接続なし
+                    _nNetComment.WsStatus = 1;  //再接続なし
                 }
             }
         }
@@ -289,9 +288,9 @@ namespace NicoNamaRokuga.Rec
                 if (pli.Status != "Ok" || pli.Player.Count() <= 0)
                 {
                     _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
-                    EndPs(1);
+                    EndPs(2);
                 }
-                await Task.Delay(250);
+                await Task.Delay(100);
 
                 while (PsStatus == 0)
                 {
@@ -313,7 +312,7 @@ namespace NicoNamaRokuga.Rec
                         pli.CurrentNo = sgi.SeqNo;
                         //pli.Position = sgi.Position;
                     }
-                    await Task.Delay(250);
+                    await Task.Delay(100);
 
                     // 指定秒ごとにSegmentファイルを取得
                     foreach (var item in sgi.Seg)
@@ -326,14 +325,14 @@ namespace NicoNamaRokuga.Rec
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
                             //sgi.Position += item.ExtInfo;
-                            await Task.Delay(500);
+                            await Task.Delay(200);
                         }
                         else
                         {
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
                             //sgi.Position += item.ExtInfo;
-                            await Task.Delay(500);
+                            await Task.Delay(100);
                         }
                     }
                     pli.SeqNo = sgi.SeqNo;
@@ -345,7 +344,6 @@ namespace NicoNamaRokuga.Rec
                          EndPs(1);
                     }
                 }
-                EndPs(1);
             }
             catch (Exception Ex)
             {

@@ -128,7 +128,7 @@ namespace NicoNamaRokuga.Net
             _ws.Error += (s, e) =>
             {
                 StopHBTimer();   //タイマー終了
-                WsStatus = 2; //再接続なし
+                WsStatus = 1; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
@@ -140,7 +140,7 @@ namespace NicoNamaRokuga.Net
             {
                 StopHBTimer();   //タイマー終了
                 if (WsStatus == 0)
-                    WsStatus = 2; //再接続なし
+                    WsStatus = 1; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;

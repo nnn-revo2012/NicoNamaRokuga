@@ -217,7 +217,7 @@ namespace NicoNamaRokuga.Proc
                         _form.AddLog("コメントファイル出力終了", 1);
                         _nNetComment.EndXmlDoc();
                         _nNetComment?.Dispose();
-                        _nNetComment.WsStatus = 2;  //再接続なし
+                        _nNetComment.WsStatus = 1;  //再接続なし
                     }
                 }
             }

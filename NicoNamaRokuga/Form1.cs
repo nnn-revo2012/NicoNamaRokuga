@@ -32,6 +32,7 @@ namespace NicoNamaRokuga
         private string liveId = null;
 
         private volatile bool start_flg = false;
+        private int RetryCount = 3;
 
         private readonly object lockObject = new object();  //情報表示用
         private readonly object lockObject2 = new object(); //実行ファイルのログ用
@@ -255,7 +256,8 @@ namespace NicoNamaRokuga
                 //WebSocket接続開始
                 _nNetStream.Connect();
 
-                //3秒おきに状態を調べて処理する
+                //1秒おきに状態を調べて処理する
+                RetryCount = props.Retry;
                 start_flg = true;
                 while (start_flg == true)
                 {
@@ -283,7 +285,7 @@ namespace NicoNamaRokuga
                 ExecStatus = _eProcess.PsStatus;
             try
             {
-                if (ExecStatus >= 1) //終了処理
+                if (ExecStatus == 1) //終了処理
                 {
                     if (_rHtml != null)
                     {
@@ -311,7 +313,7 @@ namespace NicoNamaRokuga
                     return;
                 }
 
-                if (_nNetStream.WsStatus == 1 || WsCommentStatus == 1)
+                if (_nNetStream.WsStatus == 2 || WsCommentStatus == 2 || ExecStatus == 2)
                 {
                     //WebSocket再接続処理開始
                     if (_rHtml != null)
@@ -330,30 +332,31 @@ namespace NicoNamaRokuga
                     {
                         _nNetComment.Close();
                     }
-                    AddLog("再接続します。", 1);
-                    if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
-                    if (props.UseExternal == UseExternal.native)
-                        _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer());
+                    if (RetryCount > 0)
+                    {
+                        AddLog("再接続します。", 1);
+                        if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
+                        if (props.UseExternal == UseExternal.native)
+                            _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer());
+                        else
+                            _eProcess = new ExecProcess(this, bci, _nNetComment);
+                        _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
+                        _nNetStream.Connect();
+                        RetryCount--;
+                    }
                     else
-                        _eProcess = new ExecProcess(this, bci, _nNetComment);
-                    _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
-                    _nNetStream.Connect();
-
+                    {
+                        AddLog("リトライ終了します。", 1);
+                        if (_nLiveNet != null)
+                        {
+                            _nLiveNet.Dispose();
+                        }
+                        AddLog("録画終了しました。", 1);
+                        EnableButton(true);
+                        start_flg = false;
+                        return;
+                    }
                 }
-                else if (ExecStatus == 1 && (_nNetStream.WsStatus == 0 || WsCommentStatus == 0))
-                {
-                    //ffmpeg再起動処理
-                    AddLog("再接続します。", 1);
-                    if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
-                    if (props.UseExternal == UseExternal.native)
-                        _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer());
-                    else
-                        _eProcess = new ExecProcess(this, bci, _nNetComment);
-                    _nNetComment.Connect(cmi.WsUrl);
-                    _nNetStream.ReSendGetStream(epi.Quality, epi.Protocol);
-
-                }
-
             }
             catch (Exception Ex)
             {

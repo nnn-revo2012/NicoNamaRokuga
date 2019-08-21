@@ -288,9 +288,9 @@ namespace NicoNamaRokuga.Net
                         ttt = par[1].ToString();
                         _form.AddLog("Disconnect: " + ttt, 9);
                         if (ttt == "TAKEOVER") //追い出し
-                            WsStatus = 1; //再接続あり
+                            WsStatus = 2; //再接続あり
                         else if (ttt == "END_PROGRAM") //放送終了
-                            WsStatus = 2; //再接続なし
+                            WsStatus = 1; //再接続なし
                         break;
                     default:
                         break;
@@ -317,7 +317,7 @@ namespace NicoNamaRokuga.Net
             /// 接続断の発生
             _ws.Error += (s, e) =>
             {
-                WsStatus = 2; //再接続なし
+                WsStatus = 1; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
@@ -329,7 +329,7 @@ namespace NicoNamaRokuga.Net
             {
                 StopWatchTimer();   //タイマー終了
                 if (WsStatus == 0)
-                    WsStatus = 2; //再接続なし
+                    WsStatus = 1; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
