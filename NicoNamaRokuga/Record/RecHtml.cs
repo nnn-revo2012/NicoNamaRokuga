@@ -202,9 +202,9 @@ namespace NicoNamaRokuga.Rec
 
                 var ttt = masterfile;
                 if (_ri.IsRetry)
-                {
                     ttt += "&st=" + _ri.Position.ToString();
-                }
+                else
+                    ttt += "&st=0.0";
 
                 // masterファイルをGet
                 var pli = await GetMasterM3u8Async(masterfile);

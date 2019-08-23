@@ -242,8 +242,6 @@ namespace NicoNamaRokuga.Net
                             else
                             {
                                 ttt = jtkn["currentStream"]["uri"].ToString();
-                                if (_bci.IsTimeShift())
-                                    ttt += "&start=0.0";
                                 _form.AddLog("Masterm3u8: " + ttt, 9);
                             }
                             if (Form1.props.UseExternal == UseExternal.native)
