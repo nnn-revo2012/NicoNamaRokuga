@@ -32,7 +32,8 @@ namespace NicoNamaRokuga
         private string liveId = null;
 
         private volatile bool start_flg = false;
-        private int RetryCount = 3;
+        private RetryInfo _ri = null;
+        //private int RetryCount = 3;
 
         private readonly object lockObject = new object();  //情報表示用
         private readonly object lockObject2 = new object(); //実行ファイルのログ用
@@ -240,9 +241,12 @@ namespace NicoNamaRokuga
                     cmi.EndTime = bci.End_Time + "000";
                     _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
                 }
+                var ri = new RetryInfo();
+                _ri = ri;
+                _ri.Count = props.Retry;
 
                 if (props.UseExternal == UseExternal.native)
-                    _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer());
+                    _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), ri);
                 else
                     _eProcess = new ExecProcess(this, bci, _nNetComment);
                 _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
@@ -257,12 +261,11 @@ namespace NicoNamaRokuga
                 _nNetStream.Connect();
 
                 //1秒おきに状態を調べて処理する
-                RetryCount = props.Retry;
                 start_flg = true;
                 while (start_flg == true)
                 {
-                    CheckStatus();
-                    await Task.Delay(3000);
+                    await CheckStatus();
+                    await Task.Delay(1000);
                 }
 
             }
@@ -274,7 +277,7 @@ namespace NicoNamaRokuga
 
         }
 
-        private void CheckStatus()
+        private async Task CheckStatus()
         {
             var WsCommentStatus = -1;
             var ExecStatus = -1;
@@ -285,35 +288,7 @@ namespace NicoNamaRokuga
                 ExecStatus = _eProcess.PsStatus;
             try
             {
-                if (ExecStatus == 1) //終了処理
-                {
-                    if (_rHtml != null)
-                    {
-                        _rHtml.BreakProcess("");
-                    }
-                    if (_eProcess != null)
-                    {
-                        _eProcess.BreakProcess(epi.BreakKey);
-                    }
-                    if (_nNetStream != null)
-                    {
-                        _nNetStream.Close();
-                    }
-                    if (_nNetComment != null)
-                    {
-                        _nNetComment.Close();
-                    }
-                    if (_nLiveNet != null)
-                    {
-                        _nLiveNet.Dispose();
-                    }
-                    AddLog("録画終了しました。", 1);
-                    EnableButton(true);
-                    start_flg = false;
-                    return;
-                }
-
-                if (_nNetStream.WsStatus == 2 || WsCommentStatus == 2 || ExecStatus == 2)
+                if (_nNetStream.WsStatus >= 2 || WsCommentStatus >= 2 || ExecStatus >= 2)
                 {
                     //WebSocket再接続処理開始
                     if (_rHtml != null)
@@ -332,21 +307,65 @@ namespace NicoNamaRokuga
                     {
                         _nNetComment.Close();
                     }
-                    if (RetryCount > 0)
+                    if (_ri.Count > 0)
                     {
-                        AddLog("再接続します。", 1);
-                        if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
-                        if (props.UseExternal == UseExternal.native)
-                            _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer());
-                        else
-                            _eProcess = new ExecProcess(this, bci, _nNetComment);
-                        _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
-                        _nNetStream.Connect();
-                        RetryCount--;
+                        if (_nNetStream.WsStatus >= 3 || WsCommentStatus >= 3 || ExecStatus >= 3)
+                        {
+                            var _bci = await _nLiveNet.GetNicoPageAsync(liveId);
+                            if (_bci.Status != "ok")
+                            {
+                                AddLog("放送情報が取得できませんでした。", 1);
+                                AddLog("Status: " + _bci.Error, 1);
+                                _ri.Count--;
+                                return;
+                            }
+                            if (bci.OnAirStatus == "ON_AIR" && _bci.OnAirStatus != "ON_AIR")
+                            {
+                                ExecStatus = 1;
+                            }
+                            else
+                            {
+                                bci.BcId = _bci.BcId;
+                                bci.AuTkn = _bci.AuTkn;
+                                bci.WsUrl = _bci.WsUrl;
+                            }
+                        }
+                        if (ExecStatus >= 2)
+                        {
+                            AddLog("再接続します。", 1);
+                            if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
+                            if (props.UseExternal == UseExternal.native)
+                                _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ri);
+                            else
+                                _eProcess = new ExecProcess(this, bci, _nNetComment);
+                            _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
+                            _nNetStream.Connect();
+                            _ri.Count--;
+                        }
                     }
                     else
                     {
                         AddLog("リトライ終了します。", 1);
+                        ExecStatus = 1;
+                    }
+                    if (ExecStatus == 1) //終了処理
+                    {
+                        if (_rHtml != null)
+                        {
+                            _rHtml.BreakProcess("");
+                        }
+                        if (_eProcess != null)
+                        {
+                            _eProcess.BreakProcess(epi.BreakKey);
+                        }
+                        if (_nNetStream != null)
+                        {
+                            _nNetStream.Close();
+                        }
+                        if (_nNetComment != null)
+                        {
+                            _nNetComment.Close();
+                        }
                         if (_nLiveNet != null)
                         {
                             _nLiveNet.Dispose();
@@ -356,6 +375,7 @@ namespace NicoNamaRokuga
                         start_flg = false;
                         return;
                     }
+
                 }
             }
             catch (Exception Ex)
