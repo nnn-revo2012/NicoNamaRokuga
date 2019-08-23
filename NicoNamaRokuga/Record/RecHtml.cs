@@ -200,14 +200,15 @@ namespace NicoNamaRokuga.Rec
                 var nd = new NicoDb(_form, file);
                 _nd = nd;
 
-                var ttt = masterfile;
+                var ttt = string.Empty;
                 if (_ri.IsRetry)
-                    ttt += "&st=" + _ri.Position.ToString();
+                    ttt = "&start=" + _ri.Position.ToString();
                 else
-                    ttt += "&st=0.0";
+                    ttt = "&start=0.0";
+                _form.AddExecLog("MasterFile: " + masterfile + ttt + "\r\n");
 
                 // masterファイルをGet
-                var pli = await GetMasterM3u8Async(masterfile);
+                var pli = await GetMasterM3u8Async(masterfile + ttt);
                 if (pli.Status != "Ok" || pli.Player.Count() <= 0)
                 {
                     _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");

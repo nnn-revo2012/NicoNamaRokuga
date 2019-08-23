@@ -128,6 +128,7 @@ namespace NicoNamaRokuga.Net
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
         private ExecProcess _eProcess = null;         //Process
         private RecHtml _rHtml = null;                //RecHtml
+        private RetryInfo _ri = null;
 
         System.Threading.Timer _watchTimer;
 
@@ -135,7 +136,7 @@ namespace NicoNamaRokuga.Net
 
         //放送情報
 
-        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi, NicoNetComment nNetComment, ExecProcess eProcess, RecHtml rHtml)
+        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi, NicoNetComment nNetComment, ExecProcess eProcess, RecHtml rHtml, RetryInfo ri)
         {
             IsDebug = false;
 
@@ -147,6 +148,7 @@ namespace NicoNamaRokuga.Net
             this._nNetComment = nNetComment;
             this._eProcess = eProcess;
             this._rHtml = rHtml;
+            this._ri = ri;
             this._bci = bci;
             this._cmi = cmi;
             this._epi = epi;
@@ -259,7 +261,7 @@ namespace NicoNamaRokuga.Net
                         break;
                     case "currentroom":
                         //コメントサーバー接続設定
-                        if (Form1.props.IsComment)
+                        if (Form1.props.IsComment && !_ri.IsRetry)
                         {
                             ttt = jtkn["room"]["messageServerUri"].ToString();
                             _cmi.WsUrl = ttt;

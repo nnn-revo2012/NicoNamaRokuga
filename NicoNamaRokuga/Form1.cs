@@ -246,10 +246,10 @@ namespace NicoNamaRokuga
                 _ri.Count = props.Retry;
 
                 if (props.UseExternal == UseExternal.native)
-                    _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), ri);
+                    _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ri);
                 else
                     _eProcess = new ExecProcess(this, bci, _nNetComment);
-                _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
+                _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
 
                 AddLog("wsUrl: " + bci.WsUrl, 9);
                 AddLog("wsPermit: " + _nNetStream.GetPermit(bci.BcId, props.Protocol.ToString()), 9);
@@ -338,7 +338,7 @@ namespace NicoNamaRokuga
                                 _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ri);
                             else
                                 _eProcess = new ExecProcess(this, bci, _nNetComment);
-                            _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml);
+                            _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
                             _nNetStream.Connect();
                             _ri.Count--;
                         }
