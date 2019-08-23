@@ -33,7 +33,6 @@ namespace NicoNamaRokuga
 
         private volatile bool start_flg = false;
         private RetryInfo _ri = null;
-        //private int RetryCount = 3;
 
         private readonly object lockObject = new object();  //情報表示用
         private readonly object lockObject2 = new object(); //実行ファイルのログ用
@@ -224,6 +223,16 @@ namespace NicoNamaRokuga
                     return;
                 }
 
+                if (props.Protocol == Protocol.rtmp)
+                {
+                    if (bci.IsTimeShift() || bci.Provider_Type != "official")
+                    {
+                        AddLog("RTMP録画は公式の生放送のみです。", 1);
+                        return;
+
+                    }
+                }
+
                 //保存ファイル名作成
                 epi = new ExecPsInfo();
                 epi.Sdir = props.SaveDir;
@@ -245,7 +254,7 @@ namespace NicoNamaRokuga
                 _ri = ri;
                 _ri.Count = props.Retry;
 
-                if (props.UseExternal == UseExternal.native)
+                if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
                     _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ri);
                 else
                     _eProcess = new ExecProcess(this, bci, _nNetComment);
@@ -282,7 +291,7 @@ namespace NicoNamaRokuga
             var WsCommentStatus = -1;
             var ExecStatus = -1;
             if (props.IsComment) WsCommentStatus = _nNetComment.WsStatus;
-            if (props.UseExternal == UseExternal.native)
+            if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
                 ExecStatus = _rHtml.PsStatus;
             else
                 ExecStatus = _eProcess.PsStatus;
@@ -334,7 +343,7 @@ namespace NicoNamaRokuga
                         {
                             AddLog("再接続します。", 1);
                             if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
-                            if (props.UseExternal == UseExternal.native)
+                            if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
                                 _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ri);
                             else
                                 _eProcess = new ExecProcess(this, bci, _nNetComment);

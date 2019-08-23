@@ -45,6 +45,9 @@
             this.rB_always = new System.Windows.Forms.RadioButton();
             this.rB_none = new System.Windows.Forms.RadioButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.rB_native = new System.Windows.Forms.RadioButton();
+            this.rB_ext1 = new System.Windows.Forms.RadioButton();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
             this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
@@ -56,6 +59,11 @@
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -63,25 +71,15 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.rB_native = new System.Windows.Forms.RadioButton();
-            this.rB_ext1 = new System.Windows.Forms.RadioButton();
-            this.rB_ext2 = new System.Windows.Forms.RadioButton();
-            this.rB_ext3 = new System.Windows.Forms.RadioButton();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -280,6 +278,38 @@
             this.tabPage2.Text = "基本設定";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // groupBox6
+            // 
+            this.groupBox6.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.groupBox6.Controls.Add(this.rB_native);
+            this.groupBox6.Controls.Add(this.rB_ext1);
+            this.groupBox6.Location = new System.Drawing.Point(293, 185);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(117, 71);
+            this.groupBox6.TabIndex = 6;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "HLS録画方法";
+            // 
+            // rB_native
+            // 
+            this.rB_native.AutoSize = true;
+            this.rB_native.Location = new System.Drawing.Point(6, 18);
+            this.rB_native.Name = "rB_native";
+            this.rB_native.Size = new System.Drawing.Size(92, 16);
+            this.rB_native.TabIndex = 1;
+            this.rB_native.Text = "内蔵プログラム";
+            this.rB_native.UseVisualStyleBackColor = true;
+            // 
+            // rB_ext1
+            // 
+            this.rB_ext1.AutoSize = true;
+            this.rB_ext1.Location = new System.Drawing.Point(6, 40);
+            this.rB_ext1.Name = "rB_ext1";
+            this.rB_ext1.Size = new System.Drawing.Size(92, 16);
+            this.rB_ext1.TabIndex = 2;
+            this.rB_ext1.Text = "外部プログラム";
+            this.rB_ext1.UseVisualStyleBackColor = true;
+            // 
             // checkBox6
             // 
             this.checkBox6.AutoSize = true;
@@ -342,16 +372,6 @@
             this.rB_rtmp.Text = "RTMP(公式生放送のみ)";
             this.rB_rtmp.UseVisualStyleBackColor = true;
             // 
-            // rB_native
-            // 
-            this.rB_native.AutoSize = true;
-            this.rB_native.Location = new System.Drawing.Point(6, 18);
-            this.rB_native.Name = "rB_native";
-            this.rB_native.Size = new System.Drawing.Size(92, 16);
-            this.rB_native.TabIndex = 1;
-            this.rB_native.Text = "内蔵プログラム";
-            this.rB_native.UseVisualStyleBackColor = true;
-            // 
             // rB_hls
             // 
             this.rB_hls.AutoSize = true;
@@ -409,6 +429,50 @@
             this.groupBox3.TabIndex = 0;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "録画ファイル保存先フォルダー";
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(216, 90);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(61, 23);
+            this.button8.TabIndex = 8;
+            this.button8.Text = "振分選択";
+            this.button8.UseVisualStyleBackColor = true;
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(334, 53);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(61, 23);
+            this.button7.TabIndex = 7;
+            this.button7.Text = "書式選択";
+            this.button7.UseVisualStyleBackColor = true;
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(334, 16);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(62, 23);
+            this.button6.TabIndex = 6;
+            this.button6.Text = "参照";
+            this.button6.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(4, 77);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(92, 12);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "振り分けフォルダー";
+            // 
+            // textBox5
+            // 
+            this.textBox5.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.textBox5.Location = new System.Drawing.Point(6, 92);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(204, 19);
+            this.textBox5.TabIndex = 4;
             // 
             // textBox4
             // 
@@ -479,94 +543,6 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // textBox5
-            // 
-            this.textBox5.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.textBox5.Location = new System.Drawing.Point(6, 92);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(204, 19);
-            this.textBox5.TabIndex = 4;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 77);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(92, 12);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "振り分けフォルダー";
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.groupBox6.Controls.Add(this.rB_native);
-            this.groupBox6.Controls.Add(this.rB_ext1);
-            this.groupBox6.Controls.Add(this.rB_ext2);
-            this.groupBox6.Controls.Add(this.rB_ext3);
-            this.groupBox6.Location = new System.Drawing.Point(293, 185);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(117, 113);
-            this.groupBox6.TabIndex = 6;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "HLS録画方法";
-            // 
-            // rB_ext2
-            // 
-            this.rB_ext2.AutoSize = true;
-            this.rB_ext2.Location = new System.Drawing.Point(6, 62);
-            this.rB_ext2.Name = "rB_ext2";
-            this.rB_ext2.Size = new System.Drawing.Size(100, 16);
-            this.rB_ext2.TabIndex = 0;
-            this.rB_ext2.Text = "外部プログラム２";
-            this.rB_ext2.UseVisualStyleBackColor = true;
-            // 
-            // rB_ext1
-            // 
-            this.rB_ext1.AutoSize = true;
-            this.rB_ext1.Location = new System.Drawing.Point(6, 40);
-            this.rB_ext1.Name = "rB_ext1";
-            this.rB_ext1.Size = new System.Drawing.Size(100, 16);
-            this.rB_ext1.TabIndex = 2;
-            this.rB_ext1.Text = "外部プログラム１";
-            this.rB_ext1.UseVisualStyleBackColor = true;
-            // 
-            // rB_ext3
-            // 
-            this.rB_ext3.AutoSize = true;
-            this.rB_ext3.Location = new System.Drawing.Point(6, 84);
-            this.rB_ext3.Name = "rB_ext3";
-            this.rB_ext3.Size = new System.Drawing.Size(100, 16);
-            this.rB_ext3.TabIndex = 3;
-            this.rB_ext3.Text = "外部プログラム３";
-            this.rB_ext3.UseVisualStyleBackColor = true;
-            // 
-            // button6
-            // 
-            this.button6.Location = new System.Drawing.Point(334, 16);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(62, 23);
-            this.button6.TabIndex = 6;
-            this.button6.Text = "参照";
-            this.button6.UseVisualStyleBackColor = true;
-            // 
-            // button7
-            // 
-            this.button7.Location = new System.Drawing.Point(334, 53);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(61, 23);
-            this.button7.TabIndex = 7;
-            this.button7.Text = "書式選択";
-            this.button7.UseVisualStyleBackColor = true;
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(216, 90);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(61, 23);
-            this.button8.TabIndex = 8;
-            this.button8.Text = "振分選択";
-            this.button8.UseVisualStyleBackColor = true;
-            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -587,13 +563,13 @@
             this.groupBox1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -637,9 +613,7 @@
         private System.Windows.Forms.CheckBox checkBox5;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.RadioButton rB_ext3;
         private System.Windows.Forms.RadioButton rB_ext1;
-        private System.Windows.Forms.RadioButton rB_ext2;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button6;
