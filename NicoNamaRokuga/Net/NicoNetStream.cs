@@ -38,10 +38,10 @@ namespace NicoNamaRokuga.Net
         public string Community_Id { set; get; }
         public string Community_Thumbnail { set; get; }
         public bool   FollowerOnly { set; get; }
-        public string Open_Time { set; get; }
-        public string Begin_Time { set; get; }
-        public string VposBase_Time { set; get; }
-        public string End_Time { set; get; }
+        public long   Open_Time { set; get; }
+        public long   Begin_Time { set; get; }
+        public long   VposBase_Time { set; get; }
+        public long   End_Time { set; get; }
         public string OnAirStatus { set; get; }
         public string User_Id { set; get; }
 
@@ -261,18 +261,21 @@ namespace NicoNamaRokuga.Net
                         break;
                     case "currentroom":
                         //コメントサーバー接続設定
-                        if (Form1.props.IsComment && !_ri.IsRetry)
+                        if (Form1.props.IsComment)
                         {
-                            ttt = jtkn["room"]["messageServerUri"].ToString();
-                            _cmi.WsUrl = ttt;
-                            _form.AddLog("CommentServer: " + ttt, 9);
-                            ttt = jtkn["room"]["threadId"].ToString();
-                            _cmi.ThreadId = ttt;
-                            _nNetComment.Connect(_cmi.WsUrl);
-                            if (_bci.IsTimeShift())
+                            if (!_bci.IsTimeShift() || !_ri.IsRetry)
                             {
-                                while (_nNetComment.WsStatus != 0) ;
-                                _nNetComment.StartGetTSComment();
+                                ttt = jtkn["room"]["messageServerUri"].ToString();
+                                _cmi.WsUrl = ttt;
+                                _form.AddLog("CommentServer: " + ttt, 9);
+                                ttt = jtkn["room"]["threadId"].ToString();
+                                _cmi.ThreadId = ttt;
+                                _nNetComment.Connect(_cmi.WsUrl);
+                                if (_bci.IsTimeShift())
+                                {
+                                    while (_nNetComment.WsStatus != 0) ;
+                                    _nNetComment.StartGetTSComment();
+                                }
                             }
                         }
                         break;
@@ -287,8 +290,13 @@ namespace NicoNamaRokuga.Net
                         var par = (JArray)jtkn["params"];
                         ttt = par[1].ToString();
                         _form.AddLog("Disconnect: " + ttt, 9);
+                        WsStatus = 2; //再接続
                         if (ttt == "TAKEOVER") //追い出し
-                            WsStatus = 2; //再接続あり
+                            WsStatus = 3; //再接続あり(長)
+                        else if (ttt == "SERVICE_TEMPORARILY_UNAVAILABLE")
+                            WsStatus = 3; //再接続あり(長)
+                        else if (ttt == "TOO_MANY_CONNECTIONS")
+                            WsStatus = 3; //再接続あり(長)
                         else if (ttt == "END_PROGRAM") //放送終了
                             WsStatus = 1; //再接続なし
                         break;

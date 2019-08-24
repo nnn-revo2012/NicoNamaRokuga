@@ -33,8 +33,8 @@ namespace NicoNamaRokuga.Net
         public string Channel_Stream_Status { set; get; } //チャンネルのみ
         public string Owner_Id { set; get; }
         public string Owner_Name { set; get; } //ユーザーのみあり
-        public string Start_Time { set; get; }
-        public string End_Time { set; get; }
+        public long   Start_Time { set; get; }
+        public long   End_Time { set; get; }
 
         public GetPlayerStatusInfo()
         {
@@ -170,9 +170,8 @@ namespace NicoNamaRokuga.Net
                 DebugWrite.WriteWebln(nameof(LoginNico), Ex);
                 return flag;
             }
-            catch (Exception Ex) //タイムアウトなど
+            catch (Exception Ex) //その他のエラー
             {
-                //HttpRequestException
                 DebugWrite.Writeln(nameof(LoginNico), Ex);
                 return flag;
             }
@@ -213,8 +212,8 @@ namespace NicoNamaRokuga.Net
                     gpsi.Default_Community = nodes.Item(0)["default_community"].InnerText;
                     gpsi.Owner_Id = nodes.Item(0)["owner_id"].InnerText;
                     gpsi.Owner_Name = nodes.Item(0)["owner_name"].InnerText;
-                    gpsi.Start_Time = nodes.Item(0)["start_time"].InnerText;
-                    gpsi.End_Time = nodes.Item(0)["end_time"].InnerText;
+                    gpsi.Start_Time = long.Parse(nodes.Item(0)["start_time"].InnerText);
+                    gpsi.End_Time = long.Parse(nodes.Item(0)["end_time"].InnerText);
                     switch (gpsi.Provider_Type)
                     {
                         case "channel":
@@ -239,7 +238,7 @@ namespace NicoNamaRokuga.Net
                 gpsi.Error = Ex.Status.ToString();
                 return gpsi;
             }
-            catch (Exception Ex) //タイムアウトなど
+            catch (Exception Ex) //その他のエラー
             {
                 DebugWrite.Writeln(nameof(GetPlayerStatusAsync), Ex);
                 gpsi.Error = Ex.Message;
@@ -297,10 +296,10 @@ namespace NicoNamaRokuga.Net
                         bci.Provider_Id = BroadCastInfo.GetChNo(dprogram["supplier"]["pageUrl"].ToString());
                 }
                 bci.FollowerOnly = (bool)dprogram["isFollowerOnly"];
-                bci.Open_Time = dprogram["openTime"].ToString();
-                bci.Begin_Time = dprogram["beginTime"].ToString();
-                bci.VposBase_Time = dprogram["vposBaseTime"].ToString();
-                bci.End_Time = dprogram["endTime"].ToString();
+                bci.Open_Time = (long)dprogram["openTime"];
+                bci.Begin_Time = (long)dprogram["beginTime"];
+                bci.VposBase_Time = (long)dprogram["vposBaseTime"];
+                bci.End_Time = (long)dprogram["endTime"];
                 bci.OnAirStatus = dprogram["status"].ToString();
 
                 bci.Community_Id = providertype;
@@ -320,9 +319,8 @@ namespace NicoNamaRokuga.Net
                 bci.Error = Ex.Status.ToString();
                 return bci;
             }
-            catch (Exception Ex) //タイムアウトなど
+            catch (Exception Ex) //その他のエラー
             {
-                //HttpRequestException
                 DebugWrite.Writeln(nameof(GetNicoPageAsync), Ex);
                 bci.Error = Ex.Message;
                 return bci;
@@ -342,9 +340,13 @@ namespace NicoNamaRokuga.Net
                 result = await _wc.DownloadStringTaskAsync(stmp);
                 result = result.Split('=')[1];
             }
-            catch (Exception Ex) //タイムアウトなど
+            catch (WebException Ex)
             {
-                //HttpRequestException
+                DebugWrite.WriteWebln(nameof(GetWayBackKeyAsync), Ex);
+                return result;
+            }
+            catch (Exception Ex) //その他のエラー
+            {
                 DebugWrite.Writeln(nameof(GetWayBackKeyAsync), Ex);
                 return result;
             }
@@ -424,9 +426,8 @@ namespace NicoNamaRokuga.Net
                         cc.GetCookieHeader(targetUrl)));
                 }
             }
-            catch (Exception Ex) //タイムアウトなど
+            catch (Exception Ex) //エラー
             {
-                //HttpRequestException
                 DebugWrite.Writeln(nameof(SetNicoCookie), Ex);
                 return false;	
             }

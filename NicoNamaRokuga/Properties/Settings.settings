@@ -75,13 +75,13 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="ReConnectTime1" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">10</Value>
+      <Value Profile="(Default)">4000</Value>
     </Setting>
     <Setting Name="Retry" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
+      <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="ReConnectTime2" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">60</Value>
+      <Value Profile="(Default)">29000</Value>
     </Setting>
   </Settings>
 </SettingsFile>

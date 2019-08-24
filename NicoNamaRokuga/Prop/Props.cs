@@ -315,5 +315,14 @@ namespace NicoNamaRokuga.Prop
             return result;
         }
 
+        public static long GetUnixTime() {
+            return (long)(((TimeSpan)(DateTime.Now - new DateTime(1970, 1, 1))).TotalSeconds);
+        }
+
+        public static DateTime GetUnixToDateTime(long unix) {
+            DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            return UNIX_EPOCH.AddSeconds(unix).ToLocalTime();
+        }
+
     }
 }

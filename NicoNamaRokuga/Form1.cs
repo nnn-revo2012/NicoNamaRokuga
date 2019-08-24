@@ -246,8 +246,8 @@ namespace NicoNamaRokuga
                 if (props.IsComment)
                 {
                     cmi = new CommentInfo(bci.User_Id);
-                    cmi.BeginTime = bci.Open_Time + "000";
-                    cmi.EndTime = bci.End_Time + "000";
+                    cmi.BeginTime = bci.Open_Time;
+                    cmi.EndTime = bci.End_Time;
                     _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
                 }
                 var ri = new RetryInfo();
@@ -318,8 +318,11 @@ namespace NicoNamaRokuga
                     }
                     if (_ri.Count > 0)
                     {
-                        if (_nNetStream.WsStatus >= 3 || WsCommentStatus >= 3 || ExecStatus >= 3)
+                        if (_nNetStream.WsStatus == 4)
                         {
+                            var tt = props.ReConnectTime2 / 1000;
+                            AddLog(tt + "秒停止します。", 1);
+                            await Task.Delay(props.ReConnectTime2);
                             var _bci = await _nLiveNet.GetNicoPageAsync(liveId);
                             if (_bci.Status != "ok")
                             {
@@ -339,7 +342,13 @@ namespace NicoNamaRokuga
                                 bci.WsUrl = _bci.WsUrl;
                             }
                         }
-                        if (ExecStatus >= 2)
+                        else if (_nNetStream.WsStatus == 3)
+                        {
+                            var tt = props.ReConnectTime1 / 1000;
+                            AddLog(tt + "秒停止します。", 1);
+                            await Task.Delay(props.ReConnectTime1);
+                        }
+                        if (ExecStatus != 1)
                         {
                             AddLog("再接続します。", 1);
                             if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);

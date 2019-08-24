@@ -26,8 +26,8 @@ namespace NicoNamaRokuga.Net
         public string UserId { set; get; }
         public string ThreadId { set; get; }
         public string SaveFile { get; set; }
-        public string BeginTime { get; set; }
-        public string EndTime { get; set; }
+        public long   BeginTime { get; set; }
+        public long   EndTime { get; set; }
 
         public CommentInfo(string userid)
         {
@@ -290,7 +290,7 @@ namespace NicoNamaRokuga.Net
                 if (_seq_no == 0)
                 {
                     _waybackkey = _nLiveNet.GetWayBackKeyAsync(_cmi.ThreadId).Result; //waybackkey取得
-                    _when = long.Parse(_cmi.EndTime.Substring(0, _cmi.EndTime.Length - 3));
+                    _when = _cmi.EndTime + 120L;
                     _chat_flg = true;
                 }
                 var ttt = SendThreadTS(_cmi.ThreadId, _cmi.UserId, -_MESSAGE_MAX, _when.ToString(), _waybackkey);

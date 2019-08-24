@@ -285,7 +285,7 @@ namespace NicoNamaRokuga.Rec
 
         public void EndPs(int status, int seq_no, double position)
         {
-            //1:正常終了 2:異常終了
+            //1:正常終了 2:再接続 3:再接続(長)
             PsStatus = status;
             if (status >= 2)
             {
@@ -300,7 +300,6 @@ namespace NicoNamaRokuga.Rec
                 {
                     _nNetComment?.Close();
                     _form.AddLog("コメントファイル出力終了", 1);
-                    //_nNetComment.EndXmlDoc();
                     _nNetComment?.Dispose();
                     _nNetComment.WsStatus = 1;  //再接続なし
                 }
