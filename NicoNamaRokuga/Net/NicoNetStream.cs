@@ -273,8 +273,11 @@ namespace NicoNamaRokuga.Net
                                 _nNetComment.Connect(_cmi.WsUrl);
                                 if (_bci.IsTimeShift())
                                 {
-                                    while (_nNetComment.WsStatus != 0) ;
-                                    _nNetComment.StartGetTSComment();
+                                    if (_nNetComment.WsStatus < 1)
+                                    {
+                                        while (_nNetComment.WsStatus != 0) ;
+                                        _nNetComment.StartGetTSComment();
+                                    }
                                 }
                             }
                         }

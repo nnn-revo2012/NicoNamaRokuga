@@ -257,7 +257,7 @@ namespace NicoNamaRokuga
                 if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
                     _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ri);
                 else
-                    _eProcess = new ExecProcess(this, bci, _nNetComment);
+                    _eProcess = new ExecProcess(this, bci, _nNetComment, _ri);
                 _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
 
                 AddLog("wsUrl: " + bci.WsUrl, 9);
@@ -358,7 +358,7 @@ namespace NicoNamaRokuga
                             if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
                                 _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ri);
                             else
-                                _eProcess = new ExecProcess(this, bci, _nNetComment);
+                                _eProcess = new ExecProcess(this, bci, _nNetComment, _ri);
                             _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
                             _nNetStream.Connect();
                             _ri.Count--;

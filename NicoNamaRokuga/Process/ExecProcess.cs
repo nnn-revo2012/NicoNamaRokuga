@@ -8,6 +8,7 @@ using System.IO;
 using System.Windows.Forms;
 
 using NicoNamaRokuga.Net;
+using NicoNamaRokuga.Rec;
 
 namespace NicoNamaRokuga.Proc
 {
@@ -84,15 +85,17 @@ namespace NicoNamaRokuga.Proc
 
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
         private BroadCastInfo _bci = null;
+        private RetryInfo _ri = null;
         private Form1 _form = null;
 
-        public ExecProcess(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment)
+        public ExecProcess(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment, RetryInfo ri)
         {
             IsDebug = false;
 
             PsStatus = -1;
             this._nNetComment = nNetComment;
             this._bci = bci;
+            this._ri = ri;
             this._form = fo;
         }
 
@@ -143,10 +146,16 @@ namespace NicoNamaRokuga.Proc
                 //EnableButton(false);
 
                 //生放送の場合コメント出力開始
-                if (Form1.props.IsComment && !_bci.IsTimeShift())
+                if (Form1.props.IsComment)
                 {
-                    while (_nNetComment.WsStatus != 0) ;
-                    _nNetComment.StartGetComment();
+                    if (!_bci.IsTimeShift() || !_ri.IsRetry)
+                    {
+                        if (_nNetComment.WsStatus < 1)
+                        {
+                            while (_nNetComment.WsStatus != 0) ;
+                            _nNetComment.StartGetComment();
+                        }
+                    }
                 }
                 _ps.BeginOutputReadLine();
                 _ps.BeginErrorReadLine();

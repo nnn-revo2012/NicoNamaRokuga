@@ -173,10 +173,16 @@ namespace NicoNamaRokuga.Rec
                 _form.AddLog("プロセス実行中です。", 1);
                 PsStatus = 0; //実行中
                 //生放送の場合コメント出力開始
-                if (Form1.props.IsComment && !_bci.IsTimeShift())
+                if (Form1.props.IsComment)
                 {
-                    while (_nNetComment.WsStatus != 0) ;
-                    _nNetComment.StartGetComment();
+                    if (!_bci.IsTimeShift() || !_ri.IsRetry)
+                    {
+                        if (_nNetComment.WsStatus < 1)
+                        {
+                            while (_nNetComment.WsStatus != 0) ;
+                            _nNetComment.StartGetComment();
+                        }
+                    }
                 }
                 if (_bci.IsTimeShift())
                     Task.Run(() => HtmlRecordTS(masterfile, outfile));
