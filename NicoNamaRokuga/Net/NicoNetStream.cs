@@ -290,13 +290,13 @@ namespace NicoNamaRokuga.Net
                         var par = (JArray)jtkn["params"];
                         ttt = par[1].ToString();
                         _form.AddLog("Disconnect: " + ttt, 9);
-                        WsStatus = 2; //再接続
+                        WsStatus = 3; //再接続
                         if (ttt == "TAKEOVER") //追い出し
-                            WsStatus = 3; //再接続あり(長)
+                            WsStatus = 4; //再接続あり(長)
                         else if (ttt == "SERVICE_TEMPORARILY_UNAVAILABLE")
-                            WsStatus = 3; //再接続あり(長)
+                            WsStatus = 4; //再接続あり(長)
                         else if (ttt == "TOO_MANY_CONNECTIONS")
-                            WsStatus = 3; //再接続あり(長)
+                            WsStatus = 4; //再接続あり(長)
                         else if (ttt == "END_PROGRAM") //放送終了
                             WsStatus = 1; //再接続なし
                         break;

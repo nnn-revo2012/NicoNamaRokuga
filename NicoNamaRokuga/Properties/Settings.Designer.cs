@@ -312,7 +312,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
         public int ReConnectTime1 {
             get {
                 return ((int)(this["ReConnectTime1"]));
@@ -336,7 +336,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("29000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
         public int ReConnectTime2 {
             get {
                 return ((int)(this["ReConnectTime2"]));

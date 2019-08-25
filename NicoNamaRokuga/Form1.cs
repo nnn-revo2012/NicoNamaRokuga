@@ -318,11 +318,10 @@ namespace NicoNamaRokuga
                     }
                     if (_ri.Count > 0)
                     {
-                        if (_nNetStream.WsStatus == 4)
+                        if (_nNetStream.WsStatus == 5)
                         {
-                            var tt = props.ReConnectTime2 / 1000;
-                            AddLog(tt + "秒停止します。", 1);
-                            await Task.Delay(props.ReConnectTime2);
+                            AddLog(props.ReConnectTime2 - 1 + "秒停止します。", 1);
+                            await Task.Delay(TimeSpan.FromSeconds(props.ReConnectTime2 - 1));
                             var _bci = await _nLiveNet.GetNicoPageAsync(liveId);
                             if (_bci.Status != "ok")
                             {
@@ -342,11 +341,15 @@ namespace NicoNamaRokuga
                                 bci.WsUrl = _bci.WsUrl;
                             }
                         }
+                        else if (_nNetStream.WsStatus == 4)
+                        {
+                            AddLog(props.ReConnectTime2 - 1 + "秒停止します。", 1);
+                            await Task.Delay(TimeSpan.FromSeconds(props.ReConnectTime2 - 1));
+                        }
                         else if (_nNetStream.WsStatus == 3)
                         {
-                            var tt = props.ReConnectTime1 / 1000;
-                            AddLog(tt + "秒停止します。", 1);
-                            await Task.Delay(props.ReConnectTime1);
+                            AddLog(props.ReConnectTime1 - 1 + "秒停止します。", 1);
+                            await Task.Delay(TimeSpan.FromSeconds(props.ReConnectTime1 - 1));
                         }
                         if (ExecStatus != 1)
                         {
