@@ -150,6 +150,43 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
+        public void WriteDbComment(Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
+        {
+
+            try 
+            {
+                _cn.Open();
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO comment \n";
+                    if (notfound > 0)
+                        command.CommandText += "(seqno,current,position,bandwidth,size,data,notfound) VALUES (\n";
+                    else
+                        command.CommandText += "(seqno,current,position,bandwidth,size,data) VALUES (\n";
+                    command.CommandText += sgi.SeqNo.ToString() + ",\n"
+                                         + pli.SeqNo.ToString() + ",\n"
+                                         + sgi.Position.ToString() + ",\n"
+                                         + pli.Player.FirstOrDefault().Bandwidth.ToString() + ",\n"
+                                         + leng.ToString() + ",\n";
+                    if (notfound > 0)
+                        command.CommandText += "@data," + notfound.ToString() + ");";
+                    else
+                        command.CommandText += "@data);";
+
+                        var param = new SQLiteParameter("@data", System.Data.DbType.Binary);
+                    param.Value = data;
+                    command.Parameters.Add(param);
+                    command.ExecuteNonQuery();
+                }
+                _cn.Close();
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(WriteDbComment), Ex);
+                _cn.Close();
+            }
+        }
+
         public void CreateDbKvs(string DbFile)
         {
             try

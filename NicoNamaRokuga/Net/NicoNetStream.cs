@@ -271,14 +271,6 @@ namespace NicoNamaRokuga.Net
                                 ttt = jtkn["room"]["threadId"].ToString();
                                 _cmi.ThreadId = ttt;
                                 _nNetComment.Connect(_cmi.WsUrl);
-                                if (_bci.IsTimeShift())
-                                {
-                                    if (_nNetComment.WsStatus < 1)
-                                    {
-                                        while (_nNetComment.WsStatus != 0) ;
-                                        _nNetComment.StartGetTSComment();
-                                    }
-                                }
                             }
                         }
                         break;

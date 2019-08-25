@@ -109,9 +109,16 @@ namespace NicoNamaRokuga.Net
 
             /// 文字列受信
             if (_bci.IsTimeShift())
+            {
                 _ws.MessageReceived += wsReceivedTS;
+            }
             else
-                _ws.MessageReceived += wsReceived;
+            {
+                if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
+                    _ws.MessageReceived += wsReceivedDB;
+                else
+                    _ws.MessageReceived += wsReceived;
+            }
 
             /// サーバー接続完了
             _ws.Opened += (s, e) =>
@@ -209,6 +216,53 @@ namespace NicoNamaRokuga.Net
             }
         }
 
+        /// 文字列受信(生放送)(DB)
+        private void wsReceivedDB(object sender, MessageReceivedEventArgs e)
+        {
+
+            if (string.IsNullOrEmpty(e.Message))
+                return;
+
+            if (Form1.props.IsSeetNo)
+            {
+                if (e.Message.Contains(Props.Commnet_SeetNo))
+                    return;
+            }
+
+            try
+            {
+                //_form.AddLog(e.Message + "\r\n");
+                var jmes = JObject.Parse(e.Message);
+
+                switch (RgxCommand.Match(e.Message).Groups[1].Value)
+                {
+                    case "ping":
+                        //_form.AddLog(e.Message + "\r\n");
+                        if (e.Message.IndexOf("rf:") > 0) _seq_no++;
+                        break;
+                    case "thread":
+                        //_form.AddLog(e.Message + "\r\n");
+                        if ((int)jmes["thread"]["resultcode"] == 0)
+                        {
+                            _form.AddLog("コメントファイル出力開始", 1);
+                            if (_seq_no == 0)
+                            {
+                                StartHBTimer();
+                            }
+                        }
+                        break;
+                    case "chat":
+                        Json2DB(jmes);
+                        break;
+                }
+
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(wsReceived), Ex);
+            }
+        }
+
         /// 文字列受信(TS)
         private void wsReceivedTS(object sender, MessageReceivedEventArgs e)
         {
@@ -233,7 +287,10 @@ namespace NicoNamaRokuga.Net
                             if (_last_res < _MESSAGE_MAX)
                             {
                                 this.Close();
-                                AppendComment();
+                                if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
+                                    AppendCommentDB();
+                                else
+                                    AppendComment();
                             }
                             else
                             {
@@ -397,6 +454,54 @@ namespace NicoNamaRokuga.Net
 
         }
 
+        private void AppendCommentDB()
+        {
+            var come_time_prev = string.Empty;
+            var come_time = string.Empty;
+
+            //一時ファイル番号大きい方から読み込み
+            //ファイル書き出す
+            try
+            {
+                _form.AddLog("コメントファイル出力開始", 1);
+                    for (var i = _seq_no - 1; i >= 0; i--)
+                    {
+                        var write_flg = (come_time_prev == string.Empty) ? true : false;
+                        foreach (var line in _come_list.ToArray()[i])
+                        {
+                            var jmes = JObject.Parse(line);
+                            come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
+                            if (write_flg)
+                            {
+                                if (Form1.props.IsSeetNo)
+                                {
+                                    if (line.Contains(Props.Commnet_SeetNo))
+                                        continue;
+                                }
+                                Json2DB(jmes);
+                            }
+                            else
+                            {
+                                if (come_time == come_time_prev) write_flg = true;
+                            }
+                        }
+                        come_time_prev = come_time;
+                        _come_list.ToArray()[i].Clear();
+                        _come_list.ToArray()[i].TrimExcess();
+                    }
+
+                _form.AddLog("コメントファイル出力終了", 1);
+
+                _come_list.Clear();
+                _come_list.TrimExcess();
+
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(AppendCommentDB), Ex);
+            }
+
+        }
 
         public void BeginXmlDoc() 
         {
@@ -434,6 +539,11 @@ namespace NicoNamaRokuga.Net
             }
 
             return result;
+        }
+
+        private void Json2DB(JObject jmes)
+        {
+            //Dummy
         }
 
 
