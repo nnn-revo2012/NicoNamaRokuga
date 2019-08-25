@@ -369,34 +369,33 @@ namespace NicoNamaRokuga
                         AddLog("リトライ終了します。", 1);
                         ExecStatus = 1;
                     }
-                    if (ExecStatus == 1) //終了処理
+                }
+                if (_nNetStream.WsStatus == 1 || ExecStatus == 1) //終了処理
+                {
+                    if (_rHtml != null)
                     {
-                        if (_rHtml != null)
-                        {
-                            _rHtml.BreakProcess("");
-                        }
-                        if (_eProcess != null)
-                        {
-                            _eProcess.BreakProcess(epi.BreakKey);
-                        }
-                        if (_nNetStream != null)
-                        {
-                            _nNetStream.Close();
-                        }
-                        if (_nNetComment != null)
-                        {
-                            _nNetComment.Close();
-                        }
-                        if (_nLiveNet != null)
-                        {
-                            _nLiveNet.Dispose();
-                        }
-                        AddLog("録画終了しました。", 1);
-                        EnableButton(true);
-                        start_flg = false;
-                        return;
+                        _rHtml.BreakProcess("");
                     }
-
+                    if (_eProcess != null)
+                    {
+                        _eProcess.BreakProcess(epi.BreakKey);
+                    }
+                    if (_nNetStream != null)
+                    {
+                        _nNetStream.Close();
+                    }
+                    if (_nNetComment != null)
+                    {
+                        _nNetComment.Close();
+                    }
+                    if (_nLiveNet != null)
+                    {
+                        _nLiveNet.Dispose();
+                    }
+                    AddLog("録画終了しました。", 1);
+                    EnableButton(true);
+                    start_flg = false;
+                    return;
                 }
             }
             catch (Exception Ex)
