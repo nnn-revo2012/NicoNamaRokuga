@@ -328,6 +328,7 @@ namespace NicoNamaRokuga.Net
             /// 接続断の発生
             _ws.Error += (s, e) =>
             {
+                StopWatchTimer();   //タイマー終了
                 WsStatus = 1; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
@@ -461,6 +462,7 @@ namespace NicoNamaRokuga.Net
                 {
                     // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
                     _ws?.Dispose();
+                    StopWatchTimer();
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。

@@ -444,7 +444,7 @@ namespace NicoNamaRokuga.Net
             _hbTimer = new System.Threading.Timer(_ =>
             {
                 _ws?.Send(string.Empty);
-                _form.AddLog("Send HeartBeat", 9);
+                _form.AddLog("Comment HeartBeat", 9);
             }
             , null, time, time);
         }
@@ -466,6 +466,7 @@ namespace NicoNamaRokuga.Net
                     // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
                     _ws?.Dispose();
                     _sw?.Dispose();
+                    StopHBTimer();
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
