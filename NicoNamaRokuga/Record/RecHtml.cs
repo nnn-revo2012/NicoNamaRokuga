@@ -96,7 +96,6 @@ namespace NicoNamaRokuga.Rec
         private bool disposedValue = false; // 重複する呼び出しを検知するには
 
         private WebClientEx _wc = null;
-        private NicoDb _nd = null;
 
         private class WebClientEx : WebClient
         {
@@ -130,16 +129,18 @@ namespace NicoNamaRokuga.Rec
 
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
         private BroadCastInfo _bci = null;
+        private NicoDb _ndb = null;
         private RetryInfo _ri = null;
         private Form1 _form = null;
 
-        public RecHtml(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment, CookieContainer cc, RetryInfo ri)
+        public RecHtml(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment, CookieContainer cc, NicoDb ndb, RetryInfo ri)
         {
             IsDebug = false;
 
             PsStatus = -1;
             this._nNetComment = nNetComment;
             this._bci = bci;
+            this._ndb = ndb;
             this._ri = ri;
             this._form = fo;
 
@@ -208,13 +209,6 @@ namespace NicoNamaRokuga.Rec
         {
             try
             {
-                var file = outfile;
-                if (_bci.IsTimeShift()) file += Props.TIMESHIFT;
-                file += ".sqlite3";
-                _form.AddExecLog("Output: " + file + "\r\n");
-                var nd = new NicoDb(_form, file);
-                _nd = nd;
-
                 var ttt = string.Empty;
                 if (_ri.IsRetry)
                     ttt = "&start=" + _ri.Position.ToString();
@@ -268,7 +262,7 @@ namespace NicoNamaRokuga.Rec
                         if (PsStatus > 0) break;
                         if (sgi.SeqNo >= pli.SeqNo)
                         {
-                            if (!await GetSegmentAsync(item, file, pli, sgi))
+                            if (!await GetSegmentAsync(item, pli, sgi))
                                 EndPs(2, sgi.SeqNo, sgi.Position); //Retry
                             sgi.SeqNo++;
                             sgi.Position += item.ExtInfo;
@@ -325,12 +319,6 @@ namespace NicoNamaRokuga.Rec
         {
             try
             {
-                var file = outfile;
-                file += ".sqlite3";
-                _form.AddExecLog("Output: " + file + "\r\n");
-                var nd = new NicoDb(_form, file);
-                _nd = nd;
-
                 // masterファイルをGet
                 var pli = await GetMasterM3u8Async(masterfile);
                 if (pli.Status != "Ok" || pli.Player.Count() <= 0)
@@ -373,7 +361,7 @@ namespace NicoNamaRokuga.Rec
                         if (PsStatus > 0) break;
                         if (sgi.SeqNo >= pli.SeqNo)
                         {
-                            if (!await GetSegmentAsync(item, file, pli, sgi))
+                            if (!await GetSegmentAsync(item, pli, sgi))
                                 EndPs(2, sgi.SeqNo, sgi.Position); //Retry
                             sgi.SeqNo++;
                             //sgi.Position += item.ExtInfo;
@@ -556,7 +544,7 @@ namespace NicoNamaRokuga.Rec
         }
 
         //segmentファイルを取得
-        public async Task<bool> GetSegmentAsync(Segment seg, string outfile, PlayListInfo pli, SegmentInfo sgi)
+        public async Task<bool> GetSegmentAsync(Segment seg, PlayListInfo pli, SegmentInfo sgi)
         {
             _form.AddExecLog("GetSegmentFile\r\n");
             byte[] data = null;
@@ -564,14 +552,13 @@ namespace NicoNamaRokuga.Rec
 
             try
             {
-                var file = outfile + "_" + seg.sFile;
                 data = await _wc.DownloadDataTaskAsync(seg.sUrl);
                 string ll = _wc.ResponseHeaders.Get("Content-Length");
                 _form.AddExecLog("Input: " + seg.sUrl + "\r\n");
                 _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " Size: " + data.Length.ToString() + " Content-Length: " + ll + "\r\n");
 
                 //データーをSqlite3に書き込み
-                _nd.WriteDbMedia(seg, pli, sgi, data, data.Length, 0);
+                _ndb.WriteDbMedia(seg, pli, sgi, data, data.Length, 0);
 
             }
             catch (WebException Ex)
@@ -642,7 +629,6 @@ namespace NicoNamaRokuga.Rec
                 {
                     // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
                     _wc?.Dispose();
-                    _nd?.Dispose();
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。

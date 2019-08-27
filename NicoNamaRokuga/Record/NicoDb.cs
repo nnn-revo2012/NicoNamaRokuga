@@ -9,6 +9,8 @@ using System.Net;
 using System.Windows.Forms;
 
 using System.Data.SQLite;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using NicoNamaRokuga.Prop;
 
@@ -34,6 +36,7 @@ namespace NicoNamaRokuga.Rec
             var conn = new SQLiteConnection("Data Source=" + dbfile);
             _cn = conn;
 
+            _cn.Open();
             CreateDbMedia(dbfile);
             CreateDbComment(dbfile);
             CreateDbKvs(dbfile);
@@ -48,7 +51,6 @@ namespace NicoNamaRokuga.Rec
         {
             try
             {
-                _cn.Open();
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "CREATE TABLE IF NOT EXISTS media (\n"
@@ -66,21 +68,17 @@ namespace NicoNamaRokuga.Rec
                                         + "CREATE INDEX IF NOT EXISTS media101 ON media(notfound)";
                     command.ExecuteNonQuery();
                 }
-                _cn.Close();
             }
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(CreateDbMedia), Ex);
-                _cn.Close();
             }
         }
 
         public void WriteDbMedia(Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
         {
-
             try 
             {
-                _cn.Open();
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "INSERT INTO media \n";
@@ -103,12 +101,10 @@ namespace NicoNamaRokuga.Rec
                     command.Parameters.Add(param);
                     command.ExecuteNonQuery();
                 }
-                _cn.Close();
             }
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(WriteDbMedia), Ex);
-                _cn.Close();
             }
         }
 
@@ -116,7 +112,6 @@ namespace NicoNamaRokuga.Rec
         {
             try
             {
-                _cn.Open();
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "CREATE TABLE IF NOT EXISTS comment (\n"
@@ -141,49 +136,44 @@ namespace NicoNamaRokuga.Rec
                                         + "CREATE INDEX IF NOT EXISTS comment101 ON comment(no)";
                     command.ExecuteNonQuery();
                 }
-                _cn.Close();
             }
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(CreateDbComment), Ex);
-                _cn.Close();
             }
         }
 
-        public void WriteDbComment(Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
+        public void WriteDbComment(string command_text, string mail, string user_id, string content, string hash)
         {
-
             try 
             {
-                _cn.Open();
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO comment \n";
-                    if (notfound > 0)
-                        command.CommandText += "(seqno,current,position,bandwidth,size,data,notfound) VALUES (\n";
-                    else
-                        command.CommandText += "(seqno,current,position,bandwidth,size,data) VALUES (\n";
-                    command.CommandText += sgi.SeqNo.ToString() + ",\n"
-                                         + pli.SeqNo.ToString() + ",\n"
-                                         + sgi.Position.ToString() + ",\n"
-                                         + pli.Player.FirstOrDefault().Bandwidth.ToString() + ",\n"
-                                         + leng.ToString() + ",\n";
-                    if (notfound > 0)
-                        command.CommandText += "@data," + notfound.ToString() + ");";
-                    else
-                        command.CommandText += "@data);";
+                    command.CommandText = "INSERT INTO comment \n" +
+                                          command_text;
 
-                        var param = new SQLiteParameter("@data", System.Data.DbType.Binary);
-                    param.Value = data;
-                    command.Parameters.Add(param);
+                    var p_mail = new SQLiteParameter("@mail", System.Data.DbType.String);
+                    p_mail.Value = mail;
+                    command.Parameters.Add(p_mail);
+
+                    var p_user_id = new SQLiteParameter("@user_id", System.Data.DbType.String);
+                    p_user_id.Value = user_id;
+                    command.Parameters.Add(p_user_id);
+
+                    var p_content = new SQLiteParameter("@content", System.Data.DbType.String);
+                    p_content.Value = content;
+                    command.Parameters.Add(p_content);
+
+                    var p_hash = new SQLiteParameter("@hash", System.Data.DbType.String);
+                    p_hash.Value = hash;
+                    command.Parameters.Add(p_hash);
+
                     command.ExecuteNonQuery();
                 }
-                _cn.Close();
             }
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(WriteDbComment), Ex);
-                _cn.Close();
             }
         }
 
@@ -191,7 +181,6 @@ namespace NicoNamaRokuga.Rec
         {
             try
             {
-                _cn.Open();
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "CREATE TABLE IF NOT EXISTS kvs (\n"
@@ -201,12 +190,10 @@ namespace NicoNamaRokuga.Rec
                     command.CommandText = "CREATE UNIQUE INDEX IF NOT EXISTS kvs0 ON kvs(k)";
                     command.ExecuteNonQuery();
                 }
-                _cn.Close();
             }
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(CreateDbKvs), Ex);
-                _cn.Close();
             }
         }
 
@@ -218,6 +205,7 @@ namespace NicoNamaRokuga.Rec
                 if (disposing)
                 {
                     // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
+                    _cn?.Close();
                     _cn?.Dispose();
                 }
 

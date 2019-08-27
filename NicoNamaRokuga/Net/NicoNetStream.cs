@@ -246,9 +246,7 @@ namespace NicoNamaRokuga.Net
                                 ttt = jtkn["currentStream"]["uri"].ToString();
                                 _form.AddLog("Masterm3u8: " + ttt, 9);
                             }
-                            if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
-                                _epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3(_epi);
-                            else
+                            if (Form1.props.Protocol != Protocol.hls || Form1.props.UseExternal != UseExternal.native)
                                 _epi.SaveFile = ExecPsInfo.GetSaveFileNum(_epi);
                             if (Form1.props.IsComment)
                                 _cmi.SaveFile = _epi.SaveFile + _epi.Xml;
@@ -290,7 +288,11 @@ namespace NicoNamaRokuga.Net
                             WsStatus = 4; //再接続あり(長)
                         else if (ttt == "SERVICE_TEMPORARILY_UNAVAILABLE")
                             WsStatus = 4; //再接続あり(長)
+                        else if (ttt == "INTERNAL_SERVERERROR")
+                            WsStatus = 4; //再接続あり(長)
                         else if (ttt == "TOO_MANY_CONNECTIONS")
+                            WsStatus = 4; //再接続あり(長)
+                        else if (ttt == "TEMPORARILY_CROWDED")
                             WsStatus = 4; //再接続あり(長)
                         else if (ttt == "END_PROGRAM") //放送終了
                             WsStatus = 1; //再接続なし

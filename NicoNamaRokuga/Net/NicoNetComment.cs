@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq;
 using WebSocket4Net;
 
 using NicoNamaRokuga.Prop;
-using NicoNamaRokuga.Net;
+using NicoNamaRokuga.Rec;
 
 namespace NicoNamaRokuga.Net
 {
@@ -62,16 +62,18 @@ namespace NicoNamaRokuga.Net
 
         System.Threading.Timer _hbTimer;
 
+        private NicoLiveNet _nLiveNet = null;         //WebClient
         private BroadCastInfo _bci = null;
         private CommentInfo _cmi = null;
-        private NicoLiveNet _nLiveNet = null;         //WebClient
+        private NicoDb _ndb = null;
+
 
         private Form1 _form = null;
         private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
 
         //放送情報
 
-        public NicoNetComment(Form1 fo, BroadCastInfo bci, CommentInfo cmi, NicoLiveNet nLiveNet)
+        public NicoNetComment(Form1 fo, BroadCastInfo bci, CommentInfo cmi, NicoLiveNet nLiveNet, NicoDb ndb)
         {
             IsDebug = false;
 
@@ -82,6 +84,7 @@ namespace NicoNamaRokuga.Net
             this._nLiveNet = nLiveNet;
             this._bci = bci;
             this._cmi = cmi;
+            this._ndb = ndb;
             this._form = fo;
 
             _seq_no = 0;
@@ -252,7 +255,7 @@ namespace NicoNamaRokuga.Net
                         }
                         break;
                     case "chat":
-                        Json2DB(jmes);
+                        Json2Db(jmes);
                         break;
                 }
 
@@ -478,7 +481,7 @@ namespace NicoNamaRokuga.Net
                                     if (line.Contains(Props.Commnet_SeetNo))
                                         continue;
                                 }
-                                Json2DB(jmes);
+                                Json2Db(jmes);
                             }
                             else
                             {
@@ -514,6 +517,64 @@ namespace NicoNamaRokuga.Net
             _sw.Write("</packet>\r\n");
         }
 
+        private void Json2Db(JObject jmes)
+        {
+            var r_hash = new Dictionary<string, string>();
+            var mail = string.Empty;
+            var content = string.Empty;
+            var user_id = string.Empty;
+
+            if (string.IsNullOrEmpty(jmes.ToString()))
+                return;
+
+            foreach (var it in jmes)
+            {
+                foreach (var it2 in (JObject)it.Value)
+                {
+                    if (it2.Key == "mail")
+                    {
+                        r_hash[it2.Key] = "\"@" + it2.Key + "\"";
+                        mail = it2.Value.ToString();
+                    }
+                    else if (it2.Key == "user_id")
+                    {
+                        r_hash[it2.Key] = "\"@" + it2.Key + "\"";
+                        user_id = it2.Value.ToString();
+                    }
+                    else if (it2.Key == "content")
+                    {
+                        r_hash[it2.Key] = "\"@" + it2.Key + "\"";
+                        content = it2.Value.ToString();
+                    }
+                    else if (it2.Value.Type == JTokenType.Integer)
+                    {
+                        r_hash[it2.Key] = it2.Value.ToString();
+                    }
+                    else if (it2.Value.Type == JTokenType.String)
+                    {
+                        r_hash[it2.Key] = "\"" + it2.Value.ToString() + "\"";
+                    }
+                }
+            }
+            r_hash["date2"] = ((long.Parse(r_hash["date"]) * 100L * 100L) + long.Parse(r_hash["date_usec"])).ToString();
+
+            var calc_s = string.Format("{0:N},{1:N},{2:N},{3},{4}", r_hash["vpos"], r_hash["date"], r_hash["date_usec"], user_id, content);
+            //var hash:= fmt.Sprintf("%x", sha3.Sum256([]byte(calc_s)))
+            var hash = "4dfrdwwee"; //TEST
+            r_hash["hash"] = "@hash";
+            //var ttt = "calc_s: " + calc_s + "\r\n" +
+            //          "hash: " + hash + "\r\n" +
+            //          "mail: " + mail + "\r\n" +
+            //          "user_id: " + user_id + "\r\n" +
+            //          "content: " + content + "\r\n";
+            //MessageBox.Show(ttt);
+
+            var command = "(" + string.Join(", ", r_hash.Keys.ToArray()) + ") VALUES \n(" + string.Join(", ", r_hash.Values.ToArray()) + ");\n";
+            //_ndb.WriteDbComment(command, mail, user_id, content, hash);
+
+            return;
+        }
+
         private string Json2Xml(JObject jmes)
         {
             var result = string.Empty;
@@ -539,11 +600,6 @@ namespace NicoNamaRokuga.Net
             }
 
             return result;
-        }
-
-        private void Json2DB(JObject jmes)
-        {
-            //Dummy
         }
 
 

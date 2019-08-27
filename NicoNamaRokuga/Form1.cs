@@ -24,6 +24,7 @@ namespace NicoNamaRokuga
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
         private ExecProcess _eProcess = null;         //Process
         private RecHtml _rHtml = null;                //RecHtml
+        private NicoDb _ndb = null;                   //NicoDb
 
         private BroadCastInfo bci = null;             //ストリームサーバー情報
         private CommentInfo cmi = null;               //コメントサーバー情報
@@ -85,6 +86,10 @@ namespace NicoNamaRokuga
                     if (_nLiveNet != null)
                     {
                         _nLiveNet.Dispose();
+                    }
+                    if (_ndb != null)
+                    {
+                        _ndb.Dispose();
                     }
                     AddLog("中断しました。", 1);
                     EnableButton(true);
@@ -242,20 +247,29 @@ namespace NicoNamaRokuga
                 epi.Protocol = props.Protocol.ToString();
                 epi.Seq = 0;
 
+                if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
+                {
+                    var file = ExecPsInfo.GetSaveFileSqlite3(epi);
+                    if (bci.IsTimeShift()) file += Props.TIMESHIFT;
+                    file += ".sqlite3";
+                    epi.SaveFile = file;
+                    _ndb = new NicoDb(this, epi.SaveFile);
+                }
+
                 //コメント情報
                 if (props.IsComment)
                 {
                     cmi = new CommentInfo(bci.User_Id);
                     cmi.BeginTime = bci.Open_Time;
                     cmi.EndTime = bci.End_Time;
-                    _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
+                    _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
                 }
                 var ri = new RetryInfo();
                 _ri = ri;
                 _ri.Count = props.Retry;
 
                 if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
-                    _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ri);
+                    _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ndb, _ri);
                 else
                     _eProcess = new ExecProcess(this, bci, _nNetComment, _ri);
                 _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
@@ -316,6 +330,10 @@ namespace NicoNamaRokuga
                     {
                         _nNetComment.Close();
                     }
+                    if (_ndb != null)
+                    {
+                        _ndb.Dispose();
+                    }
                     if (_ri.Count > 0)
                     {
                         if (_nNetStream.WsStatus == 5)
@@ -354,9 +372,9 @@ namespace NicoNamaRokuga
                         if (ExecStatus != 1)
                         {
                             AddLog("再接続します。", 1);
-                            if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet);
+                            if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
                             if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
-                                _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ri);
+                                _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ndb, _ri);
                             else
                                 _eProcess = new ExecProcess(this, bci, _nNetComment, _ri);
                             _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
@@ -392,6 +410,10 @@ namespace NicoNamaRokuga
                     {
                         _nLiveNet.Dispose();
                     }
+                    if (_ndb != null)
+                    {
+                        _ndb.Dispose();
+                    }
                     AddLog("録画終了しました。", 1);
                     EnableButton(true);
                     start_flg = false;
@@ -420,6 +442,7 @@ namespace NicoNamaRokuga
             _nNetStream?.Dispose();
             _nNetComment?.Close();
             _nNetComment?.Dispose();
+            _ndb?.Dispose();
 
             _nLiveNet?.Dispose();
         }
