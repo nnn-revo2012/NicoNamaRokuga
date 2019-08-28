@@ -55,7 +55,7 @@ namespace NicoNamaRokuga.Prop
 
         public static readonly string Commnet_SeetNo = "/hb ifseetno";
 
-        private readonly string[][] ReplaceWords =
+        public static readonly string[][] ReplaceWords =
             {
             new[] {"?PID?","lv1234567","ProgramId。lv1234567のような文字列。"},
             new[] {"?UNAME?","ユーザ名","ユーザ名。公式の場合、official"},
@@ -75,6 +75,41 @@ namespace NicoNamaRokuga.Prop
             new[] {"?TIME4?","3102","時2桁,分2桁"}
             //new[] {"", "",""}
             };
+
+        public static readonly Dictionary<string, string> proplist =
+            new Dictionary<string, string>()
+        {
+		// "community"
+		{"comId", "community.id"}, // "co\d+"
+		// "program"
+		{"beginTime", "program.beginTime"}, // integer
+		{"broadcastId", "program.broadcastId"}, // "\d+"
+		{"description", "program.description"}, // 放送説明
+		{"endTime", "program.endTime"}, // integer
+		{"isFollowerOnly", "program.isFollowerOnly"}, // bool
+		{"isPrivate", "program.isPrivate"}, // bool
+		{"mediaServerType","program.mediaServerType"}, // "DMC"
+		{"nicoliveProgramId", "program.nicoliveProgramId"}, // "lv\d+"
+		{"openTime", "program.openTime"}, // integer
+		{"providerType", "program.providerType"}, // "community"
+		{"status", "program.status"}, //
+		{"userName", "program.supplier.name"}, // ユーザ名
+		{"userPageUrl", "program.supplier.pageUrl"}, // "https://www.nicovideo.jp/user/\d+"
+		{"title", "program.title"}, // title
+		// "site"
+		{"serverTime", "site.serverTime"}, // integer
+		// "socialGroup"
+		{"socDescription", "socialGroup.description"}, // コミュ説明
+		{"socId", "socialGroup.id"}, // "co\d+" or "ch\d+"
+		{"socLevel", "socialGroup.level"}, // integer
+		{"socName", "socialGroup.name"}, // community name
+		{"socType", "socialGroup.type"}, // "community"
+		// "user"
+		{"accountType", "user.accountType"}, // "premium"
+		{"//myId", "user.id"}, // "\d+"
+		{"isLoggedIn", "user.isLoggedIn"}, // bool
+		{"//myNickname", "user.nickname"} // string
+    	};
 
         public bool IsDebug { get; set; }
 
