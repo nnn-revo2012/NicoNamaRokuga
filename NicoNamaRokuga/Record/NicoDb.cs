@@ -164,10 +164,6 @@ namespace NicoNamaRokuga.Rec
                     p_content.Value = content;
                     command.Parameters.Add(p_content);
 
-                    var p_hash = new SQLiteParameter("@hash", System.Data.DbType.String);
-                    p_hash.Value = hash;
-                    command.Parameters.Add(p_hash);
-
                     command.ExecuteNonQuery();
                 }
             }

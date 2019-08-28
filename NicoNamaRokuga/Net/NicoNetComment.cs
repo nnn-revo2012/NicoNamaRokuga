@@ -527,41 +527,44 @@ namespace NicoNamaRokuga.Net
             if (string.IsNullOrEmpty(jmes.ToString()))
                 return;
 
-            foreach (var it in jmes)
+            JToken jtkn;
+            if (!jmes.TryGetValue("chat", out jtkn))
             {
-                foreach (var it2 in (JObject)it.Value)
+                return;
+            }
+            foreach (var it in JObject.Parse(jtkn.ToString()))
+            {
+                if (it.Key == "mail")
                 {
-                    if (it2.Key == "mail")
-                    {
-                        r_hash[it2.Key] = "\"@" + it2.Key + "\"";
-                        mail = it2.Value.ToString();
-                    }
-                    else if (it2.Key == "user_id")
-                    {
-                        r_hash[it2.Key] = "\"@" + it2.Key + "\"";
-                        user_id = it2.Value.ToString();
-                    }
-                    else if (it2.Key == "content")
-                    {
-                        r_hash[it2.Key] = "\"@" + it2.Key + "\"";
-                        content = it2.Value.ToString();
-                    }
-                    else if (it2.Value.Type == JTokenType.Integer)
-                    {
-                        r_hash[it2.Key] = it2.Value.ToString();
-                    }
-                    else if (it2.Value.Type == JTokenType.String)
-                    {
-                        r_hash[it2.Key] = "\"" + it2.Value.ToString() + "\"";
-                    }
+                    r_hash[it.Key] = "@" + it.Key;
+                    mail = it.Value.ToString();
+                }
+                else if (it.Key == "user_id")
+                {
+                    r_hash[it.Key] = "@" + it.Key;
+                    user_id = it.Value.ToString();
+                }
+                else if (it.Key == "content")
+                {
+                    r_hash[it.Key] = "@" + it.Key;
+                    content = it.Value.ToString();
+                }
+                else if (it.Value.Type == JTokenType.Integer)
+                {
+                    r_hash[it.Key] = it.Value.ToString();
+                }
+                else if (it.Value.Type == JTokenType.String)
+                {
+                    r_hash[it.Key] = "\"" + it.Value.ToString() + "\"";
                 }
             }
+
             r_hash["date2"] = ((long.Parse(r_hash["date"]) * 100L * 100L) + long.Parse(r_hash["date_usec"])).ToString();
 
             var calc_s = string.Format("{0:N},{1:N},{2:N},{3},{4}", r_hash["vpos"], r_hash["date"], r_hash["date_usec"], user_id, content);
             //var hash:= fmt.Sprintf("%x", sha3.Sum256([]byte(calc_s)))
             var hash = "4dfrdwwee"; //TEST
-            r_hash["hash"] = "@hash";
+            r_hash["hash"] = "\"" + hash + "\"";
             //var ttt = "calc_s: " + calc_s + "\r\n" +
             //          "hash: " + hash + "\r\n" +
             //          "mail: " + mail + "\r\n" +
@@ -570,6 +573,8 @@ namespace NicoNamaRokuga.Net
             //MessageBox.Show(ttt);
 
             var command = "(" + string.Join(", ", r_hash.Keys.ToArray()) + ") VALUES \n(" + string.Join(", ", r_hash.Values.ToArray()) + ");\n";
+            //MessageBox.Show(command);
+
             //_ndb.WriteDbComment(command, mail, user_id, content, hash);
 
             return;
