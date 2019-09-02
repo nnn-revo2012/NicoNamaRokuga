@@ -200,6 +200,7 @@ namespace NicoNamaRokuga.Net
                             _sw = sw;
                             _form.AddLog("コメントファイル出力開始", 1);
                             BeginXmlDoc();
+                            _sw.Write(Json2Xml(jmes));
                             if (_seq_no == 0)
                             {
                                 StartHBTimer();
@@ -248,6 +249,7 @@ namespace NicoNamaRokuga.Net
                         if ((int)jmes["thread"]["resultcode"] == 0)
                         {
                             _form.AddLog("コメントファイル出力開始", 1);
+                            Json2Db(jmes);
                             if (_seq_no == 0)
                             {
                                 StartHBTimer();
@@ -311,6 +313,7 @@ namespace NicoNamaRokuga.Net
                             var cmlist = new List<string>();
                             _come_text = cmlist;
                             if (_seq_no == 0) StartHBTimer();
+                            Json2Db(jmes);
                         }
                         break;
                     case "chat":
@@ -528,7 +531,12 @@ namespace NicoNamaRokuga.Net
                 return;
 
             JToken jtkn;
-            if (!jmes.TryGetValue("chat", out jtkn))
+            if (jmes.TryGetValue("thread", out jtkn))
+            {
+                _ndb.WriteDbKvs("comment/thread", System.Data.DbType.Double, (double )jtkn["thread"]);
+                return;
+            }
+            else if (!jmes.TryGetValue("chat", out jtkn))
             {
                 return;
             }

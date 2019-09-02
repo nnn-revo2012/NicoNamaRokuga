@@ -44,6 +44,7 @@ namespace NicoNamaRokuga.Net
         public long   End_Time { set; get; }
         public string OnAirStatus { set; get; }
         public string User_Id { set; get; }
+        public string Data_Props { set; get; }
 
         public BroadCastInfo(string liveid, string bcid, string autkn, string wsurl)
         {
@@ -53,17 +54,12 @@ namespace NicoNamaRokuga.Net
             this.WsUrl = wsurl;
             this.Status = null;
             this.Error = null;
+            this.Data_Props = null;
         }
 
         public bool IsTimeShift()
         {
             return OnAirStatus == "ON_AIR" ? false : true;
-        }
-
-        private static readonly Regex RgxChNo = new Regex("/([^/]+)$", RegexOptions.Compiled);
-        public static string GetChNo(string url)
-        {
-            return RgxChNo.Match(url).Groups[1].Value;
         }
 
         //指定フォーマットに基づいて録画ファイル名を作る

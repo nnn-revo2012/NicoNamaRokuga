@@ -33,10 +33,17 @@ namespace NicoNamaRokuga.Rec
             IsDebug = false;
 
             this._form = fo;
-            var conn = new SQLiteConnection("Data Source=" + dbfile);
+
+            var builder = new SQLiteConnectionStringBuilder
+            {
+                DataSource = dbfile,
+                SyncMode = SynchronizationModes.Off,
+                JournalMode = SQLiteJournalModeEnum.Wal,
+            };
+            var conn = new SQLiteConnection(builder.ToString());
             _cn = conn;
 
-            _cn.Open();
+            Open();
             CreateDbMedia(dbfile);
             CreateDbComment(dbfile);
             CreateDbKvs(dbfile);
@@ -46,6 +53,21 @@ namespace NicoNamaRokuga.Rec
         {
             this.Dispose();
         }
+
+        public void Open()
+        {
+            _cn?.Open();
+        }
+
+        public void Close()
+        {
+            _cn?.Close();
+        }
+
+        //public void Open()
+        //{
+        //    _cn?.Open();
+        //}
 
         public void CreateDbMedia(string DbFile)
         {
@@ -193,6 +215,73 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
+        public void WriteDbKvsProps(string data_props)
+        {
+            try
+            {
+                var datap = JObject.Parse(data_props);
+                var ttt = string.Empty;
+
+                foreach (var item in Props.PropLists)
+                {
+                    ttt = (string)datap.SelectToken(item.Value);
+                    if (item.Key == "beginTime" || item.Key == "endTime" ||
+                        item.Key == "openTime" || item.Key == "serverTime" ||
+                        item.Key == "socLevel")
+                    {
+                        double ddd;
+                        if (double.TryParse(ttt, out ddd))
+                            WriteDbKvs(item.Key, System.Data.DbType.Double, ddd);
+                    }
+                    else if (item.Key == "isFollowerOnly" || item.Key == "isPrivate" || item.Key == "isLoggedIn")
+                    {
+                        if (ttt != null)
+                            WriteDbKvs(item.Key, System.Data.DbType.Int32, (int )datap.SelectToken(item.Value));
+                    }
+                    else
+                    {
+                        if (ttt != null)
+                            WriteDbKvs(item.Key, System.Data.DbType.String, ttt);
+                    }
+
+                }
+                ttt = (string)datap.SelectToken(Props.PropLists["userPageUrl"]);
+                if (ttt != null)
+                    WriteDbKvs("userId", System.Data.DbType.String, Props.GetChNo(ttt));
+
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(WriteDbKvsProps), Ex);
+            }
+        }
+
+        public void WriteDbKvs(string key, System.Data.DbType dbtype, object data)
+        {
+            try
+            {
+                SQLiteParameter p_data = null;
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO kvs (k, v) VALUES \n" +
+                                          "(\"" + key + "\" ,@data);";
+                    p_data = new SQLiteParameter("@data", dbtype);
+                    if (dbtype == System.Data.DbType.Double)
+                        p_data.Value = (double )data;
+                    else if (dbtype == System.Data.DbType.Int32)
+                        p_data.Value = (int )data;
+                    else
+                        p_data.Value = (string )data;
+                    command.Parameters.Add(p_data);
+
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(WriteDbKvs), Ex);
+            }
+        }
 
         protected virtual void Dispose(bool disposing)
         {

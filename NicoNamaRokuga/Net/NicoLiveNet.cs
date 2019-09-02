@@ -275,6 +275,7 @@ namespace NicoNamaRokuga.Net
                 providertype = Regex.Match(hs, "\"content_type\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
                 bci.Provider_Type = providertype;
                 var ttt = WebUtility.HtmlDecode(Regex.Match(hs, "<script +id=\"embedded-data\" +data-props=\"([^\"]*)\"></script>", RegexOptions.Compiled).Groups[1].Value);
+                bci.Data_Props = ttt;
                 bci.WsUrl = Regex.Match(ttt, @"""webSocketUrl"":""([^""]+)""").Groups[1].Value;
                 bci.AuTkn = Regex.Match(ttt, @"""audienceToken"":""([^""]+)""").Groups[1].Value; ;
                 bci.BcId = Regex.Match(ttt, @"""broadcastId"":""([^""]+)""").Groups[1].Value; ;
@@ -293,7 +294,7 @@ namespace NicoNamaRokuga.Net
                 {
                     bci.Provider_Name = dprogram["supplier"]["name"].ToString();
                     if (providertype == "user")
-                        bci.Provider_Id = BroadCastInfo.GetChNo(dprogram["supplier"]["pageUrl"].ToString());
+                        bci.Provider_Id = Props.GetChNo(dprogram["supplier"]["pageUrl"].ToString());
                 }
                 bci.FollowerOnly = (bool)dprogram["isFollowerOnly"];
                 bci.Open_Time = (long)dprogram["openTime"];

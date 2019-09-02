@@ -254,6 +254,8 @@ namespace NicoNamaRokuga
                     file += ".sqlite3";
                     epi.SaveFile = file;
                     _ndb = new NicoDb(this, epi.SaveFile);
+
+                    _ndb.WriteDbKvsProps(bci.Data_Props);
                 }
 
                 //コメント情報

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -76,7 +77,7 @@ namespace NicoNamaRokuga.Prop
             //new[] {"", "",""}
             };
 
-        public static readonly Dictionary<string, string> proplist =
+        public static readonly Dictionary<string, string> PropLists =
             new Dictionary<string, string>()
         {
 		// "community"
@@ -106,9 +107,7 @@ namespace NicoNamaRokuga.Prop
 		{"socType", "socialGroup.type"}, // "community"
 		// "user"
 		{"accountType", "user.accountType"}, // "premium"
-		{"//myId", "user.id"}, // "\d+"
 		{"isLoggedIn", "user.isLoggedIn"}, // bool
-		{"//myNickname", "user.nickname"} // string
     	};
 
         public bool IsDebug { get; set; }
@@ -348,6 +347,12 @@ namespace NicoNamaRokuga.Prop
                     break;
             }
             return result;
+        }
+
+        private static readonly Regex RgxChNo = new Regex("/([^/]+)$", RegexOptions.Compiled);
+        public static string GetChNo(string url)
+        {
+            return RgxChNo.Match(url).Groups[1].Value;
         }
 
         public static long GetUnixTime() {
