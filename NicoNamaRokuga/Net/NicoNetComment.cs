@@ -312,8 +312,10 @@ namespace NicoNamaRokuga.Net
                             _form.AddLog(_last_res + " 個のコメントを読み込みます。", 1);
                             var cmlist = new List<string>();
                             _come_text = cmlist;
-                            if (_seq_no == 0) StartHBTimer();
-                            Json2Db(jmes);
+                            if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
+                                Json2Db(jmes);
+                            if (_seq_no == 0)
+                                StartHBTimer();
                         }
                         break;
                     case "chat":
