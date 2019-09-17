@@ -100,7 +100,7 @@ namespace NicoNamaRokuga.Rec
         private class WebClientEx : WebClient
         {
             public CookieContainer cookieContainer = new CookieContainer();
-            private int timeout;
+            public int timeout;
 
             public WebClientEx(int timeout) : base()
             {
@@ -410,7 +410,7 @@ namespace NicoNamaRokuga.Rec
                 pli.MasterUrl = url;
                 var idx = url.IndexOf("master.m3u8");
                 if (idx >= 0) pli.BaseUrl = url.Substring(0, idx);
-                var str = await _wc.DownloadStringTaskAsync(url);
+                var str = await _wc.DownloadStringTaskAsync(url).Timeout(_wc.timeout);
                 using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(str), false))
                 using (var sr = new StreamReader(stream, Encoding.UTF8))
                 {
@@ -472,7 +472,7 @@ namespace NicoNamaRokuga.Rec
             {
                 var idx = url.IndexOf("playlist.m3u8");
                 if (idx >= 0) sgi.BaseUrl = url.Substring(0, idx);
-                var str = await _wc.DownloadStringTaskAsync(url);
+                var str = await _wc.DownloadStringTaskAsync(url).Timeout(_wc.timeout);
                 using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(str), false))
                 using (var sr = new StreamReader(stream, Encoding.UTF8))
                 {
@@ -552,7 +552,7 @@ namespace NicoNamaRokuga.Rec
 
             try
             {
-                data = await _wc.DownloadDataTaskAsync(seg.sUrl);
+                data = await _wc.DownloadDataTaskAsync(seg.sUrl).Timeout(_wc.timeout);
                 string ll = _wc.ResponseHeaders.Get("Content-Length");
                 _form.AddExecLog("Input: " + seg.sUrl + "\r\n");
                 _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " Size: " + data.Length.ToString() + " Content-Length: " + ll + "\r\n");
@@ -593,7 +593,7 @@ namespace NicoNamaRokuga.Rec
                 var ttt = pli.MasterUrl.Split('?')[1].Split('&').FirstOrDefault(s => s.StartsWith("ht2_nicolive="));
                 var url = pli.BaseUrl + "play_control.json?" + ttt + "&play_speed=2";
                 _form.AddExecLog(url + "\r\n");
-                var str = await _wc.DownloadStringTaskAsync(url);
+                var str = await _wc.DownloadStringTaskAsync(url).Timeout(_wc.timeout);
                 var result = JObject.Parse(str);
                 //{ "meta":{ "status":200,"message":"ok"},"data":{ "play_control":{ "play_speed":0.25} } }
                 _form.AddExecLog(str + "\r\n");

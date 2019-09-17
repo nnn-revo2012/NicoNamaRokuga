@@ -63,10 +63,10 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="Timeout1" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2500</Value>
+      <Value Profile="(Default)">20000</Value>
     </Setting>
     <Setting Name="Timeout2" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">8000</Value>
+      <Value Profile="(Default)">20000</Value>
     </Setting>
     <Setting Name="IsComment" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

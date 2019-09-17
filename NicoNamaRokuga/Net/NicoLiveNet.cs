@@ -43,6 +43,24 @@ namespace NicoNamaRokuga.Net
         }
     }
 
+    static class TimeoutExtention
+    {
+        public static async Task Timeout(this Task task, int timeout)
+        {
+            var delay = Task.Delay(timeout);
+            if (await Task.WhenAny(task, delay) == delay)
+            {
+                throw new TimeoutException();
+            }
+        }
+
+        public static async Task<T> Timeout<T>(this Task<T> task, int timeout)
+        {
+            await ((Task)task).Timeout(timeout);
+            return await task;
+        }
+    }
+
     public class NicoLiveNet : IDisposable
     {
 
@@ -53,6 +71,7 @@ namespace NicoNamaRokuga.Net
         private class WebClientEx : WebClient
         {
             public CookieContainer cookieContainer = new CookieContainer();
+            public int timeout;
 
             protected override WebRequest GetWebRequest(Uri address)
             {
@@ -63,6 +82,7 @@ namespace NicoNamaRokuga.Net
                 {
                     hwr.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; //圧縮を有効化
                     hwr.CookieContainer = cookieContainer; //Cookie
+                    this.timeout = hwr.Timeout;
                 }
                 return wr;
             }
@@ -138,7 +158,7 @@ namespace NicoNamaRokuga.Net
                 ps.Add("mail", mail);
                 ps.Add("password", pass);
 
-                byte[] resArray = await _wc.UploadValuesTaskAsync(Props.NicoLoginUrl, ps);
+                byte[] resArray = await _wc.UploadValuesTaskAsync(Props.NicoLoginUrl, ps).Timeout(_wc.timeout);
                 string ttt = _wc.ResponseHeaders.Get("x-niconico-authflag");
                 int authflg;
                 if (int.TryParse(ttt, out authflg))
@@ -193,7 +213,7 @@ namespace NicoNamaRokuga.Net
                 if (string.IsNullOrEmpty(stmp)) return gpsi;
 
                 stmp = Props.NicoGetPlayerStatus + stmp;
-                var xhtml = await _wc.DownloadStringTaskAsync(stmp);
+                var xhtml = await _wc.DownloadStringTaskAsync(stmp).Timeout(_wc.timeout);
                 var doc = new XmlDocument();
                 doc.LoadXml(xhtml);
                 gpsi.Status = doc.DocumentElement.GetAttribute("status");
@@ -264,7 +284,7 @@ namespace NicoNamaRokuga.Net
                 var providertype = "unama";
                 bci.Provider_Type = providertype;
 
-                var hs = await _wc.DownloadStringTaskAsync(Props.NicoLiveUrl + liveid);
+                var hs = await _wc.DownloadStringTaskAsync(Props.NicoLiveUrl + liveid).Timeout(_wc.timeout);
                 if (string.IsNullOrEmpty(hs)) return bci;
                 if (hs.IndexOf("window.NicoGoogleTagManagerDataLayer = [];") > 0)
                 {
@@ -338,7 +358,7 @@ namespace NicoNamaRokuga.Net
             try
             {
                 var stmp = Props.NicoWayBackKey + "?thread=" + thread_id;
-                result = await _wc.DownloadStringTaskAsync(stmp);
+                result = await _wc.DownloadStringTaskAsync(stmp).Timeout(_wc.timeout);
                 result = result.Split('=')[1];
             }
             catch (WebException Ex)
