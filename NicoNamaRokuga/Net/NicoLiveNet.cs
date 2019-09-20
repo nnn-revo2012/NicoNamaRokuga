@@ -82,7 +82,7 @@ namespace NicoNamaRokuga.Net
                 {
                     hwr.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate; //圧縮を有効化
                     hwr.CookieContainer = cookieContainer; //Cookie
-                    this.timeout = hwr.Timeout;
+                    hwr.Timeout = timeout;
                 }
                 return wr;
             }
@@ -104,6 +104,7 @@ namespace NicoNamaRokuga.Net
 
             _wc.Encoding = Encoding.UTF8;
             _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
+            _wc.timeout = 30000;
         }
 
         ~NicoLiveNet()

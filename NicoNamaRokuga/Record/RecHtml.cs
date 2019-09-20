@@ -102,11 +102,6 @@ namespace NicoNamaRokuga.Rec
             public CookieContainer cookieContainer = new CookieContainer();
             public int timeout;
 
-            public WebClientEx(int timeout) : base()
-            {
-                this.timeout = timeout;
-            }
-
             protected override WebRequest GetWebRequest(Uri address)
             {
                 var wr = base.GetWebRequest(address);
@@ -146,13 +141,14 @@ namespace NicoNamaRokuga.Rec
 
             var timeout = Form1.props.Timeout1;
             if (_bci.IsTimeShift()) timeout = Form1.props.Timeout2;
-            var wc = new WebClientEx(timeout);
+            var wc = new WebClientEx();
             _wc = wc;
 
             _wc.Encoding = Encoding.UTF8;
             _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
             _wc.Headers.Add(HttpRequestHeader.Referer, Props.GetLiveUrl(_bci.LiveId));
             _wc.cookieContainer = cc;
+            _wc.timeout = timeout;     
             if (IsDebug)
             {
                 foreach (Cookie ck in cc.GetCookies(new Uri(Props.NicoDomain)))
