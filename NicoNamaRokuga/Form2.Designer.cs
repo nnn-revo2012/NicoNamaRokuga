@@ -554,7 +554,6 @@
             this.Controls.Add(this.tabControl1);
             this.Name = "Form2";
             this.Text = "設定";
-            this.Shown += new System.EventHandler(this.Form2_Shown);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

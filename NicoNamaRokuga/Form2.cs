@@ -30,10 +30,16 @@ namespace NicoNamaRokuga
         public Form2(Form1 fo)
         {
             InitializeComponent();
-
             _form = fo;
-            _props = new Props();
+        }
 
+        protected override async void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            _props = new Props();
+            var result = _props.LoadData();
+            await SetFormAsync();
         }
 
         //変数→フォーム
@@ -229,15 +235,6 @@ namespace NicoNamaRokuga
         private async void button4_Click(object sender, EventArgs e)
         {
             //ログインする
-        }
-
-
-        private async void Form2_Shown(object sender, EventArgs e)
-        {
-            //フォーム表示後データー読み込み＆表示
-            var result = _props.LoadData();
-            await SetFormAsync();
-
         }
 
         private async void checkBox1_Click(object sender, EventArgs e)

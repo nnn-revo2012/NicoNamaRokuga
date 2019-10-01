@@ -43,13 +43,7 @@ namespace NicoNamaRokuga
         public Form1(string[] args)
         {
             InitializeComponent();
-
-            //設定データー読み込み
-            props = new Props();
-            props.LoadData();
-
             IsBatchMode = (args.Length > 0) ? true : false;
-
             if (IsBatchMode)
             {
                 liveId = NicoLiveNet.GetLiveID(args[0]);
@@ -58,6 +52,17 @@ namespace NicoNamaRokuga
                     this.Close();
                 }
             }
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            //設定データー読み込み
+            props = new Props();
+            props.LoadData();
+
+            if (IsBatchMode) button1.PerformClick();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -480,11 +485,5 @@ namespace NicoNamaRokuga
                 AddLog("オプションメニューが開けませんでした。\r\n" + Ex.Message, 2);
             }
         }
-
-        private void Form1_Shown(object sender, EventArgs e)
-        {
-            if (IsBatchMode) button1.PerformClick();
-        }
-
     }
 }
