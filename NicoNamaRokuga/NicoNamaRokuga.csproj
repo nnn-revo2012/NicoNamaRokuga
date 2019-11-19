@@ -143,7 +143,6 @@
     <Compile Include="Net\NicoLiveNet.cs" />
     <Compile Include="Net\NicoNetComment.cs" />
     <Compile Include="Net\NicoNetStream.cs" />
-    <Compile Include="Process\IExecProcess.cs" />
     <Compile Include="Record\NicoDb.cs" />
     <Compile Include="Record\RecHtml.cs" />
     <Compile Include="Program.cs" />

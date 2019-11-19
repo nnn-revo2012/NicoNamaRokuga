@@ -544,17 +544,23 @@ namespace NicoNamaRokuga.Rec
         {
             _form.AddExecLog("GetSegmentFile\r\n");
             byte[] data = null;
+            int ll;
             if (string.IsNullOrEmpty(seg.sUrl)) return false;
 
             try
             {
                 data = await _wc.DownloadDataTaskAsync(seg.sUrl).Timeout(_wc.timeout);
-                string ll = _wc.ResponseHeaders.Get("Content-Length");
+                if (int.TryParse(_wc.ResponseHeaders.Get("Content-Length"), out ll))
+                {
+                    if (ll != data.Length)
+                        _form.AddLog("Seg " + sgi.SeqNo.ToString() + ": Size Error \r\n", 1);
+                }
+                ll = data.Length;
                 _form.AddExecLog("Input: " + seg.sUrl + "\r\n");
-                _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " Size: " + data.Length.ToString() + " Content-Length: " + ll + "\r\n");
+                _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " Size: " + data.Length.ToString() + " Content-Length: " + ll.ToString() + "\r\n");
 
                 //データーをSqlite3に書き込み
-                _ndb.WriteDbMedia(seg, pli, sgi, data, data.Length, 0);
+                _ndb.WriteDbMedia(seg, pli, sgi, data, ll, 0);
 
             }
             catch (WebException Ex)
