@@ -43,6 +43,7 @@ namespace NicoNamaRokuga
         public Form1(string[] args)
         {
             InitializeComponent();
+            this.Text = Ver.GetFullVersion();
             IsBatchMode = (args.Length > 0) ? true : false;
             if (IsBatchMode)
             {
