@@ -21,15 +21,11 @@ namespace NicoNamaRokuga.Rec
     {
         public bool IsRetry { set; get; }
         public int Count { set; get; }
-        public int SeqNo { set; get; }
-        public double Position { set; get; }
 
         public RetryInfo()
         {
             this.IsRetry = false;
             this.Count = 3;
-            this.SeqNo = -1;
-            this.Position = 0.0;
         }
     }
 
@@ -37,6 +33,7 @@ namespace NicoNamaRokuga.Rec
     {
         public string Status { set; get; }
         public string Error { set; get; }
+        public int ErrNo { set; get; }
         public string MasterUrl { set; get; }
         public string BaseUrl { set; get; }
         public ICollection<PlayerInfo> Player { private set; get; }
@@ -49,6 +46,7 @@ namespace NicoNamaRokuga.Rec
         {
             this.Status = "";
             this.Error = "";
+            this.ErrNo = 0;
             this.Player = new List<PlayerInfo>();
             this.SeqNo = -1;
             this.LastSeqNo = -1;
@@ -67,6 +65,7 @@ namespace NicoNamaRokuga.Rec
     {
         public string Status { set; get; }
         public string Error { set; get; }
+        public int ErrNo { set; get; }
         public string BaseUrl { set; get; }
         public ICollection<Segment> Seg { private set; get; }
         public int SeqNo { set; get; }
@@ -77,6 +76,7 @@ namespace NicoNamaRokuga.Rec
         {
             this.Status = "";
             this.Error = "";
+            this.ErrNo = 0;
             this.Seg = new List<Segment>();
             this.SeqNo = -1;
             this.EndList = false;
@@ -169,7 +169,6 @@ namespace NicoNamaRokuga.Rec
             {
                 _form.AddLog("プロセス実行中です。", 1);
                 PsStatus = 0; //実行中
-
                 if (Form1.props.IsComment)
                 {
                     if (!_bci.IsTimeShift())
@@ -190,10 +189,9 @@ namespace NicoNamaRokuga.Rec
                     }
                 }
 
-                if (_bci.IsTimeShift())
-                    Task.Run(() => HtmlRecordTS(masterfile, outfile));
-                else
-                    Task.Run(() => HtmlRecord(masterfile, outfile));
+                long waittime = 1400;
+                if (_bci.IsTimeShift()) waittime = 2400;
+                Task.Run(() => HtmlRecord(masterfile, outfile, waittime));
             }
             catch (Exception Ex)
             {
@@ -201,34 +199,45 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        private async Task HtmlRecordTS(string masterfile, string outfile)
+        private async Task HtmlRecord(string masterfile, string outfile, long waittime)
         {
             try
             {
-                var ttt = string.Empty;
-                if (_ri.IsRetry)
-                    ttt = "&start=" + _ri.Position.ToString();
-                else
-                    ttt = "&start=0.0";
-                _form.AddExecLog("MasterFile: " + masterfile + ttt + "\r\n");
+                var stime = string.Empty;
+                if (_bci.IsTimeShift())
+                {
+                    var ll = _ndb.GetDbMediaLastPos();
+                    if (ll > 0.0)
+                        stime = "&start=" + ll.ToString();
+                    else
+                        stime = "&start=0.0";
+                }
+                _form.AddExecLog("MasterFile: " + masterfile + stime + "\r\n");
 
                 // masterファイルをGet
-                var pli = await GetMasterM3u8Async(masterfile + ttt);
+                var sw = new Stopwatch();
+                sw.Start();
+                var pli = await GetMasterM3u8Async(masterfile + stime);
+                sw.Stop();
                 if (pli.Status != "Ok" || pli.Player.Count() <= 0)
                 {
                     _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
-                    EndPs(2, _ri.SeqNo, _ri.Position);
+                    EndPs(2, 0, 0);
                 }
-                if (_ri.IsRetry)
+                var seqno = _ndb.GetDbMediaLastSeqNo();
+                if (seqno > 0)
                 {
-                    pli.SeqNo = _ri.SeqNo;
-                    pli.Position = _ri.Position;
+                    pli.SeqNo = seqno;
+                    pli.Position = _ndb.GetDbMediaLastPos();
                 }
-                await Task.Delay(200);
+                await Task.Delay(100);
 
                 //速度 X2.0
-                await SetPlayControlAsync(2, pli);
-                await Task.Delay(200);
+                if (_bci.IsTimeShift())
+                {
+                    await SetPlayControlAsync(2, pli);
+                    await Task.Delay(100);
+                }
 
                 while (PsStatus == 0)
                 {
@@ -250,7 +259,7 @@ namespace NicoNamaRokuga.Rec
                         pli.SeqNo = sgi.SeqNo;
                         pli.Position = sgi.Position;
                     }
-                    await Task.Delay(500);
+                    await Task.Delay(100);
 
                     // 指定秒ごとにSegmentファイルを取得
                     foreach (var item in sgi.Seg)
@@ -258,19 +267,24 @@ namespace NicoNamaRokuga.Rec
                         if (PsStatus > 0) break;
                         if (sgi.SeqNo >= pli.SeqNo)
                         {
+                            sw.Restart();
                             if (!await GetSegmentAsync(item, pli, sgi))
                                 EndPs(2, sgi.SeqNo, sgi.Position); //Retry
+                            sw.Stop();
+                            _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " " + sw.ElapsedMilliseconds.ToString() + " mSec\r\n");
                             sgi.SeqNo++;
                             sgi.Position += item.ExtInfo;
                             if (PsStatus > 0) break;
-                            await Task.Delay(500);
+                            if (sw.ElapsedMilliseconds > waittime)
+                                await Task.Delay(100);
+                            else
+                                await Task.Delay(TimeSpan.FromMilliseconds(waittime - sw.ElapsedMilliseconds));
                         }
                         else
                         {
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
                             sgi.Position += item.ExtInfo;
-                            await Task.Delay(500);
                         }
                     }
                     pli.SeqNo = sgi.SeqNo;
@@ -295,8 +309,6 @@ namespace NicoNamaRokuga.Rec
             if (status >= 2)
             {
                 _ri.IsRetry = true;
-                _ri.SeqNo = seq_no;
-                _ri.Position = position;
             }
             //生放送の場合プロセスが終了したらコメントサーバーを切断する。
             if (Form1.props.IsComment)
@@ -311,12 +323,16 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
+        /*
         private async Task HtmlRecord(string masterfile, string outfile)
         {
             try
             {
                 // masterファイルをGet
+                var sw = new Stopwatch();
+                sw.Start();
                 var pli = await GetMasterM3u8Async(masterfile);
+                sw.Stop();
                 if (pli.Status != "Ok" || pli.Player.Count() <= 0)
                 {
                     _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
@@ -357,19 +373,25 @@ namespace NicoNamaRokuga.Rec
                         if (PsStatus > 0) break;
                         if (sgi.SeqNo >= pli.SeqNo)
                         {
+                            sw.Restart();
                             if (!await GetSegmentAsync(item, pli, sgi))
                                 EndPs(2, sgi.SeqNo, sgi.Position); //Retry
+                            sw.Stop();
+                            _form.AddExecLog("SeqNo="+ sgi.SeqNo.ToString()+" "+sw.ElapsedMilliseconds.ToString() + " mSec\r\n");
                             sgi.SeqNo++;
                             //sgi.Position += item.ExtInfo;
                             if (PsStatus > 0) break;
-                            await Task.Delay(200);
+                            if (sw.ElapsedMilliseconds > 1400)
+                                await Task.Delay(100);
+                            else
+                                await Task.Delay(TimeSpan.FromMilliseconds(1400 - sw.ElapsedMilliseconds));
                         }
                         else
                         {
                             if (PsStatus > 0) break;
                             sgi.SeqNo++;
                             //sgi.Position += item.ExtInfo;
-                            await Task.Delay(100);
+                            //await Task.Delay(100);
                         }
                     }
                     pli.SeqNo = sgi.SeqNo;
@@ -386,6 +408,7 @@ namespace NicoNamaRokuga.Rec
                 DebugWrite.Writeln(nameof(ExecPs), Ex);
             }
         }
+        */
 
         public override void BreakProcess(string breakkey)
         {
@@ -542,7 +565,7 @@ namespace NicoNamaRokuga.Rec
         //segmentファイルを取得
         public async Task<bool> GetSegmentAsync(Segment seg, PlayListInfo pli, SegmentInfo sgi)
         {
-            _form.AddExecLog("GetSegmentFile\r\n");
+            //_form.AddExecLog("GetSegmentFile\r\n");
             byte[] data = null;
             int ll;
             if (string.IsNullOrEmpty(seg.sUrl)) return false;
@@ -556,7 +579,7 @@ namespace NicoNamaRokuga.Rec
                         _form.AddLog("Seg " + sgi.SeqNo.ToString() + ": Size Error \r\n", 1);
                 }
                 ll = data.Length;
-                _form.AddExecLog("Input: " + seg.sUrl + "\r\n");
+                //_form.AddExecLog("Input: " + seg.sUrl + "\r\n");
                 _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " Size: " + data.Length.ToString() + " Content-Length: " + ll.ToString() + "\r\n");
 
                 //データーをSqlite3に書き込み

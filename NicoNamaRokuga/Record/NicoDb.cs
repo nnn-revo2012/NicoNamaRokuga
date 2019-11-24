@@ -283,6 +283,54 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
+        public double GetDbMediaLastPos()
+        {
+            double ll = 0;
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "SELECT position FROM media ORDER BY POSITION DESC LIMIT 1";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            double.TryParse(reader["position"].ToString(), out ll);
+                    }
+                }
+                return ll;
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(GetDbMediaLastPos), Ex);
+                return ll;
+            }
+        }
+
+        public int GetDbMediaLastSeqNo()
+        {
+            int seqno = 0;
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "SELECT seqno FROM media ORDER BY seqno DESC LIMIT 1";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            int.TryParse(reader["seqno"].ToString(), out seqno);
+                    }
+                }
+                return seqno;
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(GetDbMediaLastSeqNo), Ex);
+                return seqno;
+            }
+        }
+
+
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
