@@ -175,55 +175,39 @@ namespace NicoNamaRokuga
             {
                 _nLiveNet = new NicoLiveNet();
 
-                //if (_nLiveNet.IsLoginStatus == true)
-                //    await _nLiveNet.LogoutNico();
-
-                //将来的には放送が要ログインかチェック
-                //要ログインで none ならば終了 それ以外ならログイン
-                //var gpsi = await _nLiveNet.GetLoginStatusAsync(liveId);
-                //if (gpsi.Status != "ok")
-                //{
-                //    AddLog("番組情報が取得できませんでした。\r\n");
-                //    AddLog("GetLoginStatusAsync: " + gpsi.Error + "\r\n");
-                //    return;
-                //}
-
-                //ニコニコにログイン
-                switch (props.LoginMethod.ToString())
+                if (props.IsLogin == IsLogin.always)
                 {
-                    case "login":
-                        if (!_nLiveNet.IsLoginStatus)
-                        {
-                            if (!(await _nLiveNet.LoginNico(props.UserID, props.Password)))
+                    //ニコニコにログイン
+                    switch (props.LoginMethod.ToString())
+                    {
+                        case "login":
+                            if (!_nLiveNet.IsLoginStatus)
                             {
-                                AddLog("Login Failed", 1);
+                                if (!(await _nLiveNet.LoginNico(props.UserID, props.Password)))
+                                {
+                                    AddLog("Login Failed", 1);
+                                    return;
+                                }
+                                AddLog("Login OK", 1);
+                            }
+                            break;
+                        case "cookie":
+                            //ブラウザのCookie読み込み処理
+                            if (props.SelectedCookie != null)
+                                AddLog(string.Format("Cookie: {0}", props.SelectedCookie.BrowserName), 1);
+                            if (!(await _nLiveNet.SetNicoCookie(!props.IsAllCookie, props.SelectedCookie)))
+                            {
+                                AddLog("Cookie読み込み失敗", 1);
                                 return;
                             }
-                            AddLog("Login OK", 1);
-                        }
-                        break;
-                    case "cookie":
-                        //ブラウザのCookie読み込み処理
-                        if (props.SelectedCookie != null)
-                            AddLog(string.Format("Cookie: {0}", props.SelectedCookie.BrowserName), 1);
-                        if (!(await _nLiveNet.SetNicoCookie(!props.IsAllCookie, props.SelectedCookie)))
-                        {
-                            AddLog("Cookie読み込み失敗", 1);
-                            return;
-                        }
-                        AddLog("Cookie読み込みOK", 1);
-                        break;
+                            AddLog("Cookie読み込みOK", 1);
+                            break;
+                    }
                 }
-
-                //番組情報を取得する(旧API)
-                var gpsi = await _nLiveNet.GetPlayerStatusAsync(liveId);
-                if (gpsi.Status != "ok")
+                else
                 {
-                    AddLog("番組情報が取得できませんでした。", 1);
-                    AddLog("GetApiStatus: " + gpsi.Error, 1);
-                    return;
+                    AddLog("ログインなし", 1);
                 }
-                AddLog(string.Format("Provider_Type: {0}", gpsi.Provider_Type), 1);
 
                 //番組情報を取得する
                 bci = await _nLiveNet.GetNicoPageAsync(liveId);

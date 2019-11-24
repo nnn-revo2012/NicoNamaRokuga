@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("NicoNamaRokuga")]
+[assembly: AssemblyTitle("ニコニコ生放送(新配信)を録画するツール")]
 [assembly: AssemblyDescription("ニコニコ生放送(新配信)を録画するツール")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
+[assembly: AssemblyProduct("NicoNamaRokuga")]
 [assembly: AssemblyCopyright("Copyright ©  2019 nnn-revo2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

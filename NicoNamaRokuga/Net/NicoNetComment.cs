@@ -31,7 +31,10 @@ namespace NicoNamaRokuga.Net
 
         public CommentInfo(string userid)
         {
-            this.UserId = userid;
+            if (userid == "null" || userid == "NaN")
+                this.UserId = "";
+            else
+                this.UserId = userid;
         }
     }
 

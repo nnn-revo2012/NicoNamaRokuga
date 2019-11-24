@@ -189,8 +189,8 @@ namespace NicoNamaRokuga.Rec
                     }
                 }
 
-                long waittime = 1400;
-                if (_bci.IsTimeShift()) waittime = 2400;
+                long waittime = 1000;
+                if (_bci.IsTimeShift()) waittime = 2000;
                 Task.Run(() => HtmlRecord(masterfile, outfile, waittime));
             }
             catch (Exception Ex)
@@ -322,93 +322,6 @@ namespace NicoNamaRokuga.Rec
                 }
             }
         }
-
-        /*
-        private async Task HtmlRecord(string masterfile, string outfile)
-        {
-            try
-            {
-                // masterファイルをGet
-                var sw = new Stopwatch();
-                sw.Start();
-                var pli = await GetMasterM3u8Async(masterfile);
-                sw.Stop();
-                if (pli.Status != "Ok" || pli.Player.Count() <= 0)
-                {
-                    _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
-                    EndPs(2, _ri.SeqNo, _ri.Position);
-                }
-                if (_ri.IsRetry)
-                {
-                    pli.SeqNo = _ri.SeqNo;
-                    pli.Position = _ri.Position;
-                }
-                await Task.Delay(100);
-
-                while (PsStatus == 0)
-                {
-                    if (pli.EndList)
-                    {
-                         EndPs(1, 0, 0.0);
-                         break;
-                    }
-                    // playerファイルをGet
-                    var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl);
-                    if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0)
-                    {
-                        _form.AddExecLog("GetPlayerM3u8 Error: " + sgi.Error + "\r\n");
-                        EndPs(2, pli.SeqNo, pli.Position); //Retry
-                        break;
-                    }
-                    if (pli.SeqNo < 0)
-                    {
-                        pli.SeqNo = sgi.SeqNo;
-                        //pli.Position = sgi.Position;
-                    }
-                    await Task.Delay(100);
-
-                    // 指定秒ごとにSegmentファイルを取得
-                    foreach (var item in sgi.Seg)
-                    {
-                        if (PsStatus > 0) break;
-                        if (sgi.SeqNo >= pli.SeqNo)
-                        {
-                            sw.Restart();
-                            if (!await GetSegmentAsync(item, pli, sgi))
-                                EndPs(2, sgi.SeqNo, sgi.Position); //Retry
-                            sw.Stop();
-                            _form.AddExecLog("SeqNo="+ sgi.SeqNo.ToString()+" "+sw.ElapsedMilliseconds.ToString() + " mSec\r\n");
-                            sgi.SeqNo++;
-                            //sgi.Position += item.ExtInfo;
-                            if (PsStatus > 0) break;
-                            if (sw.ElapsedMilliseconds > 1400)
-                                await Task.Delay(100);
-                            else
-                                await Task.Delay(TimeSpan.FromMilliseconds(1400 - sw.ElapsedMilliseconds));
-                        }
-                        else
-                        {
-                            if (PsStatus > 0) break;
-                            sgi.SeqNo++;
-                            //sgi.Position += item.ExtInfo;
-                            //await Task.Delay(100);
-                        }
-                    }
-                    pli.SeqNo = sgi.SeqNo;
-                    //pli.Position = sgi.Position;
-                    if (sgi.EndList)
-                    {
-                        pli.EndList = true;
-                        EndPs(1, 0, 0.0);
-                    }
-                }
-            }
-            catch (Exception Ex)
-            {
-                DebugWrite.Writeln(nameof(ExecPs), Ex);
-            }
-        }
-        */
 
         public override void BreakProcess(string breakkey)
         {
