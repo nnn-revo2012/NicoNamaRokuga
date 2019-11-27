@@ -189,8 +189,8 @@ namespace NicoNamaRokuga.Rec
                     }
                 }
 
-                long waittime = 1000;
-                if (_bci.IsTimeShift()) waittime = 2000;
+                long waittime = 1300;
+                if (_bci.IsTimeShift()) waittime = 2300;
                 Task.Run(() => HtmlRecord(masterfile, outfile, waittime));
             }
             catch (Exception Ex)
@@ -222,7 +222,7 @@ namespace NicoNamaRokuga.Rec
                 if (pli.Status != "Ok" || pli.Player.Count() <= 0)
                 {
                     _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
-                    EndPs(2, 0, 0);
+                    EndPs(2); //Retry
                 }
                 var seqno = _ndb.GetDbMediaLastSeqNo();
                 if (seqno > 0)
@@ -243,7 +243,7 @@ namespace NicoNamaRokuga.Rec
                 {
                     if (pli.EndList)
                     {
-                         EndPs(1, 0, 0.0);
+                         EndPs(1);
                          break;
                     }
                     // playerファイルをGet
@@ -251,7 +251,7 @@ namespace NicoNamaRokuga.Rec
                     if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0)
                     {
                         _form.AddExecLog("GetPlayerM3u8 Error: " + sgi.Error + "\r\n");
-                        EndPs(2, pli.SeqNo, pli.Position); //Retry
+                        EndPs(2); //Retry
                         break;
                     }
                     if (pli.SeqNo < 0)
@@ -262,6 +262,7 @@ namespace NicoNamaRokuga.Rec
                     await Task.Delay(100);
 
                     // 指定秒ごとにSegmentファイルを取得
+                    var sc = 0;
                     foreach (var item in sgi.Seg)
                     {
                         if (PsStatus > 0) break;
@@ -269,16 +270,21 @@ namespace NicoNamaRokuga.Rec
                         {
                             sw.Restart();
                             if (!await GetSegmentAsync(item, pli, sgi))
-                                EndPs(2, sgi.SeqNo, sgi.Position); //Retry
+                                EndPs(2); //Retry
                             sw.Stop();
-                            _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " " + sw.ElapsedMilliseconds.ToString() + " mSec\r\n");
+                            _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " " + sw.ElapsedMilliseconds.ToString() + "mSec\r\n");
                             sgi.SeqNo++;
+                            sc++;
                             sgi.Position += item.ExtInfo;
                             if (PsStatus > 0) break;
                             if (sw.ElapsedMilliseconds > waittime)
+                            {
                                 await Task.Delay(100);
+                            }
                             else
+                            {
                                 await Task.Delay(TimeSpan.FromMilliseconds(waittime - sw.ElapsedMilliseconds));
+                            }
                         }
                         else
                         {
@@ -287,12 +293,18 @@ namespace NicoNamaRokuga.Rec
                             sgi.Position += item.ExtInfo;
                         }
                     }
+                    if (PsStatus > 0) break;
+                    if (sc <= 1)
+                    {
+                        _form.AddExecLog("Wait 2000mSec\r\n");
+                        await Task.Delay(2000);
+                    }
                     pli.SeqNo = sgi.SeqNo;
                     pli.Position = sgi.Position;
                     if (sgi.EndList)
                     {
                         pli.EndList = true;
-                        EndPs(1, 0, 0.0);
+                        EndPs(1);
                     }
                 }
             }
@@ -302,7 +314,7 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        public void EndPs(int status, int seq_no, double position)
+        public void EndPs(int status)
         {
             //1:正常終了 2:再接続 3:再接続(長)
             PsStatus = status;
@@ -325,7 +337,7 @@ namespace NicoNamaRokuga.Rec
 
         public override void BreakProcess(string breakkey)
         {
-            EndPs(1, 0, 0.0);
+            EndPs(1);
         }
 
         //master.m3u8からplayer.m3u8のURLを取得

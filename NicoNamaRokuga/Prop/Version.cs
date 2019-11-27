@@ -4,12 +4,12 @@ namespace NicoNamaRokuga.Prop
 {
     public class Ver
     {
-        public static readonly string Version = "0.1.0.0";
-        public static readonly string VerDate = "(2019/11/24)";
+        public static readonly string Version = "0.1.0.1";
+        public static readonly string VerDate = "2019/11/27";
 
         public static string GetFullVersion()
         {
-            return GetAssemblyName() + " Ver" + Version;
+            return GetAssemblyName() + " Ver " + Version;
         }
 
         public static string GetAssemblyName()
