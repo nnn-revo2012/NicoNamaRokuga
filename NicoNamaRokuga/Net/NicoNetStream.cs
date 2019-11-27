@@ -63,36 +63,50 @@ namespace NicoNamaRokuga.Net
         }
 
         //指定フォーマットに基づいて録画ファイル名を作る
-        public string SetRecFile(string recfile)
+        public string SetRecFile(string s)
         {
-            var result = string.Empty;
+            var result = s;
 
-            result = string.Format(recfile,
-                this.LiveId, this.Title, this.Provider_Name, this.Community_Id, this.Community_Title);
+            result = result.Replace("?PID?", ReplaceWords(this.LiveId));
+            result = result.Replace("?UNAME?", ReplaceWords(this.Provider_Name));
+            result = result.Replace("?UID?", ReplaceWords(this.Provider_Id));
+            result = result.Replace("?CNAME?", ReplaceWords(this.Community_Title));
+            result = result.Replace("?CID?", ReplaceWords(this.Community_Id));
+            result = result.Replace("?TITLE?", ReplaceWords(this.Title));
 
             //時間情報付加
-            var date = DateTime.Now;
-            result = result.Replace("{Y}", date.ToString("yyyy"));
-            result = result.Replace("{y}", date.ToString("yy"));
-            result = result.Replace("{M}", date.ToString("MM"));
-            result = result.Replace("{D}", date.ToString("dd"));
-            result = result.Replace("{W}", date.ToString("ddd"));
-            result = result.Replace("{h}", date.ToString("HH"));
-            result = result.Replace("{m}", date.ToString("mm"));
-            result = result.Replace("{s}", date.ToString("ss"));
+            var date = Props.GetUnixToDateTime(this.Begin_Time);
+            result = result.Replace("?YEAR?", date.ToString("yyyy"));
+            result = result.Replace("?MONTH?", date.ToString("MM"));
+            result = result.Replace("?DAY?", date.ToString("dd"));
+            result = result.Replace("?DAY8?", date.ToString("yyyyMMdd"));
+            result = result.Replace("?DAY6?", date.ToString("yyMMdd"));
+            result = result.Replace("?HOUR?", date.ToString("HH"));
+            result = result.Replace("?MINUTE?", date.ToString("mm"));
+            result = result.Replace("?SECOND?", date.ToString("ss"));
+            result = result.Replace("?TIME6?", date.ToString("HHmmss"));
+            result = result.Replace("?TIME4?", date.ToString("HHmm"));
+
+            return result;
+        }
+
+        private string ReplaceWords(string s)
+        {
+            var result = s;
 
             result = result.Replace("\\", "￥");
-            result = result.Replace("/", "／");
+            result = result.Replace("/", "?");
             result = result.Replace(":", "：");
             result = result.Replace("*", "＊");
-            result = result.Replace("??", "？");
             result = result.Replace("?", "？");
             result = result.Replace("\"", "”");
             result = result.Replace("<", "＜");
             result = result.Replace(">", "＞");
             result = result.Replace("|", "｜");
-            result = result.Replace("+", "＋");
-            //result = result.Replace(" ", "");
+
+            result = result.Replace("）", ")");
+            result = result.Replace("（", "(");
+
             result = result.Replace("　", " ");
             result = result.Replace("\u3000", " ");
 

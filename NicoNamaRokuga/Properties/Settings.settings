@@ -27,7 +27,7 @@
       <Value Profile="(Default)">rec</Value>
     </Setting>
     <Setting Name="SaveFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">{0}-{2}-{1}</Value>
+      <Value Profile="(Default)">?PID?-?UNAME?-?TITLE?</Value>
     </Setting>
     <Setting Name="QualityType" Type="System.String" Scope="User">
       <Value Profile="(Default)">normal</Value>
@@ -51,7 +51,7 @@
       <Value Profile="(Default)">rec</Value>
     </Setting>
     <Setting Name="DefaultSaveFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">{0}-{2}-{1}</Value>
+      <Value Profile="(Default)">?PID?-?UNAME?-?TITLE?</Value>
     </Setting>
     <Setting Name="DefaultExecFile" Type="System.String" Scope="User">
       <Value Profile="(Default)">ffmpeg.exe;ffmpeg.exe</Value>
