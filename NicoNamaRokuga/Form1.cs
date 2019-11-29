@@ -233,9 +233,11 @@ namespace NicoNamaRokuga
                 epi.Sdir = props.SaveDir;
                 epi.Exec = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
                 epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
-                epi.Sfile = bci.SetRecFile(props.SaveFile);
+                epi.Sfile = bci.SetRecFileFormat(props.SaveFile);
+                epi.Sfolder = bci.SetRecFolderFormat(props.SaveFolder);
                 epi.Protocol = props.Protocol.ToString();
                 epi.Seq = 0;
+                ExecPsInfo.MakeRecDir(epi);
 
                 if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
                 {

@@ -18,6 +18,7 @@ namespace NicoNamaRokuga.Proc
         public string Arg { get; set; }
         public string Sdir { get; set; }
         public string Sfile { get; set; }
+        public string Sfolder { get; set; }
         public string BreakKey { get; set; }
         public int    Seq { get; set; }
         public string Protocol { get; set; }
@@ -29,7 +30,7 @@ namespace NicoNamaRokuga.Proc
         //保存ファイルにシーケンスNoをつける
         public static string GetSaveFileNum(ExecPsInfo epi)
         {
-            var ff = Path.Combine(epi.Sdir, epi.Sfile);
+            var ff = epi.Sdir.TrimEnd('\\') + "\\" + epi.Sfolder.Trim('\\') + "\\" + epi.Sfile;
 
             //同名ファイル名がないかチェック
             while (IsExistFile(ff, epi.Seq, epi.Ext, epi.Xml)) ++epi.Seq;
@@ -63,7 +64,26 @@ namespace NicoNamaRokuga.Proc
         //Sqlite3用の保存ファイル名
         public static string GetSaveFileSqlite3(ExecPsInfo epi)
         {
-            return Path.Combine(epi.Sdir, epi.Sfile);
+            return epi.Sdir.TrimEnd('\\') + "\\" + epi.Sfolder.Trim('\\') + "\\" + epi.Sfile;
+        }
+
+        //保存ディレクトリーがなければ作る
+        public static bool MakeRecDir(ExecPsInfo epi)
+        {
+            var result = false;
+
+            var s = epi.Sdir.TrimEnd('\\') + "\\" + epi.Sfolder.Trim('\\');
+            if (!Directory.Exists(s))
+            {
+                //フォルダー作成
+                Directory.CreateDirectory(s);
+                result = true;
+            }
+            else
+            {
+                result = true;
+            }
+            return result;
         }
 
     }

@@ -62,12 +62,20 @@ namespace NicoNamaRokuga.Net
             return OnAirStatus == "ON_AIR" ? false : true;
         }
 
-        //指定フォーマットに基づいて録画ファイル名を作る
-        public string SetRecFile(string s)
+        //指定フォーマットに基づいて録画サブディレクトリー名を作る
+        public string SetRecFolderFormat(string s)
         {
-            var result = s;
+            var result = s.Replace("/", "\\");
+            result = result.Trim('\\');
+            result = SetRecFileFormat(result);
 
-            result = result.Replace("?PID?", ReplaceWords(this.LiveId));
+            return result;
+        }
+
+        //指定フォーマットに基づいて録画ファイル名を作る
+        public string SetRecFileFormat(string s)
+        {
+            var result = s.Replace("?PID?", ReplaceWords(this.LiveId));
             result = result.Replace("?UNAME?", ReplaceWords(this.Provider_Name));
             result = result.Replace("?UID?", ReplaceWords(this.Provider_Id));
             result = result.Replace("?CNAME?", ReplaceWords(this.Community_Title));
@@ -92,9 +100,7 @@ namespace NicoNamaRokuga.Net
 
         private string ReplaceWords(string s)
         {
-            var result = s;
-
-            result = result.Replace("\\", "￥");
+            var result = s.Replace("\\", "￥");
             result = result.Replace("/", "?");
             result = result.Replace(":", "：");
             result = result.Replace("*", "＊");
