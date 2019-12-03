@@ -72,16 +72,38 @@ namespace NicoNamaRokuga
             }));
         }
 
+        public void ClearHosoData()
+        {
+            this.Invoke(new Action(() =>
+            {
+                label2.Text = "";
+                label3.Text = "";
+                label4.Text = "";
+                label5.Text = "";
+                label6.Text = "";
+                label7.Text = "";
+                label8.Text = "";
+                label9.Text = "";
+            }));
+        }
+
         //放送情報を表示
         public void DispHosoData(BroadCastInfo bci)
         {
             this.Invoke(new Action(() =>
             {
-                textBox2.Text = bci.Title;
-                textBox3.Text = bci.Provider_Name + "(" + bci.Provider_Id + ")";
-                textBox4.Text = bci.Community_Title + "(" + bci.Community_Id + ")";
-                textBox5.Text = Props.GetProviderType(bci.Provider_Type);
-                if (bci.IsTimeShift()) textBox5.Text += "(TS)";
+                label2.Text = bci.Title;
+                label3.Text = Props.GetProviderType(bci.Provider_Type);
+                label4.Text = bci.Community_Title + "(" + bci.Community_Id + ")";
+                label5.Text = bci.Provider_Name + "(" + bci.Provider_Id + ")";
+                label6.Text = Props.GetUnixToDateTime(bci.Begin_Time).ToString() + " 開始";
+                label8.Text = "生放送";
+                if (bci.IsTimeShift())
+                {
+                    label7.Text = Props.GetUnixToDateTime(bci.End_Time).ToString() + " 終了";
+                    label8.Text = "タイムシフト";
+                }
+
             }));
         }
 
@@ -90,7 +112,7 @@ namespace NicoNamaRokuga
         {
             this.Invoke(new Action(() =>
             {
-                textBox6.Text = Props.Quality[Props.ParseQTypes(s)];
+                label9.Text = Props.Quality[Props.ParseQTypes(s)];
             }));
         }
 

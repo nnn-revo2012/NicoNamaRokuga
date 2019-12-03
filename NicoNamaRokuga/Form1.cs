@@ -62,6 +62,7 @@ namespace NicoNamaRokuga
             //設定データー読み込み
             props = new Props();
             props.LoadData();
+            ClearHosoData();
 
             if (IsBatchMode) button1.PerformClick();
         }
@@ -105,6 +106,7 @@ namespace NicoNamaRokuga
 
 
                 //ニコ生に接続
+                ClearHosoData();
                 ClearLog();
 
                 //フォルダやファイルのチェック
