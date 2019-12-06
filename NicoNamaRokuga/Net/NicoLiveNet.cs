@@ -275,7 +275,7 @@ namespace NicoNamaRokuga.Net
         {
             var bci = new BroadCastInfo(null, null, null, null);
             bci.Status = "fail";
-            bci.Error = "PARAMERROR";
+            bci.Error = "notfound";
 
             try
             {
@@ -289,7 +289,7 @@ namespace NicoNamaRokuga.Net
                 if (string.IsNullOrEmpty(hs)) return bci;
                 if (hs.IndexOf("window.NicoGoogleTagManagerDataLayer = [];") > 0)
                 {
-                    bci.Error = "REQUIERED";
+                    bci.Error = "notlogin";
                     return bci;
                 }
                 bci.User_Id = Regex.Match(hs, "\"user_id\":([^,]*),", RegexOptions.Compiled).Groups[1].Value;
@@ -298,6 +298,12 @@ namespace NicoNamaRokuga.Net
                 var ttt = WebUtility.HtmlDecode(Regex.Match(hs, "<script +id=\"embedded-data\" +data-props=\"([^\"]*)\"></script>", RegexOptions.Compiled).Groups[1].Value);
                 bci.Data_Props = ttt;
                 bci.WsUrl = Regex.Match(ttt, @"""webSocketUrl"":""([^""]+)""").Groups[1].Value;
+                if (string.IsNullOrEmpty(bci.WsUrl))
+                {
+                    bci.Error = "closed";
+                    //< code > require_community_member </ code >
+                    return bci;
+                }
                 bci.AuTkn = Regex.Match(ttt, @"""audienceToken"":""([^""]+)""").Groups[1].Value; ;
                 bci.BcId = Regex.Match(ttt, @"""broadcastId"":""([^""]+)""").Groups[1].Value; ;
                 //Clipboard.SetText(ttt);
