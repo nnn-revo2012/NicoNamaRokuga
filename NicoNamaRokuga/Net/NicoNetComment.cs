@@ -9,10 +9,12 @@ using System.Windows.Forms;
 using System.Net.Http;
 using System.Net;
 using System.IO;
+using System.Diagnostics;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebSocket4Net;
+using SHA3.Net;
 
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Rec;
@@ -572,11 +574,19 @@ namespace NicoNamaRokuga.Net
                 }
             }
 
-            r_hash["date2"] = ((long.Parse(r_hash["date"]) * 100L * 100L) + long.Parse(r_hash["date_usec"])).ToString();
+            r_hash["date2"] = ((long.Parse(r_hash["date"]) * 1000L * 1000L) + long.Parse(r_hash["date_usec"])).ToString();
 
             var calc_s = string.Format("{0:N},{1:N},{2:N},{3},{4}", r_hash["vpos"], r_hash["date"], r_hash["date_usec"], user_id, content);
             //var hash:= fmt.Sprintf("%x", sha3.Sum256([]byte(calc_s)))
-            var hash = "4dfrdwwee"; //TEST
+            string hash;
+            using (var shaAlg = Sha3.Sha3256())
+            {
+                var hashv = shaAlg.ComputeHash(Encoding.UTF8.GetBytes(calc_s));
+                var hashedText = new StringBuilder();
+                for (int i = 0; i < hashv.Length; i++)
+                    hashedText.AppendFormat("{0:x2}", hashv[i]);
+                hash = hashedText.ToString();
+            }
             r_hash["hash"] = "\"" + hash + "\"";
             //var ttt = "calc_s: " + calc_s + "\r\n" +
             //          "hash: " + hash + "\r\n" +
@@ -588,7 +598,7 @@ namespace NicoNamaRokuga.Net
             var command = "(" + string.Join(", ", r_hash.Keys.ToArray()) + ") VALUES \n(" + string.Join(", ", r_hash.Values.ToArray()) + ");\n";
             //MessageBox.Show(command);
 
-            //_ndb.WriteDbComment(command, mail, user_id, content, hash);
+            _ndb.WriteDbComment(command, mail, user_id, content);
 
             return;
         }

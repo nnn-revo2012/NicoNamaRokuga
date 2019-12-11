@@ -165,7 +165,7 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        public void WriteDbComment(string command_text, string mail, string user_id, string content, string hash)
+        public void WriteDbComment(string command_text, string mail, string user_id, string content)
         {
             try 
             {
