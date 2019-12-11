@@ -602,20 +602,24 @@ namespace NicoNamaRokuga.Net
 
             foreach (var it in jmes)
             {
-                result = "<" + it.Key.ToString() + " ";
+                result = "<" + it.Key.ToString();
                 foreach (var it2 in (JObject)it.Value)
                 {
                     if (it2.Key.ToString() == "content")
                     {
                         result += ">" + it2.Value.ToString();
-                        result += "</" + it.Key.ToString() + ">\r\n";
+                        result += "</" + it.Key.ToString();
                     }
                     else
                     {
-                        result += it2.Key.ToString() + @"=""" + it2.Value.ToString() + @""" ";
+                        result += " " + it2.Key.ToString() + @"=""" + it2.Value.ToString() + @"""";
                     }
                 }
             }
+            if (result.IndexOf("<thread") == 0)
+                result += "/>\r\n";
+            else
+                result += ">\r\n";
 
             return result;
         }
