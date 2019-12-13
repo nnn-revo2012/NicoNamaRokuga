@@ -97,7 +97,7 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        public void WriteDbMedia(Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
+        public bool WriteDbMedia(Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
         {
             try 
             {
@@ -127,7 +127,10 @@ namespace NicoNamaRokuga.Rec
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(WriteDbMedia), Ex);
+                return false;
             }
+
+            return true;
         }
 
         public void CreateDbComment(string DbFile)
@@ -165,7 +168,7 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        public void WriteDbComment(string command_text, string mail, string user_id, string content)
+        public bool WriteDbComment(string command_text, string mail, string user_id, string content)
         {
             try 
             {
@@ -192,7 +195,10 @@ namespace NicoNamaRokuga.Rec
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(WriteDbComment), Ex);
+                return false;
             }
+
+            return true;
         }
 
         public void CreateDbKvs(string DbFile)
@@ -215,7 +221,7 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        public void WriteDbKvsProps(string data_props)
+        public bool WriteDbKvsProps(string data_props)
         {
             try
             {
@@ -227,7 +233,7 @@ namespace NicoNamaRokuga.Rec
                     ttt = (string)datap.SelectToken(item.Value);
                     if (item.Key == "beginTime" || item.Key == "endTime" ||
                         item.Key == "openTime" || item.Key == "serverTime" ||
-                        item.Key == "socLevel")
+                        item.Key == "socLevel" || item.Key == "vposBaseTime")
                     {
                         double ddd;
                         if (double.TryParse(ttt, out ddd))
@@ -253,17 +259,19 @@ namespace NicoNamaRokuga.Rec
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(WriteDbKvsProps), Ex);
+                return false;
             }
+            return true;
         }
 
-        public void WriteDbKvs(string key, System.Data.DbType dbtype, object data)
+        public bool WriteDbKvs(string key, System.Data.DbType dbtype, object data)
         {
             try
             {
                 SQLiteParameter p_data = null;
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO kvs (k, v) VALUES \n" +
+                    command.CommandText = "INSERT OR IGNORE INTO kvs (k, v) VALUES \n" +
                                           "(\"" + key + "\" ,@data);";
                     p_data = new SQLiteParameter("@data", dbtype);
                     if (dbtype == System.Data.DbType.Double)
@@ -280,7 +288,10 @@ namespace NicoNamaRokuga.Rec
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(WriteDbKvs), Ex);
+                return false;
             }
+
+            return true;
         }
 
         public double GetDbMediaLastPos()

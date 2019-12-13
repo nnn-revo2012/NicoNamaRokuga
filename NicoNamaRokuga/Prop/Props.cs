@@ -95,6 +95,7 @@ namespace NicoNamaRokuga.Prop
 		{"userName", "program.supplier.name"}, // ユーザ名
 		{"userPageUrl", "program.supplier.pageUrl"}, // "https://www.nicovideo.jp/user/\d+"
 		{"title", "program.title"}, // title
+        {"vposBaseTime", "program.vposBaseTime"}, // integer
 		// "site"
 		{"serverTime", "site.serverTime"}, // integer
 		// "socialGroup"

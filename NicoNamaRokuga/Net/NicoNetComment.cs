@@ -262,7 +262,11 @@ namespace NicoNamaRokuga.Net
                         }
                         break;
                     case "chat":
-                        Json2Db(jmes);
+                        if (!Json2Db(jmes))
+                        {
+                            _form.AddLog("コメント出力失敗", 9);
+                            _form.AddLog(e.Message, 9);
+                        }
                         break;
                 }
 
@@ -317,10 +321,12 @@ namespace NicoNamaRokuga.Net
                             _form.AddLog(_last_res + " 個のコメントを読み込みます。", 1);
                             var cmlist = new List<string>();
                             _come_text = cmlist;
-                            if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
-                                Json2Db(jmes);
                             if (_seq_no == 0)
+                            {
                                 StartHBTimer();
+                                if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
+                                    Json2Db(jmes);
+                            }
                         }
                         break;
                     case "chat":
@@ -463,6 +469,7 @@ namespace NicoNamaRokuga.Net
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(AppendComment), Ex);
+                _form.AddLog("コメントファイル出力失敗", 1);
             }
 
         }
@@ -491,8 +498,12 @@ namespace NicoNamaRokuga.Net
                                     if (line.Contains(Props.Commnet_SeetNo))
                                         continue;
                                 }
-                                Json2Db(jmes);
+                                if (!Json2Db(jmes))
+                                {
+                                _form.AddLog("コメント書き込み失敗", 9);
+                                _form.AddLog(line, 9);
                             }
+                        }
                             else
                             {
                                 if (come_time == come_time_prev) write_flg = true;
@@ -512,6 +523,7 @@ namespace NicoNamaRokuga.Net
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(AppendCommentDB), Ex);
+                _form.AddLog("コメントファイル出力失敗", 1);
             }
 
         }
@@ -527,7 +539,7 @@ namespace NicoNamaRokuga.Net
             _sw.Write("</packet>\r\n");
         }
 
-        private void Json2Db(JObject jmes)
+        private bool Json2Db(JObject jmes)
         {
             var r_hash = new Dictionary<string, string>();
             var mail = string.Empty;
@@ -535,72 +547,78 @@ namespace NicoNamaRokuga.Net
             var user_id = string.Empty;
 
             if (string.IsNullOrEmpty(jmes.ToString()))
-                return;
+                return false;
 
-            JToken jtkn;
-            if (jmes.TryGetValue("thread", out jtkn))
+            try
             {
-                _ndb.WriteDbKvs("comment/thread", System.Data.DbType.Double, (double )jtkn["thread"]);
-                return;
+                JToken jtkn;
+                if (jmes.TryGetValue("thread", out jtkn))
+                {
+                    _ndb.WriteDbKvs("comment/thread", System.Data.DbType.Double, (double)jtkn["thread"]);
+                    return true;
+                }
+                else if (!jmes.TryGetValue("chat", out jtkn))
+                {
+                    return false;
+                }
+                foreach (var it in JObject.Parse(jtkn.ToString()))
+                {
+                    if (it.Key == "mail")
+                    {
+                        r_hash[it.Key] = "@" + it.Key;
+                        mail = it.Value.ToString();
+                    }
+                    else if (it.Key == "user_id")
+                    {
+                        r_hash[it.Key] = "@" + it.Key;
+                        user_id = it.Value.ToString();
+                    }
+                    else if (it.Key == "content")
+                    {
+                        r_hash[it.Key] = "@" + it.Key;
+                        content = it.Value.ToString();
+                    }
+                    else if (it.Value.Type == JTokenType.Integer)
+                    {
+                        r_hash[it.Key] = it.Value.ToString();
+                    }
+                    else if (it.Value.Type == JTokenType.String)
+                    {
+                        r_hash[it.Key] = "\"" + it.Value.ToString() + "\"";
+                    }
+                }
+                if (!r_hash.ContainsKey("vpos")) r_hash["vpos"] = "0";
+                r_hash["date2"] = ((long.Parse(r_hash["date"]) * 1000L * 1000L) + long.Parse(r_hash["date_usec"])).ToString();
+
+                var calc_s = string.Format("{0:N},{1:N},{2:N},{3},{4}", r_hash["vpos"], r_hash["date"], r_hash["date_usec"], user_id, content);
+                //var hash:= fmt.Sprintf("%x", sha3.Sum256([]byte(calc_s)))
+                string hash;
+                using (var shaAlg = Sha3.Sha3256())
+                {
+                    var hashv = shaAlg.ComputeHash(Encoding.UTF8.GetBytes(calc_s));
+                    var hashedText = new StringBuilder();
+                    for (int i = 0; i < hashv.Length; i++)
+                        hashedText.AppendFormat("{0:x2}", hashv[i]);
+                    hash = hashedText.ToString();
+                }
+                r_hash["hash"] = "\"" + hash + "\"";
+                //var ttt = "calc_s: " + calc_s + "\r\n" +
+                //          "hash: " + hash + "\r\n" +
+                //          "mail: " + mail + "\r\n" +
+                //          "user_id: " + user_id + "\r\n" +
+                //          "content: " + content + "\r\n";
+                //MessageBox.Show(ttt);
+
+                var command = "(" + string.Join(", ", r_hash.Keys.ToArray()) + ") VALUES \n(" + string.Join(", ", r_hash.Values.ToArray()) + ");\n";
+                _ndb.WriteDbComment(command, mail, user_id, content);
             }
-            else if (!jmes.TryGetValue("chat", out jtkn))
+            catch (Exception Ex)
             {
-                return;
-            }
-            foreach (var it in JObject.Parse(jtkn.ToString()))
-            {
-                if (it.Key == "mail")
-                {
-                    r_hash[it.Key] = "@" + it.Key;
-                    mail = it.Value.ToString();
-                }
-                else if (it.Key == "user_id")
-                {
-                    r_hash[it.Key] = "@" + it.Key;
-                    user_id = it.Value.ToString();
-                }
-                else if (it.Key == "content")
-                {
-                    r_hash[it.Key] = "@" + it.Key;
-                    content = it.Value.ToString();
-                }
-                else if (it.Value.Type == JTokenType.Integer)
-                {
-                    r_hash[it.Key] = it.Value.ToString();
-                }
-                else if (it.Value.Type == JTokenType.String)
-                {
-                    r_hash[it.Key] = "\"" + it.Value.ToString() + "\"";
-                }
+                DebugWrite.Writeln(nameof(Json2Db), Ex);
+                return false;
             }
 
-            r_hash["date2"] = ((long.Parse(r_hash["date"]) * 1000L * 1000L) + long.Parse(r_hash["date_usec"])).ToString();
-
-            var calc_s = string.Format("{0:N},{1:N},{2:N},{3},{4}", r_hash["vpos"], r_hash["date"], r_hash["date_usec"], user_id, content);
-            //var hash:= fmt.Sprintf("%x", sha3.Sum256([]byte(calc_s)))
-            string hash;
-            using (var shaAlg = Sha3.Sha3256())
-            {
-                var hashv = shaAlg.ComputeHash(Encoding.UTF8.GetBytes(calc_s));
-                var hashedText = new StringBuilder();
-                for (int i = 0; i < hashv.Length; i++)
-                    hashedText.AppendFormat("{0:x2}", hashv[i]);
-                hash = hashedText.ToString();
-            }
-            r_hash["hash"] = "\"" + hash + "\"";
-            //var ttt = "calc_s: " + calc_s + "\r\n" +
-            //          "hash: " + hash + "\r\n" +
-            //          "mail: " + mail + "\r\n" +
-            //          "user_id: " + user_id + "\r\n" +
-            //          "content: " + content + "\r\n";
-            //MessageBox.Show(ttt);
-
-            var command = "(" + string.Join(", ", r_hash.Keys.ToArray()) + ") VALUES \n(" + string.Join(", ", r_hash.Values.ToArray()) + ");\n";
-            //MessageBox.Show(command);
-
-            _ndb.WriteDbComment(command, mail, user_id, content);
-
-            return;
+            return true;
         }
 
         private string Json2Xml(JObject jmes)
@@ -610,26 +628,35 @@ namespace NicoNamaRokuga.Net
             if (string.IsNullOrEmpty(jmes.ToString()))
                 return result;
 
-            foreach (var it in jmes)
+            try
             {
-                result = "<" + it.Key.ToString();
-                foreach (var it2 in (JObject)it.Value)
+                foreach (var it in jmes)
                 {
-                    if (it2.Key.ToString() == "content")
+                    result = "<" + it.Key.ToString();
+                    foreach (var it2 in (JObject)it.Value)
                     {
-                        result += ">" + it2.Value.ToString();
-                        result += "</" + it.Key.ToString();
-                    }
-                    else
-                    {
-                        result += " " + it2.Key.ToString() + @"=""" + it2.Value.ToString() + @"""";
+                        if (it2.Key.ToString() == "content")
+                        {
+                            result += ">" + it2.Value.ToString();
+                            result += "</" + it.Key.ToString();
+                        }
+                        else
+                        {
+                            result += " " + it2.Key.ToString() + @"=""" + it2.Value.ToString() + @"""";
+                        }
                     }
                 }
+                if (result.IndexOf("<thread") == 0)
+                    result += "/>\r\n";
+                else
+                    result += ">\r\n";
+
             }
-            if (result.IndexOf("<thread") == 0)
-                result += "/>\r\n";
-            else
-                result += ">\r\n";
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(Json2Xml), Ex);
+                return result;
+            }
 
             return result;
         }
