@@ -133,7 +133,27 @@ namespace NicoNamaRokuga.Rec
             return true;
         }
 
-        public void CreateDbComment(string DbFile)
+        public bool ReadDbMedia(Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
+        {
+            /*
+                var SelMedia = `SELECT
+                seqno, bandwidth, size, data FROM media
+                WHERE IFNULL(notfound, 0) == 0 AND data IS NOT NULL
+                ORDER BY seqno`
+            */
+            try
+            {
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(ReadDbMedia), Ex);
+                return false;
+            }
+
+            return true;
+        }
+
+public void CreateDbComment(string DbFile)
         {
             try
             {
@@ -195,6 +215,41 @@ namespace NicoNamaRokuga.Rec
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(WriteDbComment), Ex);
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool ReadDbComment(string command_text, string mail, string user_id, string content)
+        {
+            /*
+             *            var SelComment = `SELECT
+                            vpos,
+                            date,
+                            date_usec,
+
+                IFNULL(no, -1) AS no,
+                IFNULL(anonymity, 0) AS anonymity,
+                user_id,
+                content,
+                IFNULL(mail, "") AS mail,
+                IFNULL(premium, 0) AS premium,
+                IFNULL(score, 0) AS score,
+                thread,
+                IFNULL(origin, "") AS origin,
+                IFNULL(locale, "") AS locale
+
+                FROM comment
+
+                ORDER BY date2`
+            */
+            try
+            {
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(ReadDbComment), Ex);
                 return false;
             }
 
@@ -288,6 +343,30 @@ namespace NicoNamaRokuga.Rec
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(WriteDbKvs), Ex);
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool ReadDbKvs()
+        {
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "SELECT k,v FROM kvs";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read()) { }
+                            //double.TryParse(reader["position"].ToString(), out ll);
+                    }
+                }
+                return true;
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(ReadDbKvs), Ex);
                 return false;
             }
 

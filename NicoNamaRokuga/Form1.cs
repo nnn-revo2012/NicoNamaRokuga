@@ -15,7 +15,7 @@ namespace NicoNamaRokuga
     public partial class Form1 : Form
     {
 
-        public  static Props props;                   //設定
+        public static Props props;                   //設定
 
         private static bool IsBatchMode { get; set; } //引数指定で実行か？
 
@@ -292,8 +292,6 @@ namespace NicoNamaRokuga
             {
                 AddLog(nameof(StartRec) + "() Error: \r\n" + Ex.Message, 2);
             }
-
-
         }
 
         private async Task CheckStatus()
@@ -474,5 +472,35 @@ namespace NicoNamaRokuga
                 AddLog("オプションメニューが開けませんでした。\r\n" + Ex.Message, 2);
             }
         }
+
+        private void Form1_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            try
+            {
+                for (int i = 0; i < files.Length; i++)
+                {
+                    StartConvert(files[i]);
+                }
+            }
+            catch (Exception Ex)
+            {
+                AddLog("ドラッグ＆ドロップできません。\r\n" + Ex.Message, 2);
+            }
+        }
+
+        private void Form1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.All;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
     }
 }

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Xml;
-using System.IO;
 using System.Windows.Forms;
 
 using Newtonsoft.Json;
@@ -463,6 +462,7 @@ namespace NicoNamaRokuga.Net
             return true;
         }
 
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -490,6 +490,4 @@ namespace NicoNamaRokuga.Net
         }
 
     }
-
-
 }

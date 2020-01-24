@@ -5,7 +5,7 @@ using System.IO;
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Net;
 using NicoNamaRokuga.Proc;
-
+using NicoNamaRokuga.Rec;
 
 namespace NicoNamaRokuga
 {
@@ -72,7 +72,7 @@ namespace NicoNamaRokuga
             }));
         }
 
-        public void ClearHosoData()
+        private void ClearHosoData()
         {
             this.Invoke(new Action(() =>
             {
@@ -88,7 +88,7 @@ namespace NicoNamaRokuga
         }
 
         //放送情報を表示
-        public void DispHosoData(BroadCastInfo bci)
+        private void DispHosoData(BroadCastInfo bci)
         {
             this.Invoke(new Action(() =>
             {
@@ -138,6 +138,42 @@ namespace NicoNamaRokuga
             }));
         }
 
+        private void StartConvert(string filename)
+        {
+
+            //保存ファイル名作成
+            epi = new ExecPsInfo();
+            epi.Sdir = props.SaveDir;
+            epi.Exec = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
+            epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
+            epi.Sfile = bci.SetRecFileFormat(props.SaveFile);
+            epi.Sfolder = bci.SetRecFolderFormat(props.SaveFolder);
+            epi.Protocol = props.Protocol.ToString();
+            epi.Seq = 0;
+            ExecPsInfo.MakeRecDir(epi);
+
+            var file = ExecPsInfo.GetSaveFileSqlite3(epi);
+            if (bci.IsTimeShift()) file += Props.TIMESHIFT;
+            file += ".sqlite3";
+            epi.SaveFile = file;
+            _ndb = new NicoDb(this, epi.SaveFile);
+
+            //bci にKvsデーター読み込み
+            //_ndb.ReadDbKvsProps(bci.Data_Props);
+
+            //コメント情報
+            if (props.IsComment)
+            {
+                cmi = new CommentInfo(bci.User_Id);
+                cmi.BeginTime = bci.Open_Time;
+                cmi.EndTime = bci.End_Time;
+                _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
+            }
+
+            //
+
+        }
+
         //実行ファイルと同じフォルダにある指定ファイルのフルパスをGet
         private string GetExecFile(string file)
         {
@@ -146,6 +182,8 @@ namespace NicoNamaRokuga
                 return Path.Combine(Path.GetDirectoryName(fullAssemblyName), file);
             return file;
         }
+
+
 
     }
 }
