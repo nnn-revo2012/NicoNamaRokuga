@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Net.Http;
 using System.Net;
 using System.IO;
 using System.Diagnostics;
@@ -14,7 +13,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebSocket4Net;
-using SHA3.Net;
+using Org.BouncyCastle.Crypto.Digests;
 
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Rec;
@@ -592,15 +591,13 @@ namespace NicoNamaRokuga.Net
 
                 var calc_s = string.Format("{0:N},{1:N},{2:N},{3},{4}", r_hash["vpos"], r_hash["date"], r_hash["date_usec"], user_id, content);
                 //var hash:= fmt.Sprintf("%x", sha3.Sum256([]byte(calc_s)))
-                string hash;
-                using (var shaAlg = Sha3.Sha3256())
-                {
-                    var hashv = shaAlg.ComputeHash(Encoding.UTF8.GetBytes(calc_s));
-                    var hashedText = new StringBuilder();
-                    for (int i = 0; i < hashv.Length; i++)
-                        hashedText.AppendFormat("{0:x2}", hashv[i]);
-                    hash = hashedText.ToString();
-                }
+                var hashAlgorithm = new Sha3Digest(256);
+                byte[] input = Encoding.UTF8.GetBytes(calc_s);
+                hashAlgorithm.BlockUpdate(input, 0, input.Length);
+                byte[] result = new byte[32]; // 256 / 8 = 64
+                hashAlgorithm.DoFinal(result, 0);
+                string hash = BitConverter.ToString(result);
+                hash = hash.Replace("-", "").ToLowerInvariant();
                 r_hash["hash"] = "\"" + hash + "\"";
                 //var ttt = "calc_s: " + calc_s + "\r\n" +
                 //          "hash: " + hash + "\r\n" +
