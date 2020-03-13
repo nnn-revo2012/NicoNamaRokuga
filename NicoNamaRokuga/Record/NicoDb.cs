@@ -362,14 +362,12 @@ public void CreateDbComment(string DbFile)
                             //double.TryParse(reader["position"].ToString(), out ll);
                     }
                 }
-                return true;
             }
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(ReadDbKvs), Ex);
                 return false;
             }
-
             return true;
         }
 

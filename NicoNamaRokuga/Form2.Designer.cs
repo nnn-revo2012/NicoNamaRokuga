@@ -31,8 +31,8 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.nicoSessionComboBox1 = new SunokoLibrary.Windows.Forms.NicoSessionComboBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -109,8 +109,8 @@
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.nicoSessionComboBox1);
             this.groupBox2.Controls.Add(this.checkBox1);
-            this.groupBox2.Controls.Add(this.comboBox1);
             this.groupBox2.Controls.Add(this.button5);
             this.groupBox2.Controls.Add(this.button4);
             this.groupBox2.Controls.Add(this.label2);
@@ -126,10 +126,19 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "アカウント設定";
             // 
+            // nicoSessionComboBox1
+            // 
+            this.nicoSessionComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.nicoSessionComboBox1.FormattingEnabled = true;
+            this.nicoSessionComboBox1.Location = new System.Drawing.Point(17, 66);
+            this.nicoSessionComboBox1.Name = "nicoSessionComboBox1";
+            this.nicoSessionComboBox1.Size = new System.Drawing.Size(284, 20);
+            this.nicoSessionComboBox1.TabIndex = 12;
+            // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(17, 40);
+            this.checkBox1.Location = new System.Drawing.Point(17, 43);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(134, 16);
             this.checkBox1.TabIndex = 10;
@@ -137,19 +146,10 @@
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.Click += new System.EventHandler(this.checkBox1_Click);
             // 
-            // comboBox1
-            // 
-            this.comboBox1.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(17, 65);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(284, 20);
-            this.comboBox1.TabIndex = 9;
-            // 
             // button5
             // 
             this.button5.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button5.Location = new System.Drawing.Point(322, 63);
+            this.button5.Location = new System.Drawing.Point(322, 64);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(60, 23);
             this.button5.TabIndex = 8;
@@ -607,7 +607,6 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.CheckBox checkBox1;
@@ -624,5 +623,6 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBox5;
+        private SunokoLibrary.Windows.Forms.NicoSessionComboBox nicoSessionComboBox1;
     }
 }

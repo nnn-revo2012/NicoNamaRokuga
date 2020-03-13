@@ -383,7 +383,7 @@ namespace NicoNamaRokuga.Net
 
 
         //*************** Cookie用 *******************
-
+        /*
         //使えるブラウザー一覧を取得
         public static async Task<IList<string>> GetCookieBrowsers(bool flag)
         {
@@ -395,7 +395,8 @@ namespace NicoNamaRokuga.Net
                 //conbobox1 にブラウザ名を登録
                 foreach (var ib in importableBrowsers)
                     result.Add(ib.SourceInfo.BrowserName);
-            }catch (Exception Ex)
+            }
+            catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(GetCookieBrowsers), Ex);
                 return result;
@@ -417,9 +418,10 @@ namespace NicoNamaRokuga.Net
         {
             var importableBrowsers = await CookieGetters.Default.GetInstancesAsync(flag);
 
-            if (index < 0 || index > importableBrowsers.Count()-1) return null;
+            if (index < 0 || index > importableBrowsers.Count() - 1) return null;
             return importableBrowsers[index];
         }
+        */
 
         // 指定Cookie情報のブラウザーのニコニコのCookieを取得してセット
         public async Task<bool> SetNicoCookie(bool flag, CookieSourceInfo csi)
