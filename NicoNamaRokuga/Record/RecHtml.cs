@@ -145,6 +145,7 @@ namespace NicoNamaRokuga.Rec
             _wc = wc;
 
             _wc.Encoding = Encoding.UTF8;
+            _wc.Proxy = null;
             _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
             _wc.Headers.Add(HttpRequestHeader.Referer, Props.GetLiveUrl(_bci.LiveId));
             _wc.cookieContainer = cc;

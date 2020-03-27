@@ -184,8 +184,8 @@ namespace NicoNamaRokuga
                         case "cookie":
                             //ブラウザのCookie読み込み処理
                             if (props.SelectedCookie != null)
-                                AddLog(string.Format("Cookie: {0}", props.SelectedCookie.BrowserName), 1);
-                            if (!(await _nLiveNet.SetNicoCookie(!props.IsAllCookie, props.SelectedCookie)))
+                                AddLog(string.Format("Cookie: {0} {1}", props.SelectedCookie.BrowserName, props.SelectedCookie.ProfileName), 1);
+                            if (!(await _nLiveNet.SetNicoCookie(props.SelectedCookie)))
                             {
                                 AddLog("Cookie読み込み失敗", 1);
                                 return;

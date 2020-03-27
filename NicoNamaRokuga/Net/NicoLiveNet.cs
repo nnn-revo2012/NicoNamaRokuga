@@ -102,6 +102,7 @@ namespace NicoNamaRokuga.Net
             _wc = wc;
 
             _wc.Encoding = Encoding.UTF8;
+            _wc.Proxy = null;
             _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
             _wc.timeout = 30000;
         }
@@ -383,48 +384,8 @@ namespace NicoNamaRokuga.Net
 
 
         //*************** Cookie用 *******************
-        /*
-        //使えるブラウザー一覧を取得
-        public static async Task<IList<string>> GetCookieBrowsers(bool flag)
-        {
-            var result = new List<string>();
-            try
-            {
-                var importableBrowsers = await CookieGetters.Default.GetInstancesAsync(flag);
-
-                //conbobox1 にブラウザ名を登録
-                foreach (var ib in importableBrowsers)
-                    result.Add(ib.SourceInfo.BrowserName);
-            }
-            catch (Exception Ex)
-            {
-                DebugWrite.Writeln(nameof(GetCookieBrowsers), Ex);
-                return result;
-            }
-            return result;
-        }
-
-        //指定番号のCookieSourceInfoを取得
-        public static async Task<CookieSourceInfo> GetCookieSource(bool flag, int index)
-        {
-            var importableBrowsers = await CookieGetters.Default.GetInstancesAsync(flag);
-
-            if (index < 0 || index > importableBrowsers.Count() - 1) return null;
-            return importableBrowsers[index].SourceInfo;
-        }
-
-        //指定番号のCookie情報を取得
-        public static async Task<ICookieImporter> GetCookieGetter(bool flag, int index)
-        {
-            var importableBrowsers = await CookieGetters.Default.GetInstancesAsync(flag);
-
-            if (index < 0 || index > importableBrowsers.Count() - 1) return null;
-            return importableBrowsers[index];
-        }
-        */
-
         // 指定Cookie情報のブラウザーのニコニコのCookieを取得してセット
-        public async Task<bool> SetNicoCookie(bool flag, CookieSourceInfo csi)
+        public async Task<bool> SetNicoCookie(CookieSourceInfo csi)
         {
             try
             {
@@ -445,7 +406,7 @@ namespace NicoNamaRokuga.Net
                 }
 
                 // Cookieをセット
-                _wc.cookieContainer.Add(targetUrl, result.Cookies);
+                _wc.cookieContainer.Add(result.Cookies);
                 IsLoginStatus = true;
 
                 if (IsDebug)
