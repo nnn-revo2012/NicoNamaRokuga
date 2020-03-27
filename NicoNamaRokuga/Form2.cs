@@ -99,6 +99,7 @@ namespace NicoNamaRokuga
                 checkBox2.Checked = _props.IsLogging;
                 checkBox3.Checked = _props.IsComment;
                 checkBox6.Checked = _props.IsSeetNo;
+                checkBox7.Checked = _props.IsVideo;
             }
             catch (Exception Ex)
             {
@@ -165,6 +166,7 @@ namespace NicoNamaRokuga
                 _props.IsLogging = checkBox2.Checked;
                 _props.IsComment = checkBox3.Checked;
                 _props.IsSeetNo = checkBox6.Checked;
+                _props.IsVideo = checkBox7.Checked;
 
                 _props.SelectedCookie = nicoSessionComboBox1.Selector.SelectedImporter.SourceInfo;
 
@@ -216,14 +218,48 @@ namespace NicoNamaRokuga
 
         }
 
+        private void button6_Click(object sender, EventArgs e)
+        {
+            //録画ファイル保存先フォルダー
+            try
+            {
+                using (var folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog())
+                {
+                    folderBrowserDialog1.Description = "フォルダを指定してください。";
+                    folderBrowserDialog1.RootFolder = Environment.SpecialFolder.Desktop;
+                    if (String.IsNullOrEmpty(textBox3.Text)) //空白の場合はマイドキュメント指定
+                    {
+                        folderBrowserDialog1.SelectedPath = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    }
+                    else
+                    {
+                        folderBrowserDialog1.SelectedPath = textBox3.Text;
+                    }
+                    folderBrowserDialog1.ShowNewFolderButton = true;
+
+                    //ダイアログを表示する
+                    if (folderBrowserDialog1.ShowDialog(this) == DialogResult.OK)
+                    {
+                        //選択されたフォルダを表示する
+                        textBox3.Text = folderBrowserDialog1.SelectedPath;
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                MessageBox.Show(Ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void button7_Click(object sender, EventArgs e)
         {
+            //ファイル名書式
 
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void button8_Click(object sender, EventArgs e)
         {
-
+            //振り分けフォルダー
         }
     }
 }

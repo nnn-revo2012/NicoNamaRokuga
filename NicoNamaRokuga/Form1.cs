@@ -121,16 +121,8 @@ namespace NicoNamaRokuga
                     return;
                 }
                 var save_file = props.SaveFile;
-                if (String.IsNullOrEmpty(save_file))
-                {
-                    save_file = Properties.Settings.Default.DefaultSaveFile;
-                }
 
                 var exec_file = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
-                if (String.IsNullOrEmpty(exec_file))
-                {
-                    exec_file = Properties.Settings.Default.DefaultExecFile;
-                }
                 exec_file = GetExecFile(exec_file);
                 if (!File.Exists(exec_file))
                 {
@@ -138,10 +130,6 @@ namespace NicoNamaRokuga
                     return;
                 }
                 var exec_command = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
-                if (String.IsNullOrEmpty(exec_command))
-                {
-                    exec_command = Properties.Settings.Default.DefaultExecCommand;
-                }
 
                 //放送ID
                 if (!IsBatchMode)

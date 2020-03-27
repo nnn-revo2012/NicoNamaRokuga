@@ -47,18 +47,6 @@
     <Setting Name="BreakCommand" Type="System.String" Scope="User">
       <Value Profile="(Default)">q;q</Value>
     </Setting>
-    <Setting Name="DefaultSaveFolder" Type="System.String" Scope="User">
-      <Value Profile="(Default)">rec</Value>
-    </Setting>
-    <Setting Name="DefaultSaveFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">?PID?-?UNAME?-?TITLE?</Value>
-    </Setting>
-    <Setting Name="DefaultExecFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ffmpeg.exe;ffmpeg.exe</Value>
-    </Setting>
-    <Setting Name="DefaultExecCommand" Type="System.String" Scope="User">
-      <Value Profile="(Default)">%HEADERS% -i "%PARA%" -c copy "%FILE%";%HEADERS% -i "%PARA%" -c copy "%FILE%"</Value>
-    </Setting>
     <Setting Name="IsLogging" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
@@ -82,6 +70,9 @@
     </Setting>
     <Setting Name="ReConnectTime2" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">30</Value>
+    </Setting>
+    <Setting Name="IsVideo" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -45,6 +45,7 @@
             this.rB_always = new System.Windows.Forms.RadioButton();
             this.rB_none = new System.Windows.Forms.RadioButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.rB_native = new System.Windows.Forms.RadioButton();
             this.rB_ext1 = new System.Windows.Forms.RadioButton();
@@ -261,6 +262,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkBox7);
             this.tabPage2.Controls.Add(this.groupBox6);
             this.tabPage2.Controls.Add(this.checkBox6);
             this.tabPage2.Controls.Add(this.checkBox5);
@@ -277,6 +279,16 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "基本設定";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox7
+            // 
+            this.checkBox7.AutoSize = true;
+            this.checkBox7.Location = new System.Drawing.Point(12, 282);
+            this.checkBox7.Name = "checkBox7";
+            this.checkBox7.Size = new System.Drawing.Size(100, 16);
+            this.checkBox7.TabIndex = 7;
+            this.checkBox7.Text = "映像を録画する";
+            this.checkBox7.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
@@ -438,6 +450,7 @@
             this.button8.TabIndex = 8;
             this.button8.Text = "振分選択";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button7
             // 
@@ -624,5 +637,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBox5;
         private SunokoLibrary.Windows.Forms.NicoSessionComboBox nicoSessionComboBox1;
+        private System.Windows.Forms.CheckBox checkBox7;
     }
 }

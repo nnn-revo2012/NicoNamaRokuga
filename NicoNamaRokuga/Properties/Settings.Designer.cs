@@ -204,54 +204,6 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("rec")]
-        public string DefaultSaveFolder {
-            get {
-                return ((string)(this["DefaultSaveFolder"]));
-            }
-            set {
-                this["DefaultSaveFolder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("?PID?-?UNAME?-?TITLE?")]
-        public string DefaultSaveFile {
-            get {
-                return ((string)(this["DefaultSaveFile"]));
-            }
-            set {
-                this["DefaultSaveFile"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ffmpeg.exe;ffmpeg.exe")]
-        public string DefaultExecFile {
-            get {
-                return ((string)(this["DefaultExecFile"]));
-            }
-            set {
-                this["DefaultExecFile"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%HEADERS% -i \"%PARA%\" -c copy \"%FILE%\";%HEADERS% -i \"%PARA%\" -c copy \"%FILE%\"")]
-        public string DefaultExecCommand {
-            get {
-                return ((string)(this["DefaultExecCommand"]));
-            }
-            set {
-                this["DefaultExecCommand"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool IsLogging {
             get {
@@ -343,6 +295,18 @@ namespace NicoNamaRokuga.Properties {
             }
             set {
                 this["ReConnectTime2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsVideo {
+            get {
+                return ((bool)(this["IsVideo"]));
+            }
+            set {
+                this["IsVideo"] = value;
             }
         }
     }
