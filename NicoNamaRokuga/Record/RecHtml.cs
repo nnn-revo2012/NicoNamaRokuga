@@ -191,8 +191,13 @@ namespace NicoNamaRokuga.Rec
                 }
 
                 long waittime = 1300;
-                if (_bci.IsTimeShift()) waittime = 2300;
-                Task.Run(() => HtmlRecord(masterfile, outfile, waittime));
+                int delaytime = 800;
+                if (_bci.IsTimeShift())
+                {
+                    waittime = 2300;
+                    delaytime = 2000;
+                }
+                Task.Run(() => HtmlRecord(masterfile, outfile, waittime, delaytime));
             }
             catch (Exception Ex)
             {
@@ -200,7 +205,7 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        private async Task HtmlRecord(string masterfile, string outfile, long waittime)
+        private async Task HtmlRecord(string masterfile, string outfile, long waittime, int delaytime)
         {
             try
             {
@@ -297,8 +302,8 @@ namespace NicoNamaRokuga.Rec
                     if (PsStatus > 0) break;
                     if (sc <= 1)
                     {
-                        _form.AddExecLog("Wait 2000mSec\r\n");
-                        await Task.Delay(2000);
+                        _form.AddExecLog("Wait " + delaytime.ToString() + "mSec\r\n");
+                        await Task.Delay(delaytime);
                     }
                     pli.SeqNo = sgi.SeqNo;
                     pli.Position = sgi.Position;

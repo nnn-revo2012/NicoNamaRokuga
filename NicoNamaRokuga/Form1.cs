@@ -244,8 +244,10 @@ namespace NicoNamaRokuga
                 if (props.IsComment)
                 {
                     cmi = new CommentInfo(bci.User_Id);
-                    cmi.BeginTime = bci.Open_Time;
+                    cmi.OpenTime = bci.Open_Time;
+                    cmi.BeginTime = bci.Begin_Time;
                     cmi.EndTime = bci.End_Time;
+                    cmi.VposBaseTime = bci.VposBase_Time;
                     _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
                 }
                 var ri = new RetryInfo();
@@ -469,11 +471,15 @@ namespace NicoNamaRokuga
             {
                 for (int i = 0; i < files.Length; i++)
                 {
-                    StartConvert(files[i]);
+                    StartExtract(files[i]);
                 }
             }
             catch (Exception Ex)
             {
+                if (_ndb != null)
+                {
+                    _ndb.Dispose();
+                }
                 AddLog("ドラッグ＆ドロップできません。\r\n" + Ex.Message, 2);
             }
         }

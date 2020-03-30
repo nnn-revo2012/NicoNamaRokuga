@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using NicoNamaRokuga.Prop;
+using NicoNamaRokuga.Net;
+using NicoNamaRokuga.Proc;
 
 namespace NicoNamaRokuga.Rec
 {
@@ -133,24 +135,52 @@ namespace NicoNamaRokuga.Rec
             return true;
         }
 
-        public bool ReadDbMedia(Segment seg, PlayListInfo pli, SegmentInfo sgi, byte[] data, int leng, int notfound)
+        public bool ReadDbMedia(ExecPsInfo epi)
         {
-            /*
-                var SelMedia = `SELECT
-                seqno, bandwidth, size, data FROM media
-                WHERE IFNULL(notfound, 0) == 0 AND data IS NOT NULL
-                ORDER BY seqno`
-            */
+            FileStream fs = null;
+            var result = false;
             try
             {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "SELECT seqno, bandwidth, size, data FROM media\n"
+                                        + "WHERE IFNULL(notfound, 0) == 0 AND data IS NOT NULL\n"
+                                        + "ORDER BY seqno";
+                    //ファイルオープン
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                        long seqno = -1L;
+                        long old_seqno = -1L;
+                        byte[] data;
+                        fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
+                        while (reader.Read())
+                        {
+                            seqno = (long)reader["seqno"];
+                            if (old_seqno > -1L && seqno - old_seqno > 1L)
+                            {
+                                fs.Dispose();
+                                epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                                fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
+                            }
+                            data = (byte[])reader["data"];
+                            fs.Write(data, 0, data.Length);
+                            old_seqno = seqno;
+                        }
+                        if (fs != null) fs.Dispose();
+                        result = true;
+                    }
+                }
             }
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(ReadDbMedia), Ex);
-                return false;
             }
-
-            return true;
+            finally
+            {
+                if (fs != null) fs.Dispose();
+            }
+            return result;
         }
 
 public void CreateDbComment(string DbFile)
@@ -221,8 +251,37 @@ public void CreateDbComment(string DbFile)
             return true;
         }
 
-        public bool ReadDbComment(string command_text, string mail, string user_id, string content)
+        public bool ReadDbComment(string filename)
         {
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "SELECT vpos, date, date_usec,\n"
+                                        + "IFNULL(no, -1) AS no,\n"
+                                        + "IFNULL(anonymity, 0) AS anonymity,\n"
+                                        + "user_id,\n"
+                                        + "content,\n"
+                                        + "IFNULL(mail, \"\") AS mail,\n"
+                                        + "IFNULL(premium, 0) AS premium,\n"
+                                        + "IFNULL(score, 0) AS score,\n"
+                                        + "thread,\n"
+                                        + "IFNULL(origin, \"\") AS origin,\n"
+                                        + "IFNULL(locale, \"\") AS locale\n"
+                                        + "FROM comment ORDER BY date2";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        //while (reader.Read())
+                        //    //Encoding.UTF8.GetString((byte[])reader["content"]); //blob
+                   }
+                }
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(ReadDbKvs), Ex);
+                return false;
+            }
+            return true;
             /*
              *            var SelComment = `SELECT
                             vpos,
@@ -349,8 +408,10 @@ public void CreateDbComment(string DbFile)
             return true;
         }
 
-        public bool ReadDbKvs()
+        public IDictionary<string, string> ReadDbKvs()
         {
+            var kvs = new Dictionary<string, string>();
+
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
@@ -358,17 +419,18 @@ public void CreateDbComment(string DbFile)
                     command.CommandText = "SELECT k,v FROM kvs";
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        while (reader.Read()) { }
-                            //double.TryParse(reader["position"].ToString(), out ll);
-                    }
+                        while (reader.Read())
+                            kvs[reader["k"].ToString()] = 
+                                Encoding.UTF8.GetString((byte[])reader["v"]); //blob
+                   }
                 }
             }
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(ReadDbKvs), Ex);
-                return false;
+                return kvs;
             }
-            return true;
+            return kvs;
         }
 
         public double GetDbMediaLastPos()

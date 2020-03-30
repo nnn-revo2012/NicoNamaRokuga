@@ -27,8 +27,10 @@ namespace NicoNamaRokuga.Net
         public string UserId { set; get; }
         public string ThreadId { set; get; }
         public string SaveFile { get; set; }
+        public long   OpenTime { get; set; }
         public long   BeginTime { get; set; }
         public long   EndTime { get; set; }
+        public long   VposBaseTime { get; set; }
 
         public CommentInfo(string userid)
         {
@@ -92,8 +94,9 @@ namespace NicoNamaRokuga.Net
             this._form = fo;
 
             _seq_no = 0;
-            if (_bci.IsTimeShift())
-                _come_list.Clear();
+            if (_bci != null)
+                if (_bci.IsTimeShift())
+                    _come_list.Clear();
 
         }
 

@@ -24,6 +24,7 @@ namespace NicoNamaRokuga.Proc
         public string Protocol { get; set; }
         public string Quality { get; set; }
         public string SaveFile { get; set; }
+        public string Sqlite3File { get; set; }
         public string Ext { get { return (Protocol == "rtmp") ? ".flv" : ".ts"; } }
         public string Xml { get { return ".xml"; } }
 
@@ -65,6 +66,20 @@ namespace NicoNamaRokuga.Proc
         public static string GetSaveFileSqlite3(ExecPsInfo epi)
         {
             return epi.Sdir.TrimEnd('\\') + "\\" + epi.Sfolder.Trim('\\') + "\\" + epi.Sfile;
+        }
+
+        //Sqlite3の保存ファイルにシーケンスNoをつける
+        public static string GetSaveFileSqlite3Num(ExecPsInfo epi)
+        {
+            int idx = epi.Sqlite3File.IndexOf(".sqlite3");
+            if (idx < 0) return null;
+
+            var ff = epi.Sqlite3File.Substring(0, idx) + "-";
+
+            //同名ファイル名がないかチェック
+            while (IsExistFile(ff, epi.Seq, epi.Ext, epi.Xml)) ++epi.Seq;
+
+            return ff + epi.Seq.ToString();
         }
 
         //保存ディレクトリーがなければ作る

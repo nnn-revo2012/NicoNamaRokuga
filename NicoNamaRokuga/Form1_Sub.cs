@@ -138,40 +138,53 @@ namespace NicoNamaRokuga
             }));
         }
 
-        private void StartConvert(string filename)
+        private void StartExtract(string filename)
         {
+            if (filename.IndexOf(".sqlite3") < 0) return;
 
-            //保存ファイル名作成
-            epi = new ExecPsInfo();
-            epi.Sdir = props.SaveDir;
-            epi.Exec = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
-            epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
-            epi.Sfile = bci.SetRecFileFormat(props.SaveFile);
-            epi.Sfolder = bci.SetRecFolderFormat(props.SaveFolder);
-            epi.Protocol = props.Protocol.ToString();
-            epi.Seq = 0;
-            ExecPsInfo.MakeRecDir(epi);
-
-            var file = ExecPsInfo.GetSaveFileSqlite3(epi);
-            if (bci.IsTimeShift()) file += Props.TIMESHIFT;
-            file += ".sqlite3";
-            epi.SaveFile = file;
-            _ndb = new NicoDb(this, epi.SaveFile);
-
-            //bci にKvsデーター読み込み
-            //_ndb.ReadDbKvsProps(bci.Data_Props);
-
-            //コメント情報
-            if (props.IsComment)
+            try
             {
-                cmi = new CommentInfo(bci.User_Id);
-                cmi.BeginTime = bci.Open_Time;
-                cmi.EndTime = bci.End_Time;
-                _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
+                AddLog("出力開始します。", 1);
+
+                //保存ファイル名作成
+                epi = new ExecPsInfo();
+                epi.Sqlite3File = filename;
+                epi.Protocol = Protocol.hls.ToString();
+                epi.Seq = 0;
+
+                //Kvsデーター読み込み
+                _ndb = new NicoDb(this, filename);
+                var kvs = _ndb.ReadDbKvs();
+
+                //コメント情報
+                cmi = new CommentInfo("NaN");
+                //cmi.OpenTime = kvs["openTime"];
+                //cmi.BeginTime = kvs["beginTime"];
+                //cmi.EndTime = kvs["endTime"];
+                //cmi.VposBaseTime = kvs["vposBaseTime"];
+                //_nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
+
+                cmi.SaveFile = epi.SaveFile + epi.Xml;
+                //映像ファイル出力処理
+                if (_ndb.ReadDbMedia(epi))
+                    AddLog("出力終了しました。", 1);
+                else
+                    AddLog("出力失敗しました。", 1);
+
+                //終了処理
+                if (_ndb != null)
+                {
+                    _ndb.Dispose();
+                }
             }
-
-            //
-
+            catch (Exception Ex)
+            {
+                if (_ndb != null)
+                {
+                    _ndb.Dispose();
+                }
+                AddLog("出力処理エラー。\r\n" + Ex.Message, 2);
+            }
         }
 
         //実行ファイルと同じフォルダにある指定ファイルのフルパスをGet
