@@ -41,8 +41,10 @@ namespace NicoNamaRokuga.Net
         public long   Begin_Time { set; get; }
         public long   VposBase_Time { set; get; }
         public long   End_Time { set; get; }
+        public long   Server_Time { set; get; }
         public string OnAirStatus { set; get; }
         public string User_Id { set; get; }
+        public string AccountType { set; get; }
         public string Data_Props { set; get; }
 
         public BroadCastInfo(string liveid, string bcid, string autkn, string wsurl)

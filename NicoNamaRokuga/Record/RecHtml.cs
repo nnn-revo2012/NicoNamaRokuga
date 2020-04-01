@@ -37,8 +37,8 @@ namespace NicoNamaRokuga.Rec
         public string MasterUrl { set; get; }
         public string BaseUrl { set; get; }
         public ICollection<PlayerInfo> Player { private set; get; }
-        public int SeqNo { set; get; }
-        public int LastSeqNo { set; get; }
+        public long SeqNo { set; get; }
+        public long LastSeqNo { set; get; }
         public bool EndList { set; get; }
         public double Position { set; get; }
 
@@ -68,7 +68,7 @@ namespace NicoNamaRokuga.Rec
         public int ErrNo { set; get; }
         public string BaseUrl { set; get; }
         public ICollection<Segment> Seg { private set; get; }
-        public int SeqNo { set; get; }
+        public long SeqNo { set; get; }
         public bool EndList { set; get; }
         public double Position { set; get; }
 
@@ -212,9 +212,9 @@ namespace NicoNamaRokuga.Rec
                 var stime = string.Empty;
                 if (_bci.IsTimeShift())
                 {
-                    var ll = _ndb.GetDbMediaLastPos();
-                    if (ll > 0.0)
-                        stime = "&start=" + ll.ToString();
+                    var lp = _ndb.GetDbMediaLastPos();
+                    if (lp > 0.0)
+                        stime = "&start=" + lp.ToString();
                     else
                         stime = "&start=0.0";
                 }

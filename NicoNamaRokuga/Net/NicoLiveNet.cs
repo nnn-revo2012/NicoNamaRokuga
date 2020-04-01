@@ -113,7 +113,7 @@ namespace NicoNamaRokuga.Net
         }
 
 
-        public List<KeyValuePair<string, string>> GetCookieList()
+        public IList<KeyValuePair<string, string>> GetCookieList()
         {
             var result = new Dictionary<string, string>();
             var cc = _wc.cookieContainer;
@@ -293,6 +293,7 @@ namespace NicoNamaRokuga.Net
                     return bci;
                 }
                 bci.User_Id = Regex.Match(hs, "\"user_id\":([^,]*),", RegexOptions.Compiled).Groups[1].Value;
+                bci.AccountType = Regex.Match(hs, "\"member_status\":([^,]*),", RegexOptions.Compiled).Groups[1].Value;
                 providertype = Regex.Match(hs, "\"content_type\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
                 bci.Provider_Type = providertype;
                 var ttt = WebUtility.HtmlDecode(Regex.Match(hs, "<script +id=\"embedded-data\" +data-props=\"([^\"]*)\"></script>", RegexOptions.Compiled).Groups[1].Value);
@@ -329,6 +330,7 @@ namespace NicoNamaRokuga.Net
                 bci.VposBase_Time = (long)dprogram["vposBaseTime"];
                 bci.End_Time = (long)dprogram["endTime"];
                 bci.OnAirStatus = dprogram["status"].ToString();
+                bci.Server_Time = (long)dprops["site"]["serverTime"];
 
                 bci.Community_Id = providertype;
                 bci.Community_Title = "公式生放送";

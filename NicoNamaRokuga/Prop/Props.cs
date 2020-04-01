@@ -34,17 +34,17 @@ namespace NicoNamaRokuga.Prop
 
         public static readonly string TIMESHIFT = "(TS)";
 
-        public static readonly Dictionary<string, string> WsHeaderStream =
+        public static readonly IDictionary<string, string> WsHeaderStream =
             new Dictionary<string, string>()
             {{"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"}};
 
-        //public static readonly Dictionary<string, string> WsHeaderStream =
+        //public static readonly IDictionary<string, string> WsHeaderStream =
         //    new Dictionary<string, string>()
         //    {{"User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"},
         //     {"Origin", "https://live2.nicovideo.jp"},
         //     {"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"}};
 
-        public static readonly Dictionary<string, string> WsHeaderComment =
+        public static readonly IDictionary<string, string> WsHeaderComment =
             new Dictionary<string, string>()
             {{"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"},
              {"Sec-WebSocket-Protocol", "msg.nicovideo.jp#json"}};
@@ -75,39 +75,39 @@ namespace NicoNamaRokuga.Prop
             //new[] {"", "",""}
             };
 
-        public static readonly Dictionary<string, string> PropLists =
+        public static readonly IDictionary<string, string> PropLists =
             new Dictionary<string, string>()
         {
-		// "community"
-		{"comId", "community.id"}, // "co\d+"
-		// "program"
-		{"beginTime", "program.beginTime"}, // integer
-		{"broadcastId", "program.broadcastId"}, // "\d+"
-		{"description", "program.description"}, // 放送説明
-		{"endTime", "program.endTime"}, // integer
-		{"isFollowerOnly", "program.isFollowerOnly"}, // bool
-		{"isPrivate", "program.isPrivate"}, // bool
-		{"mediaServerType","program.mediaServerType"}, // "DMC"
-		{"nicoliveProgramId", "program.nicoliveProgramId"}, // "lv\d+"
-		{"openTime", "program.openTime"}, // integer
-		{"providerType", "program.providerType"}, // "community"
-		{"status", "program.status"}, //
-		{"userName", "program.supplier.name"}, // ユーザ名
-		{"userPageUrl", "program.supplier.pageUrl"}, // "https://www.nicovideo.jp/user/\d+"
-		{"title", "program.title"}, // title
-        {"vposBaseTime", "program.vposBaseTime"}, // integer
-		// "site"
-		{"serverTime", "site.serverTime"}, // integer
-		// "socialGroup"
-		{"socDescription", "socialGroup.description"}, // コミュ説明
-		{"socId", "socialGroup.id"}, // "co\d+" or "ch\d+"
-		{"socLevel", "socialGroup.level"}, // integer
-		{"socName", "socialGroup.name"}, // community name
-		{"socType", "socialGroup.type"}, // "community"
-		// "user"
-		{"accountType", "user.accountType"}, // "premium"
-		{"isLoggedIn", "user.isLoggedIn"}, // bool
-    	};
+            // "community"
+            {"comId", "community.id"}, // "co\d+"
+            // "program"
+            {"beginTime", "program.beginTime"}, // integer
+            {"broadcastId", "program.broadcastId"}, // "\d+"
+            {"description", "program.description"}, // 放送説明
+            {"endTime", "program.endTime"}, // integer
+            {"isFollowerOnly", "program.isFollowerOnly"}, // bool
+            {"isPrivate", "program.isPrivate"}, // bool
+            {"mediaServerType","program.mediaServerType"}, // "DMC"
+            {"nicoliveProgramId", "program.nicoliveProgramId"}, // "lv\d+"
+            {"openTime", "program.openTime"}, // integer
+            {"providerType", "program.providerType"}, // "community"
+            {"status", "program.status"}, //
+            {"userName", "program.supplier.name"}, // ユーザ名
+            {"userPageUrl", "program.supplier.pageUrl"}, // "https://www.nicovideo.jp/user/\d+"
+            {"title", "program.title"}, // title
+            {"vposBaseTime", "program.vposBaseTime"}, // integer
+            // "site"
+            {"serverTime", "site.serverTime"}, // integer
+            // "socialGroup"
+            {"socDescription", "socialGroup.description"}, // コミュ説明
+            {"socId", "socialGroup.id"}, // "co\d+" or "ch\d+"
+            {"socLevel", "socialGroup.level"}, // integer
+            {"socName", "socialGroup.name"}, // community name
+            {"socType", "socialGroup.type"}, // "community"
+            // "user"
+            {"accountType", "user.accountType"}, // "premium"
+            {"isLoggedIn", "user.isLoggedIn"}, // bool
+        };
 
         public bool IsDebug { get; set; }
 

@@ -46,9 +46,6 @@ namespace NicoNamaRokuga.Rec
             _cn = conn;
 
             Open();
-            CreateDbMedia(dbfile);
-            CreateDbComment(dbfile);
-            CreateDbKvs(dbfile);
         }
 
         ~NicoDb()
@@ -66,12 +63,14 @@ namespace NicoNamaRokuga.Rec
             _cn?.Close();
         }
 
-        //public void Open()
-        //{
-        //    _cn?.Open();
-        //}
+        public void CreateDbAll()
+        {
+            CreateDbMedia();
+            CreateDbComment();
+            CreateDbKvs();
+        }
 
-        public void CreateDbMedia(string DbFile)
+        public void CreateDbMedia()
         {
             try
             {
@@ -143,6 +142,13 @@ namespace NicoNamaRokuga.Rec
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
+                    long seqno = -1L;
+                    long prevseqno = -1L;
+                    int bw = -1;
+                    int prevbw = -1;
+                    int size;
+                    byte[] data;
+
                     command.CommandText = "SELECT seqno, bandwidth, size, data FROM media\n"
                                         + "WHERE IFNULL(notfound, 0) == 0 AND data IS NOT NULL\n"
                                         + "ORDER BY seqno";
@@ -150,22 +156,28 @@ namespace NicoNamaRokuga.Rec
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
-                        long seqno = -1L;
-                        long old_seqno = -1L;
-                        byte[] data;
                         fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
                         while (reader.Read())
                         {
-                            seqno = (long)reader["seqno"];
-                            if (old_seqno > -1L && seqno - old_seqno > 1L)
+                            seqno = (long )reader["seqno"];
+                            bw = (int )(long )reader["bandwidth"];
+                            // チャンクが飛んでいる場合はファイルを分ける
+                            // BANDWIDTHが変わる場合はファイルを分ける
+                            if ((prevseqno > -1L && seqno - prevseqno > 1L) || (prevbw > -1 && bw != prevbw))
                             {
+                                if (bw != prevbw)
+                                    Debug.WriteLine("Bandwitdh changed: {0} --> {1}\n", prevbw, bw);
+                                else
+                                    Debug.WriteLine("SeqNo. skipped: {0} --> {1}\n", prevseqno, seqno);
                                 fs.Dispose();
                                 epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
                                 fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
                             }
-                            data = (byte[])reader["data"];
-                            fs.Write(data, 0, data.Length);
-                            old_seqno = seqno;
+                            size = (int )(long )reader["size"];
+                            data = (byte[] )reader["data"];
+                            fs.Write(data, 0, size);
+                            prevseqno = seqno;
+                            prevbw = bw;
                         }
                         if (fs != null) fs.Dispose();
                         result = true;
@@ -183,7 +195,7 @@ namespace NicoNamaRokuga.Rec
             return result;
         }
 
-public void CreateDbComment(string DbFile)
+public void CreateDbComment()
         {
             try
             {
@@ -251,8 +263,10 @@ public void CreateDbComment(string DbFile)
             return true;
         }
 
-        public bool ReadDbComment(string filename)
+        public bool ReadDbComment(CommentInfo cmi)
         {
+            FileStream fs = null;
+            var result = false;
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
@@ -271,51 +285,32 @@ public void CreateDbComment(string DbFile)
                                         + "FROM comment ORDER BY date2";
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        //while (reader.Read())
-                        //    //Encoding.UTF8.GetString((byte[])reader["content"]); //blob
-                   }
+                        //cmi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                        //fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
+                        while (reader.Read())
+                        {
+                            //Encoding.UTF8.GetString((byte[])reader["content"]); //blob
+                            fs.Dispose();
+                            //epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                            //fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
+                        }
+                        if (fs != null) fs.Dispose();
+                        result = true;
+                    }
                 }
             }
             catch (Exception Ex)
             {
-                DebugWrite.Writeln(nameof(ReadDbKvs), Ex);
-                return false;
-            }
-            return true;
-            /*
-             *            var SelComment = `SELECT
-                            vpos,
-                            date,
-                            date_usec,
-
-                IFNULL(no, -1) AS no,
-                IFNULL(anonymity, 0) AS anonymity,
-                user_id,
-                content,
-                IFNULL(mail, "") AS mail,
-                IFNULL(premium, 0) AS premium,
-                IFNULL(score, 0) AS score,
-                thread,
-                IFNULL(origin, "") AS origin,
-                IFNULL(locale, "") AS locale
-
-                FROM comment
-
-                ORDER BY date2`
-            */
-            try
-            {
-            }
-            catch (Exception Ex)
-            {
                 DebugWrite.Writeln(nameof(ReadDbComment), Ex);
-                return false;
             }
-
-            return true;
+            finally
+            {
+                if (fs != null) fs.Dispose();
+            }
+            return result;
         }
 
-        public void CreateDbKvs(string DbFile)
+        public void CreateDbKvs()
         {
             try
             {
@@ -435,7 +430,7 @@ public void CreateDbComment(string DbFile)
 
         public double GetDbMediaLastPos()
         {
-            double ll = 0;
+            double dbl = 0;
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
@@ -444,21 +439,21 @@ public void CreateDbComment(string DbFile)
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
-                            double.TryParse(reader["position"].ToString(), out ll);
+                            double.TryParse(reader["position"].ToString(), out dbl);
                     }
                 }
-                return ll;
+                return dbl;
             }
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(GetDbMediaLastPos), Ex);
-                return ll;
+                return dbl;
             }
         }
 
-        public int GetDbMediaLastSeqNo()
+        public long GetDbMediaLastSeqNo()
         {
-            int seqno = 0;
+            long seqno = 0;
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
@@ -467,7 +462,7 @@ public void CreateDbComment(string DbFile)
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
-                            int.TryParse(reader["seqno"].ToString(), out seqno);
+                            long.TryParse(reader["seqno"].ToString(), out seqno);
                     }
                 }
                 return seqno;
@@ -478,7 +473,6 @@ public void CreateDbComment(string DbFile)
                 return seqno;
             }
         }
-
 
 
         protected virtual void Dispose(bool disposing)
