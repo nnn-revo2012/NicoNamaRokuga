@@ -162,27 +162,30 @@ namespace NicoNamaRokuga
                 //cmi.BeginTime = kvs["beginTime"];
                 //cmi.EndTime = kvs["endTime"];
                 //cmi.VposBaseTime = kvs["vposBaseTime"];
-                //_nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
+                _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
 
-                cmi.SaveFile = epi.SaveFile + epi.Xml;
                 //映像ファイル出力処理
-                if (_ndb.ReadDbMedia(epi))
-                    AddLog("出力終了しました。", 1);
+                if (_ndb.ReadDbMedia(epi, cmi))
+                    AddLog("映像出力終了しました。", 1);
                 else
-                    AddLog("出力失敗しました。", 1);
+                    AddLog("映像出力失敗しました。", 1);
+                if (_ndb.ReadDbComment(cmi, _nNetComment))
+                    AddLog("コメント出力終了しました。", 1);
+                else
+                    AddLog("コメント出力失敗しました。", 1);
 
                 //終了処理
                 if (_ndb != null)
-                {
                     _ndb.Dispose();
-                }
+                if (_nNetComment != null)
+                    _nNetComment.Dispose();
             }
             catch (Exception Ex)
             {
                 if (_ndb != null)
-                {
                     _ndb.Dispose();
-                }
+                if (_nNetComment != null)
+                    _nNetComment.Dispose();
                 AddLog("出力処理エラー。\r\n" + Ex.Message, 2);
             }
         }

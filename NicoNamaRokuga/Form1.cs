@@ -124,11 +124,12 @@ namespace NicoNamaRokuga
 
                 var exec_file = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
                 exec_file = GetExecFile(exec_file);
-                if (!File.Exists(exec_file))
-                {
-                    AddLog("実行ファイルがありません。", 2);
-                    return;
-                }
+                if (props.UseExternal != UseExternal.native)
+                    if (!File.Exists(exec_file))
+                    {
+                        AddLog("実行ファイルがありません。", 2);
+                        return;
+                    }
                 var exec_command = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
 
                 //放送ID
@@ -207,6 +208,7 @@ namespace NicoNamaRokuga
                     AddLog("Status: " + bci.Error, 1);
                     return;
                 }
+                AddLog(bci.AccountType, 1);
 
                 if (props.Protocol == Protocol.rtmp)
                 {

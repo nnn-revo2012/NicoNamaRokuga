@@ -293,7 +293,7 @@ namespace NicoNamaRokuga.Net
                     return bci;
                 }
                 bci.User_Id = Regex.Match(hs, "\"user_id\":([^,]*),", RegexOptions.Compiled).Groups[1].Value;
-                bci.AccountType = Regex.Match(hs, "\"member_status\":([^,]*),", RegexOptions.Compiled).Groups[1].Value;
+                bci.AccountType = Regex.Match(hs, "\"member_status\":\"([^,]*)\",", RegexOptions.Compiled).Groups[1].Value;
                 providertype = Regex.Match(hs, "\"content_type\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
                 bci.Provider_Type = providertype;
                 var ttt = WebUtility.HtmlDecode(Regex.Match(hs, "<script +id=\"embedded-data\" +data-props=\"([^\"]*)\"></script>", RegexOptions.Compiled).Groups[1].Value);

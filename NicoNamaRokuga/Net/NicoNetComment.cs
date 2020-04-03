@@ -541,6 +541,18 @@ namespace NicoNamaRokuga.Net
             _sw.Write("</packet>\r\n");
         }
 
+        public void SetStreamWriter(StreamWriter sw)
+        {
+            if (_sw == null && sw != null)
+                _sw = sw;
+        }
+
+        public void DisposeStreamWriter()
+        {
+            if (_sw != null)
+                _sw = null;
+        }
+
         private bool Json2Db(JObject jmes)
         {
             var r_hash = new Dictionary<string, string>();
@@ -655,6 +667,70 @@ namespace NicoNamaRokuga.Net
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(Json2Xml), Ex);
+                return result;
+            }
+
+            return result;
+        }
+
+        public string Table2Xml(IDictionary<string, string> data)
+        {
+            var result = string.Empty;
+            if (data.Count <= 0)
+                return result;
+
+            try
+            {
+                string value;
+                foreach (var it in data)
+                {
+                    value = it.Value.ToString();
+                    switch (it.Key.ToString())
+                    {
+                        case "thread":
+                            result = "<chat " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                        case "no":
+                            if (int.Parse(value) > -1)
+                                result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                        case "mail":
+                            if (value != "")
+                                result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                        case "premium":
+                            if (value != "0")
+                                result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                        case "anonymity":
+                            if (value != "0")
+                                result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                        case "score":
+                            if (value != "0")
+                                result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                        case "origin":
+                            if (value != "")
+                                result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                        case "locale":
+                            if (value != "")
+                                result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                        case "content":
+                            result += ">" + value + "</chat>\r\n";
+                            break;
+                        default:
+                            result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                    }
+
+                }
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(Table2Xml), Ex);
                 return result;
             }
 

@@ -134,7 +134,7 @@ namespace NicoNamaRokuga.Rec
             return true;
         }
 
-        public bool ReadDbMedia(ExecPsInfo epi)
+        public bool ReadDbMedia(ExecPsInfo epi, CommentInfo cmi)
         {
             FileStream fs = null;
             var result = false;
@@ -156,7 +156,9 @@ namespace NicoNamaRokuga.Rec
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                        cmi.SaveFile = epi.SaveFile + epi.Xml;
                         fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
+                        
                         while (reader.Read())
                         {
                             seqno = (long )reader["seqno"];
@@ -195,7 +197,7 @@ namespace NicoNamaRokuga.Rec
             return result;
         }
 
-public void CreateDbComment()
+        public void CreateDbComment()
         {
             try
             {
@@ -263,38 +265,45 @@ public void CreateDbComment()
             return true;
         }
 
-        public bool ReadDbComment(CommentInfo cmi)
+        public bool ReadDbComment(CommentInfo cmi, NicoNetComment nNetComment)
         {
-            FileStream fs = null;
+            var enc = new System.Text.UTF8Encoding(false);
+            StreamWriter sw = null;
             var result = false;
+            var data = new Dictionary<string, string>();
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
-                    command.CommandText = "SELECT vpos, date, date_usec,\n"
+                    command.CommandText = "SELECT thread,\n"
                                         + "IFNULL(no, -1) AS no,\n"
-                                        + "IFNULL(anonymity, 0) AS anonymity,\n"
-                                        + "user_id,\n"
-                                        + "content,\n"
+                                        + "vpos, date, date_usec,\n"
                                         + "IFNULL(mail, \"\") AS mail,\n"
+                                        + "user_id,\n"
                                         + "IFNULL(premium, 0) AS premium,\n"
-                                        + "IFNULL(score, 0) AS score,\n"
-                                        + "thread,\n"
+                                        + "IFNULL(anonymity, 0) AS anonymity,\n"
+                                        + "IFNULL(locale, \"\") AS locale\n,"
                                         + "IFNULL(origin, \"\") AS origin,\n"
-                                        + "IFNULL(locale, \"\") AS locale\n"
+                                        + "IFNULL(score, 0) AS score,\n"
+                                        + "content\n"
                                         + "FROM comment ORDER BY date2";
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        //cmi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
-                        //fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
+                        sw = new StreamWriter(cmi.SaveFile, true, enc);
+                        nNetComment.SetStreamWriter(sw);
+                        nNetComment.BeginXmlDoc();
                         while (reader.Read())
                         {
-                            //Encoding.UTF8.GetString((byte[])reader["content"]); //blob
-                            fs.Dispose();
-                            //epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
-                            //fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                data[reader.GetName(i)] = reader.GetValue(i).ToString();
+                            }
+                            sw.Write(nNetComment.Table2Xml(data));
                         }
-                        if (fs != null) fs.Dispose();
+                        nNetComment.EndXmlDoc();
+                        nNetComment.DisposeStreamWriter();
+                        if (sw != null)
+                            sw.Dispose();
                         result = true;
                     }
                 }
@@ -305,7 +314,7 @@ public void CreateDbComment()
             }
             finally
             {
-                if (fs != null) fs.Dispose();
+                if (sw != null) sw.Dispose();
             }
             return result;
         }
