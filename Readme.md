@@ -54,8 +54,6 @@ https://www.newtonsoft.com/json
 Copyright (c) 2007 James Newton-Kingさん  
 MIT License  
 
-- FFmpeg  
-
 - livedl  
 https://himananiito.hatenablog.jp/entry/livedl  
 Copyright (c) 2018 himananiitoさん  
