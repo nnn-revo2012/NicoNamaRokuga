@@ -190,14 +190,7 @@ namespace NicoNamaRokuga.Rec
                     }
                 }
 
-                long waittime = 1300;
-                int delaytime = 800;
-                if (_bci.IsTimeShift())
-                {
-                    waittime = 2300;
-                    delaytime = 2000;
-                }
-                Task.Run(() => HtmlRecord(masterfile, outfile, waittime, delaytime));
+                Task.Run(() => HtmlRecord(masterfile, outfile));
             }
             catch (Exception Ex)
             {
@@ -205,8 +198,11 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        private async Task HtmlRecord(string masterfile, string outfile, long waittime, int delaytime)
+        private async Task HtmlRecord(string masterfile, string outfile)
         {
+            long waittime = 1300;
+            int delaytime = 800;
+
             try
             {
                 var stime = string.Empty;
@@ -238,10 +234,27 @@ namespace NicoNamaRokuga.Rec
                 }
                 await Task.Delay(100);
 
-                //速度 X2.0
+                //速度 X2.0 & 待ち時間を変更
                 if (_bci.IsTimeShift())
                 {
-                    await SetPlayControlAsync(2, pli);
+                    waittime = 4500;
+                    delaytime = 4000;
+                    if (_bci.AccountType == "premium")
+                    {
+                        if (await SetPlayControlAsync("2", pli))
+                        {
+                            waittime = 2300;
+                            delaytime = 2000;
+                        }
+                    }
+                    else
+                    {
+                        if (await SetPlayControlAsync("1.25", pli))
+                        {
+                            waittime = 4000;
+                            delaytime = 3500;
+                        }
+                    }
                     await Task.Delay(100);
                 }
 
@@ -540,17 +553,20 @@ namespace NicoNamaRokuga.Rec
         }
 
         //速度変更
-        public async Task<bool> SetPlayControlAsync(double speed, PlayListInfo pli)
+        public async Task<bool> SetPlayControlAsync(string speed, PlayListInfo pli)
         {
+            var result = false;
             _form.AddExecLog("SetPlayControlAsync\r\n");
 
             try
             {
                 var ttt = pli.MasterUrl.Split('?')[1].Split('&').FirstOrDefault(s => s.StartsWith("ht2_nicolive="));
-                var url = pli.BaseUrl + "play_control.json?" + ttt + "&play_speed=2";
+                var url = pli.BaseUrl + "play_control.json?" + ttt + "&play_speed="+speed;
                 _form.AddExecLog(url + "\r\n");
                 var str = await _wc.DownloadStringTaskAsync(url).Timeout(_wc.timeout);
-                var result = JObject.Parse(str);
+                var res = JObject.Parse(str);
+                if (res["meta"]["status"].ToString() == "200")
+                    result = true;
                 //{ "meta":{ "status":200,"message":"ok"},"data":{ "play_control":{ "play_speed":0.25} } }
                 _form.AddExecLog(str + "\r\n");
             }
@@ -565,15 +581,15 @@ namespace NicoNamaRokuga.Rec
                         errno = (int)errres.StatusCode;
                 }
                 _form.AddExecLog("SetPlayControlAsync Error: " + Ex.Status.ToString() + " (" + errno + ")\r\n");
-                return false;
+                return result;
             }
             catch (Exception Ex) //その他のエラー
             {
                 //HttpRequestException
                 DebugWrite.Writeln(nameof(SetPlayControlAsync), Ex);
-                return false;
+                return result;
             }
-            return true;
+            return result;
         }
 
 

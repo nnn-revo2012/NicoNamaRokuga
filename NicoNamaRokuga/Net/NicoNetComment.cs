@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using System.Diagnostics;
+using System.Web;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -649,7 +650,7 @@ namespace NicoNamaRokuga.Net
                     {
                         if (it2.Key.ToString() == "content")
                         {
-                            result += ">" + it2.Value.ToString();
+                            result += ">" + HttpUtility.HtmlEncode(it2.Value.ToString());
                             result += "</" + it.Key.ToString();
                         }
                         else
@@ -719,7 +720,7 @@ namespace NicoNamaRokuga.Net
                                 result += " " + it.Key.ToString() + @"=""" + value + @"""";
                             break;
                         case "content":
-                            result += ">" + value + "</chat>\r\n";
+                            result += ">" + HttpUtility.HtmlEncode(value) + "</chat>\r\n";
                             break;
                         default:
                             result += " " + it.Key.ToString() + @"=""" + value + @"""";
