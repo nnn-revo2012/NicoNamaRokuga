@@ -52,7 +52,7 @@ namespace NicoNamaRokuga
                         MessageBox.Show(s + "\r\n",
                             "", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
-                    if (props.IsLogging)
+                    if (props.IsLogging && LogFile != null)
                         System.IO.File.AppendAllText(LogFile, System.DateTime.Now.ToString("HH:mm:ss ") + s + "\r\n");
                 }
             }));
@@ -66,7 +66,7 @@ namespace NicoNamaRokuga
                 lock (lockObject2)
                 {
                     textBox7.Text = s;
-                    if (props.IsLogging)
+                    if (props.IsLogging && LogFile2 != null)
                         System.IO.File.AppendAllText(LogFile2, System.DateTime.Now.ToString("HH:mm:ss ") + s);
                 }
             }));
@@ -144,6 +144,9 @@ namespace NicoNamaRokuga
 
             try
             {
+                ClearHosoData();
+                ClearLog();
+
                 AddLog("出力開始します。", 1);
 
                 //保存ファイル名作成
@@ -156,13 +159,17 @@ namespace NicoNamaRokuga
                 _ndb = new NicoDb(this, filename);
                 var kvs = _ndb.ReadDbKvs();
 
+                bci = null;
+
                 //コメント情報
                 cmi = new CommentInfo("NaN");
                 //cmi.OpenTime = kvs["openTime"];
                 //cmi.BeginTime = kvs["beginTime"];
                 //cmi.EndTime = kvs["endTime"];
                 //cmi.VposBaseTime = kvs["vposBaseTime"];
-                _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
+                //_cCtrl = new CommentControl();
+                _cCtrl = null;
+                _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, _cCtrl);
 
                 //映像ファイル出力処理
                 if (_ndb.ReadDbMedia(epi, cmi))
@@ -175,6 +182,10 @@ namespace NicoNamaRokuga
                     AddLog("コメント出力失敗しました。", 1);
 
                 //終了処理
+                if (_cCtrl != null)
+                {
+                    _cCtrl = null;
+                }
                 if (_ndb != null)
                     _ndb.Dispose();
                 if (_nNetComment != null)
@@ -182,6 +193,10 @@ namespace NicoNamaRokuga
             }
             catch (Exception Ex)
             {
+                if (_cCtrl != null)
+                {
+                    _cCtrl = null;
+                }
                 if (_ndb != null)
                     _ndb.Dispose();
                 if (_nNetComment != null)

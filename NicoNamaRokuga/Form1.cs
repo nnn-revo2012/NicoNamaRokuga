@@ -22,6 +22,7 @@ namespace NicoNamaRokuga
         private NicoLiveNet _nLiveNet = null;         //WebClient
         private NicoNetStream _nNetStream = null;     //WebSocket(Stream)
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
+        private CommentControl _cCtrl = null;         //コメント情報
         private ExecProcess _eProcess = null;         //Process
         private RecHtml _rHtml = null;                //RecHtml
         private NicoDb _ndb = null;                   //NicoDb
@@ -33,7 +34,7 @@ namespace NicoNamaRokuga
         private string liveId = null;
 
         private volatile bool start_flg = false;
-        private RetryInfo _ri = null;
+        private RetryInfo _ri = null;                 //リトライ情報
 
         private readonly object lockObject = new object();  //情報表示用
         private readonly object lockObject2 = new object(); //実行ファイルのログ用
@@ -71,6 +72,9 @@ namespace NicoNamaRokuga
         {
             try
             {
+                LogFile = null;
+                LogFile2 = null;
+
                 //中断処理
                 if (button1.Text == "中断")
                 {
@@ -93,6 +97,10 @@ namespace NicoNamaRokuga
                     if (_nLiveNet != null)
                     {
                         _nLiveNet.Dispose();
+                    }
+                    if (_cCtrl != null)
+                    {
+                        _cCtrl = null;
                     }
                     if (_ndb != null)
                     {
@@ -251,7 +259,11 @@ namespace NicoNamaRokuga
                     cmi.BeginTime = bci.Begin_Time;
                     cmi.EndTime = bci.End_Time;
                     cmi.VposBaseTime = bci.VposBase_Time;
-                    _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
+                    if (bci.IsTimeShift())
+                        _cCtrl = new CommentControl();
+                    else
+                        _cCtrl = null;
+                    _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, _cCtrl);
                 }
                 var ri = new RetryInfo();
                 _ri = ri;
@@ -359,7 +371,7 @@ namespace NicoNamaRokuga
                         if (ExecStatus != 1)
                         {
                             AddLog("再接続します。", 1);
-                            if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb);
+                            if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, _cCtrl);
                             if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
                                 _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ndb, _ri);
                             else
@@ -397,6 +409,10 @@ namespace NicoNamaRokuga
                     {
                         _nLiveNet.Dispose();
                     }
+                    if (_cCtrl != null)
+                    {
+                        _cCtrl = null;
+                    }
                     if (_ndb != null)
                     {
                         _ndb.Dispose();
@@ -429,6 +445,10 @@ namespace NicoNamaRokuga
             _nNetStream?.Dispose();
             _nNetComment?.Close();
             _nNetComment?.Dispose();
+            if (_cCtrl != null)
+            {
+                _cCtrl = null;
+            }
             _ndb?.Dispose();
 
             _nLiveNet?.Dispose();
@@ -455,6 +475,9 @@ namespace NicoNamaRokuga
         {
             try
             {
+                LogFile = null;
+                LogFile2 = null;
+
                 using (var fo2 = new Form2(this))
                 {
                     fo2.ShowDialog();
@@ -472,6 +495,9 @@ namespace NicoNamaRokuga
 
             try
             {
+                LogFile = null;
+                LogFile2 = null;
+
                 for (int i = 0; i < files.Length; i++)
                 {
                     StartExtract(files[i]);
@@ -479,6 +505,10 @@ namespace NicoNamaRokuga
             }
             catch (Exception Ex)
             {
+                if (_cCtrl != null)
+                {
+                    _cCtrl = null;
+                }
                 if (_ndb != null)
                 {
                     _ndb.Dispose();

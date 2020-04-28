@@ -42,6 +42,24 @@ namespace NicoNamaRokuga.Net
         }
     }
 
+    public class CommentControl
+    {
+        public int status { set; get; }
+        public string _waybackkey { set; get; }
+        public long _when { set; get; }                    //when
+        public long _last_res { set; get; }                //last_res
+        public List<List<string>> _come_list { set; get; }
+        public List<string> _come_text { set; get; }
+
+        public CommentControl()
+        {
+            status = 0;
+            _waybackkey = null;
+            _last_res = 0L;
+            _come_list = new List<List<string>>();
+            _come_text = new List<string>();
+        }
+    }
 
     public class NicoNetComment : IDisposable
     {
@@ -57,14 +75,9 @@ namespace NicoNamaRokuga.Net
         private WebSocket _ws = null;
         private bool _wsconnect = false;
 
-        private int _seq_no = 0;
-        private string _waybackkey = null;
-        private long _when = 0L;                          //when
-        private int _last_res = 0;                        //last_res
+        private long _seq_no = 0;
         private bool _chat_flg = true;                    //チャットデータの最初かどうか？
         private const int _MESSAGE_MAX = 1000;
-        private List<List<string>> _come_list = new List<List<string>>();
-        private List<string> _come_text = new List<string>();
         private StreamWriter _sw = null;
 
         System.Threading.Timer _hbTimer;
@@ -73,6 +86,7 @@ namespace NicoNamaRokuga.Net
         private BroadCastInfo _bci = null;
         private CommentInfo _cmi = null;
         private NicoDb _ndb = null;
+        private CommentControl _cCtrl = null;
 
 
         private Form1 _form = null;
@@ -80,7 +94,7 @@ namespace NicoNamaRokuga.Net
 
         //放送情報
 
-        public NicoNetComment(Form1 fo, BroadCastInfo bci, CommentInfo cmi, NicoLiveNet nLiveNet, NicoDb ndb)
+        public NicoNetComment(Form1 fo, BroadCastInfo bci, CommentInfo cmi, NicoLiveNet nLiveNet, NicoDb ndb, CommentControl cCtrl)
         {
             IsDebug = false;
 
@@ -92,13 +106,13 @@ namespace NicoNamaRokuga.Net
             this._bci = bci;
             this._cmi = cmi;
             this._ndb = ndb;
+            this._cCtrl = cCtrl;
             this._form = fo;
 
             _seq_no = 0;
             if (_bci != null)
-                if (_bci.IsTimeShift())
-                    _come_list.Clear();
-
+                if (_bci.IsTimeShift() && _cCtrl.status == 0)
+                    _cCtrl._come_list.Clear();
         }
 
         ~NicoNetComment()
@@ -146,8 +160,11 @@ namespace NicoNamaRokuga.Net
             /// 接続断の発生
             _ws.Error += (s, e) =>
             {
-                StopHBTimer();   //タイマー終了
-                WsStatus = 1; //再接続なし
+                StopHBTimer();          //タイマー終了
+                if (_bci.IsTimeShift() && _cCtrl.status == 1) //TSコメント取得中
+                    WsStatus = 2; //再接続あり
+                else
+                    WsStatus = 1; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
@@ -160,7 +177,9 @@ namespace NicoNamaRokuga.Net
             _ws.Closed += (s, e) =>
             {
                 StopHBTimer();   //タイマー終了
-                if (WsStatus == 0)
+                if (_bci.IsTimeShift() && _cCtrl.status == 1) //TSコメント取得中
+                    WsStatus = 2; //再接続あり
+                else if (WsStatus == 0)
                     WsStatus = 1; //再接続なし
                 _wsconnect = false;
                 _ws.Dispose();
@@ -298,12 +317,15 @@ namespace NicoNamaRokuga.Net
                         //_form.AddLog(e.Message + "\r\n");
                         if (e.Message.IndexOf("rf:") > 0)
                         {
-                            _form.AddLog("SEQ "+_seq_no+" num "+_last_res+" ", 1);
+                            _form.AddLog("SEQ "+ _seq_no +" num "+ _cCtrl._last_res +" ", 1);
                             _seq_no++;
-                            _come_list.Add(_come_text);
-                            if (_last_res < _MESSAGE_MAX)
+                            //if (_seq_no >= 4) this.Close(); //DEBUG
+                            _cCtrl._come_list.Add(_cCtrl._come_text);
+                            if (_cCtrl._last_res < _MESSAGE_MAX)
                             {
+                                _cCtrl.status = 3; //TSコメント取得終了
                                 this.Close();
+                                _seq_no = _cCtrl._come_list.Count();
                                 if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
                                     AppendCommentDB();
                                 else
@@ -320,10 +342,10 @@ namespace NicoNamaRokuga.Net
                         _form.AddLog(e.Message, 9);
                         if ((int)jmes["thread"]["resultcode"] == 0)
                         {
-                            _last_res = (int)jmes["thread"]["last_res"];
-                            _form.AddLog(_last_res + " 個のコメントを読み込みます。", 1);
+                            _cCtrl._last_res = (long)jmes["thread"]["last_res"];
+                            _form.AddLog(_cCtrl._last_res + " 個のコメントを読み込みます。", 1);
                             var cmlist = new List<string>();
-                            _come_text = cmlist;
+                            _cCtrl._come_text = cmlist;
                             if (_seq_no == 0)
                             {
                                 StartHBTimer();
@@ -335,10 +357,10 @@ namespace NicoNamaRokuga.Net
                     case "chat":
                         if (_chat_flg == true)
                         {
-                            _when = (long)jmes["chat"]["date"] + 5L;
+                            _cCtrl._when = (long)jmes["chat"]["date"] + 5L;
                             _chat_flg = false;
                         }
-                        _come_text.Add(e.Message);
+                        _cCtrl._come_text.Add(e.Message);
                         break;
                 }
             }
@@ -366,13 +388,14 @@ namespace NicoNamaRokuga.Net
         {
             try
             {
-                if (_seq_no == 0)
+                if (_cCtrl.status == 0) //TSコメント取得開始
                 {
-                    _waybackkey = _nLiveNet.GetWayBackKeyAsync(_cmi.ThreadId).Result; //waybackkey取得
-                    _when = _cmi.EndTime + 120L;
-                    _chat_flg = true;
+                    _cCtrl._waybackkey = _nLiveNet.GetWayBackKeyAsync(_cmi.ThreadId).Result; //waybackkey取得
+                    _cCtrl._when = _cmi.EndTime + 120L;
+                    _cCtrl.status = 1; //TSコメント取得中
                 }
-                var ttt = SendThreadTS(_cmi.ThreadId, _cmi.UserId, -_MESSAGE_MAX, _when.ToString(), _waybackkey);
+                _chat_flg = true;
+                var ttt = SendThreadTS(_cmi.ThreadId, _cmi.UserId, -_MESSAGE_MAX, _cCtrl._when.ToString(), _cCtrl._waybackkey);
                 _form.AddLog(ttt, 9);
 
             }
@@ -438,7 +461,7 @@ namespace NicoNamaRokuga.Net
                     for (var i = _seq_no - 1; i >= 0; i--)
                     {
                         var write_flg = (come_time_prev == string.Empty) ? true : false;
-                        foreach (var line in _come_list.ToArray()[i])
+                        foreach (var line in _cCtrl._come_list.ToArray()[i])
                         {
                             var jmes = JObject.Parse(line);
                             come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
@@ -457,16 +480,16 @@ namespace NicoNamaRokuga.Net
                             }
                         }
                         come_time_prev = come_time;
-                        _come_list.ToArray()[i].Clear();
-                        _come_list.ToArray()[i].TrimExcess();
+                        _cCtrl._come_list.ToArray()[i].Clear();
+                        _cCtrl._come_list.ToArray()[i].TrimExcess();
                     }
                     EndXmlDoc();
                     _sw = null;
                 }
                 _form.AddLog("コメントファイル出力終了", 1);
 
-                _come_list.Clear();
-                _come_list.TrimExcess();
+                _cCtrl._come_list.Clear();
+                _cCtrl._come_list.TrimExcess();
 
             }
             catch (Exception Ex)
@@ -490,7 +513,7 @@ namespace NicoNamaRokuga.Net
                     for (var i = _seq_no - 1; i >= 0; i--)
                     {
                         var write_flg = (come_time_prev == string.Empty) ? true : false;
-                        foreach (var line in _come_list.ToArray()[i])
+                        foreach (var line in _cCtrl._come_list.ToArray()[i])
                         {
                             var jmes = JObject.Parse(line);
                             come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
@@ -513,14 +536,14 @@ namespace NicoNamaRokuga.Net
                             }
                         }
                         come_time_prev = come_time;
-                        _come_list.ToArray()[i].Clear();
-                        _come_list.ToArray()[i].TrimExcess();
+                        _cCtrl._come_list.ToArray()[i].Clear();
+                        _cCtrl._come_list.ToArray()[i].TrimExcess();
                     }
 
                 _form.AddLog("コメントファイル出力終了", 1);
 
-                _come_list.Clear();
-                _come_list.TrimExcess();
+                _cCtrl._come_list.Clear();
+                _cCtrl._come_list.TrimExcess();
 
             }
             catch (Exception Ex)
