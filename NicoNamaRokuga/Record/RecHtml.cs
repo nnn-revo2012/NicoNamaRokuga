@@ -168,7 +168,8 @@ namespace NicoNamaRokuga.Rec
         {
             try
             {
-                _form.AddLog("プロセス実行中です。", 1);
+                if (Form1.props.IsVideo)
+                    _form.AddLog("プロセス実行中です。", 1);
                 PsStatus = 0; //実行中
                 if (Form1.props.IsComment)
                 {
@@ -190,7 +191,8 @@ namespace NicoNamaRokuga.Rec
                     }
                 }
 
-                Task.Run(() => HtmlRecord(masterfile, outfile));
+                if (Form1.props.IsVideo)
+                    Task.Run(() => HtmlRecord(masterfile, outfile));
             }
             catch (Exception Ex)
             {

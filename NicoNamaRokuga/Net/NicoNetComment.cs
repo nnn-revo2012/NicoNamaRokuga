@@ -165,6 +165,13 @@ namespace NicoNamaRokuga.Net
                     WsStatus = 2; //再接続あり
                 else
                     WsStatus = 1; //再接続なし
+                //映像なしで生放送の場合、コメント終了処理
+                if (!Form1.props.IsVideo && !_bci.IsTimeShift())
+                {
+                    _form.AddLog("コメントファイル出力終了", 1);
+                    if (!(Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native))
+                        EndXmlDoc();
+                }
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;
@@ -181,6 +188,13 @@ namespace NicoNamaRokuga.Net
                     WsStatus = 2; //再接続あり
                 else if (WsStatus == 0)
                     WsStatus = 1; //再接続なし
+                //映像なしで生放送の場合、コメント終了処理
+                if (!Form1.props.IsVideo && !_bci.IsTimeShift())
+                {
+                    _form.AddLog("コメントファイル出力終了", 1);
+                    if (!(Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native))
+                        EndXmlDoc();
+                }
                 _wsconnect = false;
                 _ws.Dispose();
                 _ws = null;

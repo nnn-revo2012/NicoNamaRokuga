@@ -72,9 +72,6 @@ namespace NicoNamaRokuga
         {
             try
             {
-                LogFile = null;
-                LogFile2 = null;
-
                 //中断処理
                 if (button1.Text == "中断")
                 {
@@ -112,6 +109,8 @@ namespace NicoNamaRokuga
                     return;
                 }
 
+                LogFile = null;
+                LogFile2 = null;
 
                 //ニコ生に接続
                 ClearHosoData();
@@ -387,6 +386,8 @@ namespace NicoNamaRokuga
                         ExecStatus = 1;
                     }
                 }
+                if (!props.IsVideo && WsCommentStatus == 1)
+                    ExecStatus = 1;
                 if (_nNetStream.WsStatus == 1 || ExecStatus == 1) //終了処理
                 {
                     if (_rHtml != null)
