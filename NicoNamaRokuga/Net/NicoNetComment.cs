@@ -32,6 +32,7 @@ namespace NicoNamaRokuga.Net
         public long   BeginTime { get; set; }
         public long   EndTime { get; set; }
         public long   VposBaseTime { get; set; }
+        public long   Offset { get; set; }
 
         public CommentInfo(string userid)
         {
@@ -110,9 +111,12 @@ namespace NicoNamaRokuga.Net
             this._form = fo;
 
             _seq_no = 0;
-            if (_bci != null)
+            if (_bci != null && _bci.LiveId != null)
                 if (_bci.IsTimeShift() && _cCtrl.status == 0)
+                {
                     _cCtrl._come_list.Clear();
+                    _cmi.Offset = 0L;
+                }
         }
 
         ~NicoNetComment()
@@ -236,6 +240,7 @@ namespace NicoNamaRokuga.Net
                         //_form.AddLog(e.Message + "\r\n");
                         if ((int)jmes["thread"]["resultcode"] == 0)
                         {
+                            _cmi.Offset = ((long )jmes["thread"]["server_time"] - _cmi.OpenTime) * 100L;
                             var enc = new System.Text.UTF8Encoding(false);
                             var sw = new StreamWriter(_cmi.SaveFile, true, enc);
                             _sw = sw;
@@ -250,6 +255,7 @@ namespace NicoNamaRokuga.Net
                         break;
                     case "chat":
                         //System.IO.File.AppendAllText(_cmi.SaveFile, Json2Xml(jmes));
+                        jmes["chat"]["vpos"] = CalcVpos(_cmi.OpenTime, _cmi.Offset, (string)jmes["chat"]["date"], (string)jmes["chat"]["vpos"], _bci.Provider_Type);
                         _sw.Write(Json2Xml(jmes));
                         break;
                 }
@@ -486,6 +492,7 @@ namespace NicoNamaRokuga.Net
                                     if (line.Contains(Props.Commnet_SeetNo))
                                         continue;
                                 }
+                                jmes["chat"]["vpos"] = CalcVpos(_cmi.OpenTime, _cmi.Offset, (string)jmes["chat"]["date"], (string)jmes["chat"]["vpos"], _bci.Provider_Type);
                                 sw.Write(Json2Xml(jmes));
                             }
                             else
@@ -589,6 +596,22 @@ namespace NicoNamaRokuga.Net
         {
             if (_sw != null)
                 _sw = null;
+        }
+
+        public string CalcVpos(long start, long offset, string date, string vpos, string provider_type)
+        {
+            if (provider_type != "official")
+            {
+                long ll = start * 100 + offset;
+                long.TryParse(date, out ll);
+                return ((ll - start) * 100L - offset).ToString();
+            }
+            else
+            {
+                long ll = offset;
+                long.TryParse(vpos, out ll);
+                return (ll - offset).ToString();
+            }
         }
 
         private bool Json2Db(JObject jmes)

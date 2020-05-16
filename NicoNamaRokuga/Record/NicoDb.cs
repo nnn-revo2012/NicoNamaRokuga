@@ -134,7 +134,7 @@ namespace NicoNamaRokuga.Rec
             return true;
         }
 
-        public bool ReadDbMedia(ExecPsInfo epi, CommentInfo cmi)
+        public bool ReadDbMedia(ExecPsInfo epi, CommentInfo cmi, BroadCastInfo bci)
         {
             FileStream fs = null;
             var result = false;
@@ -148,6 +148,7 @@ namespace NicoNamaRokuga.Rec
                     int prevbw = -1;
                     int size;
                     byte[] data;
+                    bool off_flg = true;
 
                     command.CommandText = "SELECT seqno, bandwidth, size, data FROM media\n"
                                         + "WHERE IFNULL(notfound, 0) == 0 AND data IS NOT NULL\n"
@@ -162,6 +163,11 @@ namespace NicoNamaRokuga.Rec
                         while (reader.Read())
                         {
                             seqno = (long )reader["seqno"];
+                            if (off_flg)
+                            {
+                                cmi.Offset = bci.IsTimeShift() ? seqno * 500L : bci.Server_Time / 10L - cmi.OpenTime * 100L;
+                                off_flg = false;
+                            }
                             bw = (int )(long )reader["bandwidth"];
                             // チャンクが飛んでいる場合はファイルを分ける
                             // BANDWIDTHが変わる場合はファイルを分ける
@@ -265,7 +271,7 @@ namespace NicoNamaRokuga.Rec
             return true;
         }
 
-        public bool ReadDbComment(CommentInfo cmi, NicoNetComment nNetComment)
+        public bool ReadDbComment(CommentInfo cmi, BroadCastInfo bci, NicoNetComment nNetComment)
         {
             var enc = new System.Text.UTF8Encoding(false);
             StreamWriter sw = null;
@@ -298,6 +304,7 @@ namespace NicoNamaRokuga.Rec
                             {
                                 data[reader.GetName(i)] = reader.GetValue(i).ToString();
                             }
+                            data["vpos"] = nNetComment.CalcVpos(cmi.OpenTime, cmi.Offset, data["date"], data["vpos"], bci.Provider_Type);
                             sw.Write(nNetComment.Table2Xml(data));
                         }
                         nNetComment.EndXmlDoc();
@@ -480,6 +487,52 @@ namespace NicoNamaRokuga.Rec
             {
                 DebugWrite.Writeln(nameof(GetDbMediaLastSeqNo), Ex);
                 return seqno;
+            }
+        }
+
+        public long CountDbMedia()
+        {
+            long result = -1;
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "SELECT COUNT(*) FROM media";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            result = reader.GetInt64(0);
+                    }
+                }
+                return result;
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(CountDbMedia), Ex);
+                return result;
+            }
+        }
+
+        public long CountDbComment()
+        {
+            long result = -1;
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "SELECT COUNT(*) FROM comment";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            result = reader.GetInt64(0);
+                    }
+                }
+                return result;
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(CountDbComment), Ex);
+                return result;
             }
         }
 

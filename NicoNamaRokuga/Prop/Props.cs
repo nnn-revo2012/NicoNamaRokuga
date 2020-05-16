@@ -366,5 +366,13 @@ namespace NicoNamaRokuga.Prop
             return UNIX_EPOCH.AddSeconds(unix).ToLocalTime();
         }
 
+        public static long GetLongParse(string ttt)
+        {
+            double dd = -1.0D;
+            double.TryParse(ttt, out dd);
+            return (long )dd;
+
+        }
+
     }
 }

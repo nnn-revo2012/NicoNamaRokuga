@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Windows.Forms;
 using System.IO;
 
@@ -159,27 +160,46 @@ namespace NicoNamaRokuga
                 _ndb = new NicoDb(this, filename);
                 var kvs = _ndb.ReadDbKvs();
 
-                bci = null;
+                bci = new BroadCastInfo(null, null, null, null);
+                bci.Provider_Type = kvs["providerType"];
+                bci.OnAirStatus = kvs["status"];
+                bci.Server_Time = Props.GetLongParse(kvs["serverTime"]);
 
                 //コメント情報
                 cmi = new CommentInfo("NaN");
-                //cmi.OpenTime = kvs["openTime"];
-                //cmi.BeginTime = kvs["beginTime"];
-                //cmi.EndTime = kvs["endTime"];
-                //cmi.VposBaseTime = kvs["vposBaseTime"];
-                //_cCtrl = new CommentControl();
+                cmi.OpenTime = Props.GetLongParse(kvs["openTime"]);
+                cmi.BeginTime = Props.GetLongParse(kvs["beginTime"]);
+                cmi.EndTime = Props.GetLongParse(kvs["endTime"]);
+                cmi.Offset = 0L;
                 _cCtrl = null;
                 _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, _cCtrl);
 
                 //映像ファイル出力処理
-                if (_ndb.ReadDbMedia(epi, cmi))
-                    AddLog("映像出力終了しました。", 1);
+                if (_ndb.CountDbMedia() > 0)
+                {
+                    if (_ndb.ReadDbMedia(epi, cmi, bci))
+                        AddLog("映像出力終了しました。", 1);
+                    else
+                        AddLog("映像出力失敗しました。", 1);
+                    AddLog("offset = " + cmi.Offset.ToString(), 1);
+                }
                 else
-                    AddLog("映像出力失敗しました。", 1);
-                if (_ndb.ReadDbComment(cmi, _nNetComment))
-                    AddLog("コメント出力終了しました。", 1);
+                {
+                    AddLog("映像データーはありません。", 1);
+                    epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                    cmi.SaveFile = epi.SaveFile + epi.Xml;
+                }
+                if (_ndb.CountDbComment() > 0)
+                {
+                    if (_ndb.ReadDbComment(cmi, bci, _nNetComment))
+                        AddLog("コメント出力終了しました。", 1);
+                    else
+                        AddLog("コメント出力失敗しました。", 1);
+                }
                 else
-                    AddLog("コメント出力失敗しました。", 1);
+                {
+                    AddLog("コメントデーターはありません。", 1);
+                }
 
                 //終了処理
                 if (_cCtrl != null)

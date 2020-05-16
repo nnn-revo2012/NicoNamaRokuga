@@ -128,13 +128,13 @@
             this.設定TToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.オプションOToolStripMenuItem});
             this.設定TToolStripMenuItem.Name = "設定TToolStripMenuItem";
-            this.設定TToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
-            this.設定TToolStripMenuItem.Text = "設定(&T)";
+            this.設定TToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.設定TToolStripMenuItem.Text = "ツール(&T)";
             // 
             // オプションOToolStripMenuItem
             // 
             this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
-            this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.オプションOToolStripMenuItem.Text = "オプション(&O)...";
             this.オプションOToolStripMenuItem.Click += new System.EventHandler(this.オプションOToolStripMenuItem_Click);
             // 
