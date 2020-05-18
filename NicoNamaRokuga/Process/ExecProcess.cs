@@ -40,14 +40,15 @@ namespace NicoNamaRokuga.Proc
         }
 
         //実行ファイル用の引数(argumentを設定)
-        public static string SetOption(ExecPsInfo epi, string para)
+        public static string SetOption(ExecPsInfo epi, string para, int starttstime)
         {
             var result = epi.Arg;
             var ff = epi.SaveFile + epi.Ext;
             var headers = string.Empty;
+            var para2 = starttstime > 0 ? para + "&start=" + starttstime.ToString() : para + "&start=0.0";
 
             result = result.Replace("%HEADERS%", headers);
-            result = result.Replace("%PARA%", para);
+            result = result.Replace("%PARA%", para2);
             result = result.Replace("%FILE%", ff);
 
             return result;

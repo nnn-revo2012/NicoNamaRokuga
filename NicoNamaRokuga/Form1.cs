@@ -216,6 +216,9 @@ namespace NicoNamaRokuga
                     return;
                 }
                 AddLog(bci.AccountType, 1);
+                int ii;
+                if (int.TryParse(textBox2.Text, out ii))
+                    bci.StartTs_Time = ii;
 
                 if (props.Protocol == Protocol.rtmp)
                 {
@@ -257,7 +260,6 @@ namespace NicoNamaRokuga
                     cmi.OpenTime = bci.Open_Time;
                     cmi.BeginTime = bci.Begin_Time;
                     cmi.EndTime = bci.End_Time;
-                    cmi.VposBaseTime = bci.VposBase_Time;
                     if (bci.IsTimeShift())
                         _cCtrl = new CommentControl();
                     else
@@ -529,6 +531,5 @@ namespace NicoNamaRokuga
                 e.Effect = DragDropEffects.None;
             }
         }
-
     }
 }

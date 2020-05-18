@@ -39,12 +39,13 @@ namespace NicoNamaRokuga.Net
         public bool   FollowerOnly { set; get; }
         public long   Open_Time { set; get; }
         public long   Begin_Time { set; get; }
-        public long   VposBase_Time { set; get; }
+        //public long   VposBase_Time { set; get; }
         public long   End_Time { set; get; }
         public long   Server_Time { set; get; }
         public string OnAirStatus { set; get; }
         public string User_Id { set; get; }
         public string AccountType { set; get; }
+        public int    StartTs_Time { set; get; }
         public string Data_Props { set; get; }
 
         public BroadCastInfo(string liveid, string bcid, string autkn, string wsurl)
@@ -55,6 +56,7 @@ namespace NicoNamaRokuga.Net
             this.WsUrl = wsurl;
             this.Status = null;
             this.Error = null;
+            this.StartTs_Time = 0;
             this.Data_Props = null;
         }
 
@@ -267,7 +269,7 @@ namespace NicoNamaRokuga.Net
                                 _epi.SaveFile = ExecPsInfo.GetSaveFileNum(_epi);
                             if (Form1.props.IsComment)
                                 _cmi.SaveFile = _epi.SaveFile + _epi.Xml;
-                            var argument = ExecPsInfo.SetOption(_epi, ttt);
+                            var argument = ExecPsInfo.SetOption(_epi, ttt, _bci.StartTs_Time);
                             if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
                                 _rHtml.ExecPs(ttt, _epi.SaveFile);
                             else

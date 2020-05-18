@@ -31,7 +31,7 @@ namespace NicoNamaRokuga.Net
         public long   OpenTime { get; set; }
         public long   BeginTime { get; set; }
         public long   EndTime { get; set; }
-        public long   VposBaseTime { get; set; }
+        //public long   VposBaseTime { get; set; }
         public long   Offset { get; set; }
 
         public CommentInfo(string userid)
@@ -115,7 +115,8 @@ namespace NicoNamaRokuga.Net
                 if (_bci.IsTimeShift() && _cCtrl.status == 0)
                 {
                     _cCtrl._come_list.Clear();
-                    _cmi.Offset = 0L;
+                    if (_bci.StartTs_Time > 0)
+                        _cmi.Offset = (long)_bci.StartTs_Time * 6000L;
                 }
         }
 

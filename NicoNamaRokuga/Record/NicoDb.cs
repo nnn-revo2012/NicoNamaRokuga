@@ -446,7 +446,7 @@ namespace NicoNamaRokuga.Rec
 
         public double GetDbMediaLastPos()
         {
-            double dbl = 0;
+            double dbl = 0.0D;
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())

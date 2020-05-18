@@ -210,11 +210,18 @@ namespace NicoNamaRokuga.Rec
                 var stime = string.Empty;
                 if (_bci.IsTimeShift())
                 {
-                    var lp = _ndb.GetDbMediaLastPos();
-                    if (lp > 0.0)
-                        stime = "&start=" + lp.ToString();
+                    stime = "&start=0.0";
+                    if (_ndb.CountDbMedia() > 0)
+                    {
+                        var lp = _ndb.GetDbMediaLastPos();
+                        if (lp > 0.0)
+                            stime = "&start=" + lp.ToString();
+                    }
                     else
-                        stime = "&start=0.0";
+                    {
+                        if (_bci.StartTs_Time > 0)
+                            stime = "&start=" + (_bci.StartTs_Time * 60).ToString();
+                    }
                 }
                 _form.AddExecLog("MasterFile: " + masterfile + stime + "\r\n");
 

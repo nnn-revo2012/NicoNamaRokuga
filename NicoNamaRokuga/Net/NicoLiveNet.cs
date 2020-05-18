@@ -327,7 +327,6 @@ namespace NicoNamaRokuga.Net
                 bci.FollowerOnly = (bool)dprogram["isFollowerOnly"];
                 bci.Open_Time = (long)dprogram["openTime"];
                 bci.Begin_Time = (long)dprogram["beginTime"];
-                bci.VposBase_Time = (long)dprogram["vposBaseTime"];
                 bci.End_Time = (long)dprogram["endTime"];
                 bci.OnAirStatus = dprogram["status"].ToString();
                 bci.Server_Time = (long)dprops["site"]["serverTime"];
