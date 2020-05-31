@@ -36,6 +36,7 @@ namespace NicoNamaRokuga
         private volatile bool start_flg = false;
         private RetryInfo _ri = null;                 //リトライ情報
 
+        private string accountdbfile;
         private readonly object lockObject = new object();  //情報表示用
         private readonly object lockObject2 = new object(); //実行ファイルのログ用
         private string LogFile;
@@ -64,6 +65,7 @@ namespace NicoNamaRokuga
             props = new Props();
             props.LoadData();
             ClearHosoData();
+            accountdbfile = Path.Combine(Props.GetSettingDirectory(), "account.db"); 
 
             if (IsBatchMode) button1.PerformClick();
         }
@@ -156,6 +158,24 @@ namespace NicoNamaRokuga
                 AddLog(string.Format("LiveID: {0}", liveId), 1);
                 textBox1.Text = NicoLiveNet.GetNicoPageUrl(liveId);
 
+#if TEST01
+                string alias = "nico_01";
+                string user = "aaa@aaa.com"; string pass = "vvvvv";
+                string session = ""; string secure = "";
+                using (var ddd = new Prop.Account("D:\\home\\tmp\\account.db"))
+                {
+                    ddd.CreateDbAccount();
+                    if (ddd.WriteDbUser(alias, props.UserID, props.Password))
+                        AddLog("メールID書き込みOK", 1);
+                    if (ddd.ReadDbUser(alias, out user, out pass))
+                        AddLog("user: " + user + " pass: " + pass, 1);
+                    //if (ddd.WriteDbSession(alias, "ffffffffffff", "nnnnnnnnnnnn"))
+                    //    AddLog("session書き込みOK", 1);
+                    //if (ddd.ReadDbSession(alias, out session, out secure))
+                    //    AddLog("session: " + session + " secure: " + secure, 1);
+                }
+                return;
+#endif
                 //録画開始
                 Task.Run(() => StartRec());
 
@@ -179,14 +199,44 @@ namespace NicoNamaRokuga
                     switch (props.LoginMethod.ToString())
                     {
                         case "login":
-                            if (!_nLiveNet.IsLoginStatus)
+                            using (var db = new Prop.Account(accountdbfile))
                             {
-                                if (!(await _nLiveNet.LoginNico(props.UserID, props.Password)))
+                                var alias = "nico_01";
+                                string user = null;string pass = null;
+                                if (!_nLiveNet.IsLoginStatus)
                                 {
-                                    AddLog("Login Failed", 1);
-                                    return;
+                                    if (db.GetSession(alias, _nLiveNet.GetCookieContainer()))
+                                    {
+                                        //ニコニコにアクセスする
+                                        if (await _nLiveNet.IsLoginNicoAsync())
+                                        {
+                                            //ログインしていればOK
+                                            AddLog("Already Logined", 1);
+                                            break;
+                                        }
+                                    }
+                                    //ログイン処理
+                                    AddLog("ログインします", 1);
+                                    if (!db.ReadDbUser(alias, out user, out pass))
+                                    {
+                                        AddLog("Login Failed", 1);
+                                        return;
+                                    }
+                                    if (!(await _nLiveNet.LoginNico(props.UserID, props.Password)))
+                                    {
+                                        AddLog("Login Failed", 1);
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        AddLog("Login OK", 1);
+                                        db.SetSession(alias, _nLiveNet.GetCookieContainer());
+                                    }
                                 }
-                                AddLog("Login OK", 1);
+                                else
+                                {
+                                    AddLog("Already Logined", 1);
+                                }
                             }
                             break;
                         case "cookie":
@@ -215,7 +265,7 @@ namespace NicoNamaRokuga
                     AddLog("Status: " + bci.Error, 1);
                     return;
                 }
-                AddLog(bci.AccountType, 1);
+                AddLog("アカウント: "+bci.AccountType, 1);
                 int ii;
                 if (int.TryParse(textBox2.Text, out ii))
                     bci.StartTs_Time = ii;

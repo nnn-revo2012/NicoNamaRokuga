@@ -26,6 +26,7 @@ namespace NicoNamaRokuga.Prop
         public static readonly string NicoCommUrl = "https://com.nicovideo.jp/community/";
         public static readonly string NicoChannelUrl = "https://ch.nicovideo.jp/";
         public static readonly string NicoUserUrl = "https://www.nicovideo.jp/user/";
+        public static readonly string NicoMyUrl = "https://www.nicovideo.jp/my/";
 
         public static readonly string NicoLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico";
         public static readonly string NicoGetPlayerStatus = "https://ow.live.nicovideo.jp/api/getplayerstatus?v=";

@@ -124,7 +124,7 @@ namespace NicoNamaRokuga.Net
             return result.ToList();
         }
 
-        public CookieContainer  GetCookieContainer()
+        public CookieContainer GetCookieContainer()
         {
             return _wc.cookieContainer;
         }
@@ -268,6 +268,29 @@ namespace NicoNamaRokuga.Net
 
             gpsi.Error = "";
             return gpsi;
+        }
+
+        public async Task<bool> IsLoginNicoAsync()
+        {
+            try
+            {
+                var hs = await _wc.DownloadStringTaskAsync(Props.NicoMyUrl).Timeout(_wc.timeout);
+                var text = Regex.Match(hs, "login_status ?= ?\\'(login)\\';", RegexOptions.Compiled).Groups[1].Value;
+                if (text == "login")
+                    return true;
+                else
+                    return false;
+            }
+            catch (WebException Ex)
+            {
+                DebugWrite.WriteWebln(nameof(GetNicoPageAsync), Ex);
+                return false;
+            }
+            catch (Exception Ex) //その他のエラー
+            {
+                DebugWrite.Writeln(nameof(GetNicoPageAsync), Ex);
+                return false;
+            }
         }
 
         //生放送ページから放送情報を取得

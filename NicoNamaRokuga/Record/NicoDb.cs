@@ -119,7 +119,7 @@ namespace NicoNamaRokuga.Rec
                     else
                         command.CommandText += "@data);";
 
-                        var param = new SQLiteParameter("@data", System.Data.DbType.Binary);
+                    var param = new SQLiteParameter("@data", System.Data.DbType.Binary);
                     param.Value = data;
                     command.Parameters.Add(param);
                     command.ExecuteNonQuery();

@@ -138,6 +138,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Prop\Account.cs" />
     <Compile Include="Form1_Sub.cs">
       <SubType>Form</SubType>
     </Compile>
