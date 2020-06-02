@@ -26,11 +26,15 @@ namespace NicoNamaRokuga
 
         private Form1 _form;  //親フォーム
         private Props _props;
+        private string _accountdbfile;
+        private string _user = null;
+        private string _pass = null;
 
-        public Form2(Form1 fo)
+        public Form2(Form1 fo, string accountdbfile)
         {
             InitializeComponent();
             _form = fo;
+            _accountdbfile = accountdbfile;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -38,7 +42,9 @@ namespace NicoNamaRokuga
             base.OnLoad(e);
 
             _props = new Props();
-            var result = _props.LoadData();
+            var result = _props.LoadData(_accountdbfile);
+            _user = _props.UserID;
+            _pass = _props.Password;
             SetForm();
         }
 
@@ -184,18 +190,19 @@ namespace NicoNamaRokuga
         {
             //OKボタンが押されたら設定を保存
             GetForm();
-            var result = _props.SaveData(); //設定ファイルに保存
-            result = Form1.props.LoadData(); //親フォームの設定データを更新
+            var acc_flg = (_user != _props.UserID || _pass != _props.Password) ? true : false;
+            var result = _props.SaveData(_accountdbfile, acc_flg); //設定ファイルに保存
+            result = Form1.props.LoadData(_accountdbfile); //親フォームの設定データを更新
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             //設定値を初期値に戻す
             var _props_save = new Props();
-            var result = _props_save.LoadData(); //現在の設定ファイル内容を読み込み
-            result = _props.ResetData(); //設定ファイルを初期化
+            var result = _props_save.LoadData(_accountdbfile); //現在の設定ファイル内容を読み込み
+            result = _props.ResetData(_accountdbfile); //設定ファイルを初期化
             SetForm();
-            result = _props_save.SaveData(); //キャンセルした時用に元の設定をファイルに書き込み
+            result = _props_save.SaveData(_accountdbfile, false); //キャンセルした時用に元の設定をファイルに書き込み
         }
 
         private void button5_Click(object sender, EventArgs e)

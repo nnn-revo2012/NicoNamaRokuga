@@ -62,10 +62,10 @@ namespace NicoNamaRokuga
             base.OnLoad(e);
 
             //設定データー読み込み
+            accountdbfile = Path.Combine(Props.GetSettingDirectory(), "account.db");
             props = new Props();
-            props.LoadData();
+            props.LoadData(accountdbfile);
             ClearHosoData();
-            accountdbfile = Path.Combine(Props.GetSettingDirectory(), "account.db"); 
 
             if (IsBatchMode) button1.PerformClick();
         }
@@ -119,17 +119,12 @@ namespace NicoNamaRokuga
                 ClearLog();
 
                 //フォルダやファイルのチェック
-                var save_dir = props.SaveDir;
-                if (String.IsNullOrEmpty(save_dir))
-                {
-                    save_dir = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                }
+                var save_dir = String.IsNullOrEmpty(props.SaveDir) ? System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments): props.SaveDir;
                 if (!Directory.Exists(save_dir))
                 {
                     AddLog("保存フォルダーが存在しません。", 2);
                     return;
                 }
-                var save_file = props.SaveFile;
 
                 var exec_file = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
                 exec_file = GetExecFile(exec_file);
@@ -139,7 +134,6 @@ namespace NicoNamaRokuga
                         AddLog("実行ファイルがありません。", 2);
                         return;
                     }
-                var exec_command = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
 
                 //放送ID
                 if (!IsBatchMode)
@@ -211,12 +205,12 @@ namespace NicoNamaRokuga
                                         if (await _nLiveNet.IsLoginNicoAsync())
                                         {
                                             //ログインしていればOK
-                                            AddLog("Already Logined", 1);
+                                            AddLog("Logged in", 1);
                                             break;
                                         }
                                     }
                                     //ログイン処理
-                                    AddLog("ログインします", 1);
+                                    AddLog("ログイン開始", 1);
                                     if (!db.ReadDbUser(alias, out user, out pass))
                                     {
                                         AddLog("Login Failed", 1);
@@ -235,7 +229,7 @@ namespace NicoNamaRokuga
                                 }
                                 else
                                 {
-                                    AddLog("Already Logined", 1);
+                                    AddLog("Logged in", 1);
                                 }
                             }
                             break;
@@ -265,7 +259,9 @@ namespace NicoNamaRokuga
                     AddLog("Status: " + bci.Error, 1);
                     return;
                 }
-                AddLog("アカウント: "+bci.AccountType, 1);
+                AddLog("Account: " + bci.AccountType, 1);
+
+                //ＴＳ開始時間
                 int ii;
                 if (int.TryParse(textBox2.Text, out ii))
                     bci.StartTs_Time = ii;
@@ -282,7 +278,7 @@ namespace NicoNamaRokuga
 
                 //保存ファイル名作成
                 epi = new ExecPsInfo();
-                epi.Sdir = props.SaveDir;
+                epi.Sdir = string.IsNullOrEmpty(props.SaveDir) ? System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : props.SaveDir;
                 epi.Exec = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
                 epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
                 epi.Sfile = bci.SetRecFileFormat(props.SaveFile);
@@ -531,7 +527,7 @@ namespace NicoNamaRokuga
                 LogFile = null;
                 LogFile2 = null;
 
-                using (var fo2 = new Form2(this))
+                using (var fo2 = new Form2(this, accountdbfile))
                 {
                     fo2.ShowDialog();
                 }

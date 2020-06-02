@@ -275,11 +275,7 @@ namespace NicoNamaRokuga.Net
             try
             {
                 var hs = await _wc.DownloadStringTaskAsync(Props.NicoMyUrl).Timeout(_wc.timeout);
-                var text = Regex.Match(hs, "login_status ?= ?\\'(login)\\';", RegexOptions.Compiled).Groups[1].Value;
-                if (text == "login")
-                    return true;
-                else
-                    return false;
+                return Regex.IsMatch(hs, "user\\.login_status += +\\'login\\'", RegexOptions.Compiled) ? true : false;
             }
             catch (WebException Ex)
             {

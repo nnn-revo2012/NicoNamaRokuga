@@ -134,7 +134,7 @@
             this.nicoSessionComboBox1.Location = new System.Drawing.Point(17, 66);
             this.nicoSessionComboBox1.Name = "nicoSessionComboBox1";
             this.nicoSessionComboBox1.Size = new System.Drawing.Size(284, 20);
-            this.nicoSessionComboBox1.TabIndex = 12;
+            this.nicoSessionComboBox1.TabIndex = 5;
             // 
             // checkBox1
             // 
@@ -142,7 +142,7 @@
             this.checkBox1.Location = new System.Drawing.Point(17, 43);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(134, 16);
-            this.checkBox1.TabIndex = 10;
+            this.checkBox1.TabIndex = 4;
             this.checkBox1.Text = "全てのブラウザーを表示";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.Click += new System.EventHandler(this.checkBox1_Click);
@@ -153,7 +153,7 @@
             this.button5.Location = new System.Drawing.Point(322, 64);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(60, 23);
-            this.button5.TabIndex = 8;
+            this.button5.TabIndex = 6;
             this.button5.Text = "更新";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
@@ -164,7 +164,7 @@
             this.button4.Location = new System.Drawing.Point(322, 188);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(60, 23);
-            this.button4.TabIndex = 7;
+            this.button4.TabIndex = 10;
             this.button4.Text = "チェック";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
@@ -197,6 +197,7 @@
             this.rB_cookie.Name = "rB_cookie";
             this.rB_cookie.Size = new System.Drawing.Size(166, 16);
             this.rB_cookie.TabIndex = 3;
+            this.rB_cookie.TabStop = true;
             this.rB_cookie.Text = "ブラウザーのクッキーを共有する";
             this.rB_cookie.UseVisualStyleBackColor = true;
             // 
@@ -205,7 +206,7 @@
             this.textBox2.Location = new System.Drawing.Point(90, 190);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(211, 19);
-            this.textBox2.TabIndex = 2;
+            this.textBox2.TabIndex = 9;
             this.textBox2.UseSystemPasswordChar = true;
             // 
             // textBox1
@@ -213,7 +214,7 @@
             this.textBox1.Location = new System.Drawing.Point(90, 158);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(286, 19);
-            this.textBox1.TabIndex = 1;
+            this.textBox1.TabIndex = 8;
             // 
             // rB_login
             // 
@@ -222,7 +223,8 @@
             this.rB_login.Location = new System.Drawing.Point(6, 136);
             this.rB_login.Name = "rB_login";
             this.rB_login.Size = new System.Drawing.Size(135, 16);
-            this.rB_login.TabIndex = 0;
+            this.rB_login.TabIndex = 7;
+            this.rB_login.TabStop = true;
             this.rB_login.Text = "このツールでログインする";
             this.rB_login.UseVisualStyleBackColor = true;
             // 
@@ -246,6 +248,7 @@
             this.rB_always.Name = "rB_always";
             this.rB_always.Size = new System.Drawing.Size(99, 16);
             this.rB_always.TabIndex = 1;
+            this.rB_always.TabStop = true;
             this.rB_always.Text = "常にログインする";
             this.rB_always.UseVisualStyleBackColor = true;
             // 
@@ -256,7 +259,8 @@
             this.rB_none.Location = new System.Drawing.Point(112, 18);
             this.rB_none.Name = "rB_none";
             this.rB_none.Size = new System.Drawing.Size(88, 16);
-            this.rB_none.TabIndex = 0;
+            this.rB_none.TabIndex = 2;
+            this.rB_none.TabStop = true;
             this.rB_none.Text = "ログインしない";
             this.rB_none.UseVisualStyleBackColor = true;
             // 
@@ -286,7 +290,7 @@
             this.checkBox7.Location = new System.Drawing.Point(12, 282);
             this.checkBox7.Name = "checkBox7";
             this.checkBox7.Size = new System.Drawing.Size(100, 16);
-            this.checkBox7.TabIndex = 7;
+            this.checkBox7.TabIndex = 16;
             this.checkBox7.Text = "映像を録画する";
             this.checkBox7.UseVisualStyleBackColor = true;
             // 
@@ -308,7 +312,8 @@
             this.rB_native.Location = new System.Drawing.Point(6, 18);
             this.rB_native.Name = "rB_native";
             this.rB_native.Size = new System.Drawing.Size(92, 16);
-            this.rB_native.TabIndex = 1;
+            this.rB_native.TabIndex = 10;
+            this.rB_native.TabStop = true;
             this.rB_native.Text = "内蔵プログラム";
             this.rB_native.UseVisualStyleBackColor = true;
             // 
@@ -318,7 +323,8 @@
             this.rB_ext1.Location = new System.Drawing.Point(6, 40);
             this.rB_ext1.Name = "rB_ext1";
             this.rB_ext1.Size = new System.Drawing.Size(92, 16);
-            this.rB_ext1.TabIndex = 2;
+            this.rB_ext1.TabIndex = 11;
+            this.rB_ext1.TabStop = true;
             this.rB_ext1.Text = "外部プログラム";
             this.rB_ext1.UseVisualStyleBackColor = true;
             // 
@@ -328,7 +334,7 @@
             this.checkBox6.Location = new System.Drawing.Point(12, 260);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(242, 16);
-            this.checkBox6.TabIndex = 5;
+            this.checkBox6.TabIndex = 15;
             this.checkBox6.Text = "追い出しコメント (/hb ifseetno) は出力しない";
             this.checkBox6.UseVisualStyleBackColor = true;
             // 
@@ -338,7 +344,7 @@
             this.checkBox5.Location = new System.Drawing.Point(12, 194);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.Size = new System.Drawing.Size(206, 16);
-            this.checkBox5.TabIndex = 4;
+            this.checkBox5.TabIndex = 12;
             this.checkBox5.Text = "自動起動時に最小化状態で起動する";
             this.checkBox5.UseVisualStyleBackColor = true;
             // 
@@ -348,7 +354,7 @@
             this.checkBox4.Location = new System.Drawing.Point(12, 216);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(216, 16);
-            this.checkBox4.TabIndex = 3;
+            this.checkBox4.TabIndex = 13;
             this.checkBox4.Text = "エラーで録画開始できなかったら終了する";
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
@@ -358,7 +364,7 @@
             this.checkBox3.Location = new System.Drawing.Point(12, 238);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(230, 16);
-            this.checkBox3.TabIndex = 2;
+            this.checkBox3.TabIndex = 14;
             this.checkBox3.Text = "コメントを取得してファイル (.xml) に出力する";
             this.checkBox3.UseVisualStyleBackColor = true;
             // 
@@ -380,7 +386,7 @@
             this.rB_rtmp.Location = new System.Drawing.Point(56, 19);
             this.rB_rtmp.Name = "rB_rtmp";
             this.rB_rtmp.Size = new System.Drawing.Size(143, 16);
-            this.rB_rtmp.TabIndex = 2;
+            this.rB_rtmp.TabIndex = 9;
             this.rB_rtmp.Text = "RTMP(公式生放送のみ)";
             this.rB_rtmp.UseVisualStyleBackColor = true;
             // 
@@ -390,7 +396,7 @@
             this.rB_hls.Location = new System.Drawing.Point(6, 19);
             this.rB_hls.Name = "rB_hls";
             this.rB_hls.Size = new System.Drawing.Size(44, 16);
-            this.rB_hls.TabIndex = 0;
+            this.rB_hls.TabIndex = 8;
             this.rB_hls.Text = "HLS";
             this.rB_hls.UseVisualStyleBackColor = true;
             // 
@@ -411,7 +417,7 @@
             this.comboBox2.Location = new System.Drawing.Point(8, 15);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(159, 20);
-            this.comboBox2.TabIndex = 2;
+            this.comboBox2.TabIndex = 7;
             // 
             // checkBox2
             // 
@@ -419,7 +425,7 @@
             this.checkBox2.Location = new System.Drawing.Point(12, 403);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(118, 16);
-            this.checkBox2.TabIndex = 0;
+            this.checkBox2.TabIndex = 17;
             this.checkBox2.Text = "接続ログを出力する";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -447,7 +453,7 @@
             this.button8.Location = new System.Drawing.Point(216, 59);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(61, 23);
-            this.button8.TabIndex = 8;
+            this.button8.TabIndex = 4;
             this.button8.Text = "振分選択";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
@@ -457,7 +463,7 @@
             this.button7.Location = new System.Drawing.Point(334, 102);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(61, 23);
-            this.button7.TabIndex = 7;
+            this.button7.TabIndex = 6;
             this.button7.Text = "書式選択";
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
@@ -467,7 +473,7 @@
             this.button6.Location = new System.Drawing.Point(334, 16);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(62, 23);
-            this.button6.TabIndex = 6;
+            this.button6.TabIndex = 2;
             this.button6.Text = "参照";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -487,7 +493,7 @@
             this.textBox5.Location = new System.Drawing.Point(6, 61);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(204, 19);
-            this.textBox5.TabIndex = 4;
+            this.textBox5.TabIndex = 3;
             // 
             // textBox4
             // 
@@ -495,7 +501,7 @@
             this.textBox4.Location = new System.Drawing.Point(6, 104);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(311, 19);
-            this.textBox4.TabIndex = 3;
+            this.textBox4.TabIndex = 5;
             // 
             // label3
             // 
@@ -511,7 +517,7 @@
             this.textBox3.Location = new System.Drawing.Point(6, 18);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(311, 19);
-            this.textBox3.TabIndex = 0;
+            this.textBox3.TabIndex = 1;
             // 
             // tabPage3
             // 
@@ -531,7 +537,7 @@
             this.button1.Name = "button1";
             this.button1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.button1.Size = new System.Drawing.Size(72, 23);
-            this.button1.TabIndex = 1;
+            this.button1.TabIndex = 20;
             this.button1.Text = "OK";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -543,7 +549,7 @@
             this.button2.Location = new System.Drawing.Point(335, 464);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(72, 23);
-            this.button2.TabIndex = 2;
+            this.button2.TabIndex = 21;
             this.button2.Text = "キャンセル";
             this.button2.UseVisualStyleBackColor = true;
             // 
@@ -553,7 +559,7 @@
             this.button3.Location = new System.Drawing.Point(12, 464);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(94, 23);
-            this.button3.TabIndex = 3;
+            this.button3.TabIndex = 22;
             this.button3.Text = "初期値に戻す";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);

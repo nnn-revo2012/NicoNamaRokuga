@@ -184,16 +184,22 @@ namespace NicoNamaRokuga.Prop
                 return Enum.IsDefined(typeof(QTypes), str);
         }
 
-        public bool LoadData()
+        public bool LoadData(string accountdbfile)
         {
             try
             {
+                using (var db = new Account(accountdbfile))
+                {
+                    var alias = "nico_01";
+                    string user = ""; string pass = "";
+                    db.ReadDbUser(alias, out user, out pass);
+                    this.UserID = user;
+                    this.Password = pass;
+                }
                 this.IsLogin =
                     (IsLogin)Enum.Parse(typeof(IsLogin), Properties.Settings.Default.IsLogin);
                 this.LoginMethod =
                     (LoginMethod)Enum.Parse(typeof(LoginMethod), Properties.Settings.Default.LoginMethod);
-                this.UserID = Properties.Settings.Default.UserID;
-                this.Password = Properties.Settings.Default.Password;
                 this.SelectedCookie = Properties.Settings.Default.SelectedCookie;
                 this.IsAllCookie = Properties.Settings.Default.IsAllCookie;
                 this.SaveDir = Properties.Settings.Default.SaveDir;
@@ -226,14 +232,12 @@ namespace NicoNamaRokuga.Prop
             return true;
         }
 
-        public bool SaveData()
+        public bool SaveData(string accountdbfile, bool acc_flg)
         {
             try
             {
                 Properties.Settings.Default.IsLogin = this.IsLogin.ToString().ToLower();
                 Properties.Settings.Default.LoginMethod = this.LoginMethod.ToString().ToLower();
-                Properties.Settings.Default.UserID = this.UserID;
-                Properties.Settings.Default.Password = this.Password;
                 Properties.Settings.Default.SelectedCookie = this.SelectedCookie;
                 Properties.Settings.Default.IsAllCookie = this.IsAllCookie;
                 Properties.Settings.Default.SaveDir = this.SaveDir;
@@ -255,7 +259,17 @@ namespace NicoNamaRokuga.Prop
                 Properties.Settings.Default.IsSeetNo = this.IsSeetNo;
                 Properties.Settings.Default.IsVideo = this.IsVideo;
                 Properties.Settings.Default.Save();
-            }catch(Exception Ex)
+                if (acc_flg == true)
+                {
+                    using (var db = new Account(accountdbfile))
+                    {
+                        var alias = "nico_01";
+                        db.CreateDbAccount();
+                        db.WriteDbUser(alias, this.UserID, this.Password);
+                    }
+                }
+            }
+            catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(SaveData), Ex);
                 return false;
@@ -263,16 +277,20 @@ namespace NicoNamaRokuga.Prop
             return true;
         }
 
-        public bool ReloadData()
+        public bool ReloadData(string accountdbfile)
         {
             Properties.Settings.Default.Reload();
-            return this.LoadData();
+            return this.LoadData(accountdbfile);
         }
 
-        public bool ResetData()
+        public bool ResetData(string accountdbfile)
         {
+            var result = false;
             Properties.Settings.Default.Reset();
-            return this.LoadData();  
+            result = this.LoadData(accountdbfile);
+            this.UserID = "";
+            this.Password = "";
+            return result;
         }
 
         //設定ファイルの場所をGet

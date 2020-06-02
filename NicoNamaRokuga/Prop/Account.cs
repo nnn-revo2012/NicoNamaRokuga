@@ -33,10 +33,13 @@ namespace NicoNamaRokuga.Prop
                 SyncMode = SynchronizationModes.Off,
                 JournalMode = SQLiteJournalModeEnum.Wal,
             };
-            var conn = new SQLiteConnection(builder.ToString());
-            _cn = conn;
+            if (Directory.Exists(Path.GetDirectoryName(dbfile)))
+            {
+                var conn = new SQLiteConnection(builder.ToString());
+                _cn = conn;
+                Open();
+            }
 
-            Open();
         }
 
         ~Account()
@@ -56,6 +59,8 @@ namespace NicoNamaRokuga.Prop
 
         public void CreateDbAccount()
         {
+            if (_cn == null) return;
+
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
@@ -81,7 +86,9 @@ namespace NicoNamaRokuga.Prop
         {
             string aesiv = "";string aeskey = "";
             string data = pass;
-            try 
+            if (_cn == null) return false;
+
+            try
             {
                 if (!string.IsNullOrEmpty(pass))
                 {
@@ -109,7 +116,9 @@ namespace NicoNamaRokuga.Prop
 
         public bool WriteDbSession(string alias, string session, string secure)
         {
-            try 
+            if (_cn == null) return false;
+
+            try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
@@ -135,6 +144,8 @@ namespace NicoNamaRokuga.Prop
             user = pass = "";
             string aesiv = ""; string aeskey = "";
             string data = null;
+            if (_cn == null) return false;
+
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
@@ -167,6 +178,8 @@ namespace NicoNamaRokuga.Prop
         public bool ReadDbSession(string alias, out string session, out string secure)
         {
             session = secure = "";
+            if (_cn == null) return false;
+
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
@@ -196,6 +209,7 @@ namespace NicoNamaRokuga.Prop
         {
             string session = null;
             string secure = null;
+            if (_cn == null) return false;
 
             try
             {
@@ -221,6 +235,8 @@ namespace NicoNamaRokuga.Prop
         {
             string session = null;
             string secure = null;
+            if (_cn == null) return false;
+
             try
             {
                 foreach (Cookie ck in cc.GetCookies(new Uri(Props.NicoDomain)))
@@ -248,6 +264,8 @@ namespace NicoNamaRokuga.Prop
         public long CountDbAccount()
         {
             long result = -1;
+            if (_cn == null) return result;
+
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
