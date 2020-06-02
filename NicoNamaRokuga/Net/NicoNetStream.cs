@@ -210,59 +210,52 @@ namespace NicoNamaRokuga.Net
                     _form.AddLog("type Error: " + e.Message, 9);
                     return;
                 }
-                if (jtkn.ToString() == "ping")
-                {
-                    ttt = SendPong();
-                    //_form.AddLog(ttt + "\r\n");
-                    return;
-                }
-
                 if (jtkn.ToString() == "error") return;
 
-                if (!jmes.TryGetValue("body", out jtkn))
+                string type = jtkn.ToString();
+                jmes.TryGetValue("data", out jtkn);
+                switch (type)
                 {
-                    _form.AddLog("body Error: " + e.Message, 9);
-                    return;
-                }
-
-                switch (jtkn["command"].ToString())
-                {
-                    case "permit":
-                        if (_wsStatus == 1)
-                            _wsStatus = 2; //permit
+                    case "ping":
+                        ttt = SendPong();
+                        _form.AddLog(ttt, 9);
                         break;
                     case "schedule":
                         break;
-                    case "currentstream":
+                    case "statistics":
+                        break;
+                    case "serverTime":
+                        break;
+                    case "stream":
                         if (_wsStatus == 2)
                         {
                             //画質の配列
-                            var qts = (JArray)jtkn["currentStream"]["qualityTypes"];
-                            _form.AddLog("QuarityTypes: [" + string.Join(" ", qts) + "]", 9);
+                            var qts = (JArray)jtkn["availableQualities"];
+                            _form.AddLog("availableQualities: [" + string.Join(" ", qts) + "]", 9);
                             _wsStatus = 3;
                             //画質一覧から画質を選ぶ
                             var selqu = SelectQuality(Form1.props.QuarityType.ToString(), qts);
                             if (string.IsNullOrEmpty(selqu))
-                                selqu = jtkn["currentStream"]["quality"].ToString();
+                                selqu = jtkn["quality"].ToString();
                             _form.AddLog("Select: " + selqu, 9);
                             _epi.Quality = selqu;
-                            ttt = SendGetStream(selqu, _epi.Protocol);
+                            ttt = SendChangeStream(selqu, _epi.Protocol);
                             _form.AddLog(ttt, 9);
                         }
                         else
                         {
-                            ttt = jtkn["currentStream"]["quality"].ToString();
+                            ttt = jtkn["quality"].ToString();
                             _form.AddLog("Quarity: " + ttt, 9);
                             _form.DispQuality(ttt);
                             //ffmpegを実行する
                             if (_epi.Protocol == "rtmp")
                             {
-                                ttt = jtkn["currentStream"]["uri"].ToString() + "/" + jtkn["currentStream"]["name"].ToString();
+                                ttt = jtkn["uri"].ToString() + "/" + jtkn["name"].ToString();
                                 _form.AddLog("RTMPFILE: " + ttt, 9);
                             }
                             else
                             {
-                                ttt = jtkn["currentStream"]["uri"].ToString();
+                                ttt = jtkn["uri"].ToString();
                                 _form.AddLog("Masterm3u8: " + ttt, 9);
                             }
                             if (Form1.props.Protocol != Protocol.hls || Form1.props.UseExternal != UseExternal.native)
@@ -276,31 +269,30 @@ namespace NicoNamaRokuga.Net
                                 _eProcess.ExecPs(_epi.Exec, argument);
                         }
                         break;
-                    case "currentroom":
+                    case "room":
                         //コメントサーバー接続設定
                         if (Form1.props.IsComment)
                         {
                             if (!_bci.IsTimeShift() || !_ri.IsRetry)
                             {
-                                ttt = jtkn["room"]["messageServerUri"].ToString();
+                                ttt = jtkn["messageServer"]["uri"].ToString();
                                 _cmi.WsUrl = ttt;
                                 _form.AddLog("CommentServer: " + ttt, 9);
-                                ttt = jtkn["room"]["threadId"].ToString();
+                                ttt = jtkn["threadId"].ToString();
                                 _cmi.ThreadId = ttt;
                                 _nNetComment.Connect(_cmi.WsUrl);
                             }
                         }
                         break;
-                    case "watchinginterval":
+                    case "seat":
                         //タイマーをスタートする
-                        ttt = jtkn["params"][0].ToString();
-                        StartWatchTimer(TimeSpan.FromSeconds(double.Parse(ttt)), _bci.BcId);
+                        ttt = jtkn["keepIntervalSec"].ToString();
+                        StartWatchTimer(TimeSpan.FromSeconds(double.Parse(ttt)));
                         _form.AddLog("HeartBeatStart: " + ttt, 9);
                         break;
                     case "disconnect":
                         //切断
-                        var par = (JArray)jtkn["params"];
-                        ttt = par[1].ToString();
+                        ttt = jtkn["reason"].ToString();
                         _form.AddLog("Disconnect: " + ttt, 9);
                         WsStatus = 3; //再接続
                         if (ttt == "TAKEOVER") //追い出し
@@ -330,11 +322,9 @@ namespace NicoNamaRokuga.Net
                 {
                     _wsconnect = true;
                     WsStatus = 0; //接続中
-                    ttt = SendVersion("leo");
+                    ttt = SendStartWatching(_epi.Protocol);
                     _form.AddLog(ttt, 9);
-                    ttt = SendGetPermit(_bci.BcId, _epi.Protocol);
-                    _form.AddLog(ttt, 9);
-                    _wsStatus = 1; //getpermit送信
+                    _wsStatus = 2; //StartWatching送信
                 }
             };
 
@@ -373,13 +363,14 @@ namespace NicoNamaRokuga.Net
         }
 
         /// 接続する
+/*
         public void ReSendGetStream(string quality, string protocol)
         {
             var ttt = SendGetStream(quality, protocol);
             //_form.AddLog(ttt + "\r\n");
 
         }
-
+*/
         private string SelectQuality(string quality, JArray qtypes)
         {
             string result = null;
@@ -396,64 +387,48 @@ namespace NicoNamaRokuga.Net
             return result;
         }
 
-        public string GetPermit(string bcId, string protocol)
+        public string SendStartWatching(string protocol)
         {
-            //getpermit
-            var s = @"{""type"":""watch"",""body"":{""command"":""getpermit"",""requirement"":{""broadcastId"":""%%bcId%%"","
-                  + @"""route"":"""",""stream"":{""protocol"":""%%proto%%"",""requireNewStream"":true,"
-                  + @"""priorStreamQuality"":""low"",""isLowLatency"":false},""room"":{""isCommentable"":true,""protocol"":""webSocket""}}}}";
-            s = s.Replace("%%bcId%%", bcId);
+            //StartWatching
+            var s = @"{""type"":""startWatching"",""data"":{ ""stream"":{ ""quality"":""normal"","
+                    + @"""protocol"":""%%proto%%"",""latency"":""high"",""chasePlay"":false},"
+                    + @"""room"":{ ""protocol"":""webSocket"",""commentable"":true},""reconnect"":false} }";
             s = s.Replace("%%proto%%", protocol);
-            return s;
-        }
-
-        private string SendGetPermit(string bcId, string protocol)
-        {
-            var s = GetPermit(bcId, protocol);
             _ws.Send(s);
             return s;
         }
 
-        public string SendGetStream(string quality, string protocol)
+        public string SendChangeStream(string quality, string protocol)
         {
-            //getstream
-            var s = @"{""type"":""watch"",""body"":{""command"":""getstream"",""requirement"":"
-                  + @"{""protocol"":""%%proto%%"",""quality"":""%%quality%%"",""isLowLatency"":false}}}";
+            //changeStream
+            var s = @"{""type"":""changeStream"",""data"":{ ""quality"":""%%quality%%"","
+                    + @"""protocol"":""%%proto%%"",""latency"":""high"",""chasePlay"":false} }";
             s = s.Replace("%%quality%%", quality);
             s = s.Replace("%%proto%%", protocol);
             _ws.Send(s);
             return s;
         }
 
-        private string SendInterval(string bcId)
+        private string SendKeepSeat()
         {
             //interval
-            var s = @"{""type"":""watch"",""body"":{""command"":""watching"",""params"":[""%%bcId%%"",""-1"",""0""]}}";
-            s = s.Replace("%%bcId%%", bcId);
+            var s = @"{""type"":""keepSeat""}";
             _ws?.Send(s);
             return s;
         }
-
-        public string SendVersion(string version)
-        {
-            var s = @"{""type"":""watch"",""body"":{""command"":""playerversion"",""params"":[""%%version%%""]}}";
-            s = s.Replace("%%version%%", version);
-            _ws.Send(s);
-            return s;
-        }
-
+ 
         private string SendPong()
         {
-            var s = @"{""type"":""pong"",""body"":{}}";
+            var s = @"{""type"":""pong""}";
             _ws?.Send(s);
             return s;
         }
 
-        private void StartWatchTimer(TimeSpan time, string bcId)
+        private void StartWatchTimer(TimeSpan time)
         {
             _watchTimer = new System.Threading.Timer(_ =>
             {
-                var s = SendInterval(bcId);
+                var s = SendKeepSeat();
                 _form.AddLog(s, 9);
             }
             , null, time, time);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
@@ -260,6 +261,13 @@ namespace NicoNamaRokuga
                     return;
                 }
                 AddLog("Account: " + bci.AccountType, 1);
+                var ws_ver = Regex.Match(bci.WsUrl, @"/wsapi/([^/]*)/").Groups[1].Value;
+                if (ws_ver == "v1")
+                    AddLog("WebSocket v1", 1);
+                else if (ws_ver == "v2")
+                    AddLog("WebSocket v2", 1);
+                else
+                    AddLog("WebSocket不明", 1);
 
                 //ＴＳ開始時間
                 int ii;
@@ -272,7 +280,6 @@ namespace NicoNamaRokuga
                     {
                         AddLog("RTMP録画は公式の生放送のみです。", 1);
                         return;
-
                     }
                 }
 
@@ -322,8 +329,8 @@ namespace NicoNamaRokuga
                     _eProcess = new ExecProcess(this, bci, _nNetComment, _ri);
                 _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
 
-                AddLog("wsUrl: " + bci.WsUrl, 9);
-                AddLog("wsPermit: " + _nNetStream.GetPermit(bci.BcId, props.Protocol.ToString()), 9);
+                AddLog("broadcastId: " + bci.BcId, 9);
+                AddLog("webSocketUrl: " + bci.WsUrl, 9);
 
                 //放送情報を表示
                 DispHosoData(bci);
