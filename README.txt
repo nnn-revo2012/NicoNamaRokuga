@@ -1,7 +1,7 @@
 ﻿===============================================================================
 【タイトル】 NicoNamaRokuga
 【ファイル】 NicoNamaRokuga.exe
-【作成月日】 2020/06/04
+【作成月日】 2020/06/05
 【著 作 者】 nnn-revo2012
 【開発環境】 Microsoft Windows 10
              Microsoft Visual Express 2015 Express for Windows Desktop
@@ -23,7 +23,8 @@
 
 ■インストール方法
 適当なフォルダにzipファイルの中のファイルを全て解凍してください。解凍したらその中のNicoNamaRokuga.exe を実行してください。
-※ダウンロード時や実行時にウイルスやマルウェアの警告が出る可能性があります。あらかじめご了承ください。
+※ダウンロード時や実行時にウイルスやマルウェアの警告が出る可能性があります。ウイルスチェックは行っておりますがご了承ください。
+外部プログラムを使って録画する場合は別途ffmpeg.exeを入手して本ソフトウェアと同じフォルダーにコピーしてください。
 
 ■アンインストール方法
 アンインストールの際は NicoNamaRokuga.exe の入っているフォルダごと削除してください。
@@ -37,7 +38,7 @@
 4.タイムシフトを録画する場合、「タイムシフト開始時間」に時間を入力するとその時間から録画開始します。
 5.「録画開始」を押すと録画が始まる。
 6.録画したファイルはツールバーのファイル(F)→録画フォルダーを開くでフォルダーが開きます。
-　録画ファイルはlivedlと同じくDB(sqlite3)ファイルになっていて、そのままでは再生することはできません（これ重要です）。
+　録画ファイルはlivedlと同じくDB(sqlite3)ファイルになっていて、そのままでは再生することはできません（重要）。
 7.録画ファイルをNicoNamaRokuga.exeの画面にドラッグアンドドロップしてください。
 8.映像ファイル(*.ts)とコメントファイル(*.xml)が作成されます。
 
@@ -50,20 +51,39 @@ https://www.microsoft.com/ja-jp/download/details.aspx?id=49981
 また著作者はバージョンアップ、不具合修正の義務を負いません。
 
 ■ライセンス関係
-・rtmpdump
-http://www.videohelp.com/tools/RTMPDump
-・ (OpenSSL) libeay32.dll
-http://gnuwin32.sourceforge.net/packages/openssl.htm
+・NicoNamaRokuga
+https://github.com/nnn-revo2012/NicoNamaRokuga
+Copyright (c) 2019 nnn-revo2012
+Released under the GNU General Public License v3.0
 
-・CookieGetterSharp.dll
-はるxxxxさん
-http://d.hatena.ne.jp/halxxxx/
-http://com.nicovideo.jp/community/co23186
-にょんにょんさん（ギッシリアンコちゃん）
-http://com.nicovideo.jp/community/co278640
-うつろさん
-http://com.nicovideo.jp/community/co235502
+・SnkLib.App.CookieGetter
+https://github.com/namoshika/SnkLib.App.CookieGetter
+Copyright (c) 2014 namoshika.さん
+Released under the GNU Lesser GPL
+本ソフトウェアでは上記にGoogleChrome80対応の修正を行ったものを使用しております。
+https://github.com/guest-nico/SnkLib.App.CookieGetter
+Copyright (c) 2019 guest-nicoさん
+
+・WebSocket4Net
+https://github.com/kerryjiang/WebSocket4Net
+kerryjiangさん
+Apache License 2.0
+
+・SQLite
+https://www.sqlite.org/index.html
+Public Domain
+
+・Json.NET
+https://www.newtonsoft.com/json
+Copyright (c) 2007 James Newton-Kingさん
+MIT License
+
+・livedl
+https://himananiito.hatenablog.jp/entry/livedl
+Copyright (c) 2018 himananiitoさん
+MIT License
+※ファイル形式やフォーマットを使用しております。
 
 ■更新履歴
-2020/06/04　Version 0.1.0.20
+2020/06/05　Version 0.1.0.20
 リリース
