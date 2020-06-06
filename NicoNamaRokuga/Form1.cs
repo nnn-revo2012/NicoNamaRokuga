@@ -244,6 +244,11 @@ namespace NicoNamaRokuga
                                 return;
                             }
                             AddLog("Cookie読み込みOK", 1);
+                            if (!await _nLiveNet.IsLoginNicoAsync())
+                            {
+                                AddLog("ブラウザでログインし直してください", 1);
+                                return;
+                            }
                             break;
                     }
                 }

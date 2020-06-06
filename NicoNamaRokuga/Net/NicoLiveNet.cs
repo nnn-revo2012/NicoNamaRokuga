@@ -270,11 +270,12 @@ namespace NicoNamaRokuga.Net
             return gpsi;
         }
 
+        //生放送ページから放送情報を取得
         public async Task<bool> IsLoginNicoAsync()
         {
             try
             {
-                var hs = await _wc.DownloadStringTaskAsync(Props.NicoMyUrl).Timeout(_wc.timeout);
+                var hs = await _wc.DownloadStringTaskAsync(Props.NicoDomain).Timeout(_wc.timeout);
                 return Regex.IsMatch(hs, "user\\.login_status += +\\'login\\'", RegexOptions.Compiled) ? true : false;
             }
             catch (WebException Ex)
@@ -426,7 +427,11 @@ namespace NicoNamaRokuga.Net
                 }
 
                 // Cookieをセット
-                _wc.cookieContainer.Add(result.Cookies);
+                foreach (Cookie ck in result.Cookies)
+                    if (ck.Name == "user_session" || ck.Name == "user_session_secure")
+                        _wc.cookieContainer.Add(new Cookie(ck.Name, ck.Value, "/", ".nicovideo.jp"));
+                    else if (ck.Name == "age_auth")
+                        _wc.cookieContainer.Add(ck);
                 IsLoginStatus = true;
 
                 if (IsDebug)

@@ -20,13 +20,12 @@ namespace NicoNamaRokuga.Prop
         //定数設定
         public static readonly string UserAgent = "Mozilla/5.0 (" + Ver.GetAssemblyName() + "; " + Ver.Version + ")";
         //public static readonly string UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36";
-        public static readonly string NicoDomain = "https://nicovideo.jp/";
+        public static readonly string NicoDomain = "https://www.nicovideo.jp/";
 
         public static readonly string NicoLiveUrl = "https://live2.nicovideo.jp/watch/";
         public static readonly string NicoCommUrl = "https://com.nicovideo.jp/community/";
         public static readonly string NicoChannelUrl = "https://ch.nicovideo.jp/";
         public static readonly string NicoUserUrl = "https://www.nicovideo.jp/user/";
-        public static readonly string NicoMyUrl = "https://www.nicovideo.jp/my/";
 
         public static readonly string NicoLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico";
         public static readonly string NicoGetPlayerStatus = "https://ow.live.nicovideo.jp/api/getplayerstatus?v=";

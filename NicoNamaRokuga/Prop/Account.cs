@@ -150,7 +150,7 @@ namespace NicoNamaRokuga.Prop
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
-                    command.CommandText = "SELECT user, pass, aesiv, aeskey FROM niconico\n";
+                    command.CommandText = "SELECT user, pass, aesiv, aeskey FROM niconico \n";
                     command.CommandText += "WHERE alias=\"" + alias + "\" \n";
                     Debug.WriteLine(command.CommandText);
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -184,7 +184,7 @@ namespace NicoNamaRokuga.Prop
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
-                    command.CommandText = "SELECT session, secure FROM niconico\n";
+                    command.CommandText = "SELECT session, secure FROM niconico \n";
                     command.CommandText += "WHERE alias=\"" + alias + "\" \n";
                     Debug.WriteLine(command.CommandText);
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -218,10 +218,8 @@ namespace NicoNamaRokuga.Prop
                 if (string.IsNullOrEmpty(session) || string.IsNullOrEmpty(secure))
                     return false;
 
-                string[] data = session.Split(';');
-                cc.Add(new Cookie("user_session", data[0], data[1], data[2]));
-                data = secure.Split(';');
-                cc.Add(new Cookie("user_session_secure", data[0], data[1], data[2]));
+                cc.Add(new Cookie("user_session", session, "/", ".nicovideo.jp"));
+                cc.Add(new Cookie("user_session_secure", secure, "/", ".nicovideo.jp"));
                 return true;
             }
             catch (Exception Ex)
@@ -242,9 +240,9 @@ namespace NicoNamaRokuga.Prop
                 foreach (Cookie ck in cc.GetCookies(new Uri(Props.NicoDomain)))
                 {
                     if (ck.Name == "user_session")
-                        session = (string)ck.Value + ";" + (string)ck.Path + ";" + (string)ck.Domain;
+                        session = (string)ck.Value;
                     else if (ck.Name == "user_session_secure")
-                        secure = (string)ck.Value + ";" + (string)ck.Path + ";" + (string)ck.Domain;
+                        secure = (string)ck.Value;
                 }
                 if (!string.IsNullOrEmpty(session) && !string.IsNullOrEmpty(secure))
                     if (WriteDbSession(alias, session, secure))
