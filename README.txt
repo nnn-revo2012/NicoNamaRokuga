@@ -1,10 +1,10 @@
 ﻿===============================================================================
 【タイトル】 NicoNamaRokuga
 【ファイル】 NicoNamaRokuga.exe
-【作成月日】 2020/06/05
+【作成月日】 2020/07/06
 【著 作 者】 nnn-revo2012
 【開発環境】 Microsoft Windows 10
-             Microsoft Visual Express 2015 Express for Windows Desktop
+             Microsoft Visual Studio 2015
 【動作環境】 Microsoft Windows 10 / Windows 8.1 / Windows 7
              .NET Framework 4.6.1
 【推奨環境】 Microsoft Windows 10
@@ -17,13 +17,15 @@
 ■説明
 ・ニコニコ生放送リアルタイム・タイムシフト放送を録画します。
 ・GUI(Windows Forms)使用。
+・タイムシフトはプレアカ2倍速・一般アカ1.25倍速で録画します。
+・リアルタイム時の追っかけ録画には対応していません。
 ・録画されたファイルはlivedlの録画ファイルと互換性があります。
 ・ffmpegなどの外部プログラムを使って録画することもできます。
 ・2020/4/4現在 公式生放送のみrtmpで録画可能です(ＴＳは全て不可)。
 
 ■インストール方法
 適当なフォルダにzipファイルの中のファイルを全て解凍してください。解凍したらその中のNicoNamaRokuga.exe を実行してください。
-※ダウンロード時や実行時にウイルスやマルウェアの警告が出る可能性があります。ウイルスチェックは行っておりますがご了承ください。
+※ダウンロード時や実行時にウイルスやマルウェアの警告が出る可能性があります。当方でウイルスチェックは行っておりますがあらかじめご了承ください。
 外部プログラムを使って録画する場合は別途ffmpeg.exeを入手して本ソフトウェアと同じフォルダーにコピーしてください。
 
 ■アンインストール方法
@@ -32,8 +34,7 @@
 ■使用方法
 1.NicoNamaRokuga.exeを起動する。
 2.ツールバーにあるツール(T)→オプション(O)をクリックし、アカウント設定のタブの「ブラウザーのクッキーを共有する」を選び
-　ニコニコにログイン中のブラウザーを選択する（こちらを推奨）。または「このツールでログインする」を選び、メールアドレスと
-　パスワードを入力する。
+　ニコニコにログイン中のブラウザーを選択する。または「このツールでログインする」を選び、メールアドレスとパスワードを入力する。
 3.放送URLに録画したい放送URL(https://live.nicovideo.jp/watch/lv******またはlv******)を入力する。
 4.タイムシフトを録画する場合、「タイムシフト開始時間」に時間を入力するとその時間から録画開始します。
 5.「録画開始」を押すと録画が始まる。
@@ -58,32 +59,37 @@ Released under the GNU General Public License v3.0
 
 ・SnkLib.App.CookieGetter
 https://github.com/namoshika/SnkLib.App.CookieGetter
-Copyright (c) 2014 namoshika.さん
+Copyright (c) 2014 namoshika.
 Released under the GNU Lesser GPL
 本ソフトウェアでは上記にGoogleChrome80対応の修正を行ったものを使用しております。
 https://github.com/guest-nico/SnkLib.App.CookieGetter
-Copyright (c) 2019 guest-nicoさん
+Copyright (c) 2019 guest-nico
 
 ・WebSocket4Net
 https://github.com/kerryjiang/WebSocket4Net
-kerryjiangさん
-Apache License 2.0
-
-・SQLite
-https://www.sqlite.org/index.html
-Public Domain
+Copyright (c) 2012 kerryjiang
+Released under the Apache License 2.0
 
 ・Json.NET
 https://www.newtonsoft.com/json
-Copyright (c) 2007 James Newton-Kingさん
-MIT License
+Copyright (c) 2007 James Newton-King
+Released under the MIT License
+
+・BouncyCastle
+http://www.bouncycastle.org/csharp/
+Copyright (c) 2000-2020 Legion of the Bouncy Castle Inc.
+Released under the MIT License
+
+・SQLite
+https://www.sqlite.org/index.html
+Released into the Public Domain
 
 ・livedl
 https://himananiito.hatenablog.jp/entry/livedl
-Copyright (c) 2018 himananiitoさん
-MIT License
+Copyright (c) 2018 himananiito
+Released under the MIT License
 ※ファイル形式やフォーマットを使用しております。
 
 ■更新履歴
-2020/06/05　Version 0.1.0.20
+2020/07/06　Version 0.1.1.02
 リリース
