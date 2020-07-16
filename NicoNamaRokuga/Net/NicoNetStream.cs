@@ -68,11 +68,7 @@ namespace NicoNamaRokuga.Net
         //指定フォーマットに基づいて録画サブディレクトリー名を作る
         public string SetRecFolderFormat(string s)
         {
-            var result = s.Replace("/", "\\");
-            result = result.Trim('\\');
-            result = SetRecFileFormat(result);
-
-            return result;
+            return SetRecFileFormat(s);
         }
 
         //指定フォーマットに基づいて録画ファイル名を作る

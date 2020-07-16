@@ -323,6 +323,11 @@ namespace NicoNamaRokuga.Prop
             return Path.Combine(dir, tmp);
         }
 
+        public static string GetDirSepString()
+        {
+            return Path.DirectorySeparatorChar.ToString();
+        }
+
         public static string GetLiveUrl(string liveid)
         {
             return NicoLiveUrl + liveid;
