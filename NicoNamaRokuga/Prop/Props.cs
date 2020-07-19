@@ -82,7 +82,6 @@ namespace NicoNamaRokuga.Prop
             {"comId", "community.id"}, // "co\d+"
             // "program"
             {"beginTime", "program.beginTime"}, // integer
-            {"broadcastId", "program.broadcastId"}, // "\d+"
             {"description", "program.description"}, // 放送説明
             {"endTime", "program.endTime"}, // integer
             {"isFollowerOnly", "program.isFollowerOnly"}, // bool
@@ -320,6 +319,13 @@ namespace NicoNamaRokuga.Prop
         public static string GetExecLogfile(string dir, string filename)
         {
             var tmp = Path.GetFileNameWithoutExtension(filename) + "_exec_" + System.DateTime.Now.ToString("yyMMdd_HHmmss") + ".log";
+            return Path.Combine(dir, tmp);
+        }
+
+        //data-propsファイル名をGet
+        public static string GetDataPropsfile(string dir, string filename)
+        {
+            var tmp = Path.GetFileNameWithoutExtension(filename) + "_data-props_" + System.DateTime.Now.ToString("yyMMdd_HHmmss") + ".log";
             return Path.Combine(dir, tmp);
         }
 

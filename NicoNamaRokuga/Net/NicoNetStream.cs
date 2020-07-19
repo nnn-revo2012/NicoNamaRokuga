@@ -25,9 +25,10 @@ namespace NicoNamaRokuga.Net
         public string Error { set; get; }
 
         public string LiveId { set; get; }
-        public string BcId { set; get; }
         public string AuTkn { set; get; }
         public string WsUrl { set; get; }
+        public string FrontEndId { set; get; }
+
         public string Title { set; get; }
         public string Description { set; get; }
         public string Provider_Type { set; get; }
@@ -48,12 +49,12 @@ namespace NicoNamaRokuga.Net
         public int    StartTs_Time { set; get; }
         public string Data_Props { set; get; }
 
-        public BroadCastInfo(string liveid, string bcid, string autkn, string wsurl)
+        public BroadCastInfo(string liveid, string autkn, string wsurl, string frontendid)
         {
             this.LiveId = liveid;
-            this.BcId = bcid;
             this.AuTkn = autkn;
             this.WsUrl = wsurl;
+            this.FrontEndId = frontendid;
             this.Status = null;
             this.Error = null;
             this.StartTs_Time = 0;
@@ -187,7 +188,7 @@ namespace NicoNamaRokuga.Net
                 _form.AddLog("サーバー接続を開始します。", 1);
                 _wsconnect = false;
                 //var clist = _form._nLiveNet.GetCookieList();
-                var _websocket = new WebSocket(_bci.WsUrl, "", null, Props.WsHeaderStream.ToList(), Props.UserAgent, "", WebSocketVersion.Rfc6455, null, System.Security.Authentication.SslProtocols.Tls12, 0);
+                var _websocket = new WebSocket(_bci.WsUrl + "&frontend_id=" + _bci.FrontEndId, "", null, Props.WsHeaderStream.ToList(), Props.UserAgent, "", WebSocketVersion.Rfc6455, null, System.Security.Authentication.SslProtocols.Tls12, 0);
                 _ws = _websocket;
             }
 

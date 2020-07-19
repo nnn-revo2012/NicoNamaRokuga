@@ -42,6 +42,7 @@ namespace NicoNamaRokuga
         private readonly object lockObject2 = new object(); //実行ファイルのログ用
         private string LogFile;
         private string LogFile2;
+        private string LogFile3;
 
         public Form1(string[] args)
         {
@@ -114,6 +115,7 @@ namespace NicoNamaRokuga
 
                 LogFile = null;
                 LogFile2 = null;
+                LogFile3 = null;
 
                 //ニコ生に接続
                 ClearHosoData();
@@ -148,6 +150,7 @@ namespace NicoNamaRokuga
 
                 LogFile = Props.GetLogfile(save_dir, liveId);
                 LogFile2 = Props.GetExecLogfile(save_dir, liveId);
+                LogFile3 = Props.GetDataPropsfile(save_dir, liveId);
 
                 AddLog("録画開始します。", 1);
                 AddLog(string.Format("LiveID: {0}", liveId), 1);
@@ -259,6 +262,7 @@ namespace NicoNamaRokuga
 
                 //番組情報を取得する
                 bci = await _nLiveNet.GetNicoPageAsync(liveId);
+                AddDataProps(bci.Data_Props);
                 if (bci.Status != "ok")
                 {
                     AddLog("放送情報が取得できませんでした。", 1);
@@ -267,12 +271,18 @@ namespace NicoNamaRokuga
                 }
                 AddLog("Account: " + bci.AccountType, 1);
                 var ws_ver = Regex.Match(bci.WsUrl, @"/wsapi/([^/]*)/").Groups[1].Value;
-                if (ws_ver == "v1")
-                    AddLog("WebSocket v1", 1);
-                else if (ws_ver == "v2")
+                if (ws_ver == "v2")
                     AddLog("WebSocket v2", 1);
+                else if (ws_ver == "v1")
+                {
+                    AddLog("WebSocket v1", 1);
+                    return;
+                }
                 else
+                {
                     AddLog("WebSocket不明", 1);
+                    return;
+                }
 
                 //ＴＳ開始時間
                 int ii;
@@ -334,8 +344,8 @@ namespace NicoNamaRokuga
                     _eProcess = new ExecProcess(this, bci, _nNetComment, _ri);
                 _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
 
-                AddLog("broadcastId: " + bci.BcId, 9);
                 AddLog("webSocketUrl: " + bci.WsUrl, 9);
+                AddLog("frontendId: " + bci.FrontEndId, 9);
 
                 //放送情報を表示
                 DispHosoData(bci);
@@ -412,9 +422,9 @@ namespace NicoNamaRokuga
                             }
                             else
                             {
-                                bci.BcId = _bci.BcId;
                                 bci.AuTkn = _bci.AuTkn;
                                 bci.WsUrl = _bci.WsUrl;
+                                bci.FrontEndId = _bci.FrontEndId;
                             }
                         }
                         else if (_nNetStream.WsStatus == 4)

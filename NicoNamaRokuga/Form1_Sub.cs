@@ -2,6 +2,9 @@
 using System.Windows.Forms;
 using System.IO;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Net;
 using NicoNamaRokuga.Proc;
@@ -68,6 +71,18 @@ namespace NicoNamaRokuga
                     textBox7.Text = s;
                     if (props.IsLogging && LogFile2 != null)
                         System.IO.File.AppendAllText(LogFile2, System.DateTime.Now.ToString("HH:mm:ss ") + s);
+                }
+            }));
+        }
+
+        //data-propsをファイルに書き込み
+        public void AddDataProps(string s)
+        {
+            this.Invoke(new Action(() =>
+            {
+                if (props.IsLogging && LogFile3 != null)
+                {
+                    System.IO.File.AppendAllText(LogFile3, JObject.Parse(s).ToString());
                 }
             }));
         }

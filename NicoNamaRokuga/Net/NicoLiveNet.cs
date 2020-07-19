@@ -270,7 +270,7 @@ namespace NicoNamaRokuga.Net
             return gpsi;
         }
 
-        //生放送ページから放送情報を取得
+        //ログインしているかどうか取得
         public async Task<bool> IsLoginNicoAsync()
         {
             try
@@ -326,7 +326,7 @@ namespace NicoNamaRokuga.Net
                     return bci;
                 }
                 bci.AuTkn = Regex.Match(ttt, @"""audienceToken"":""([^""]+)""").Groups[1].Value; ;
-                bci.BcId = Regex.Match(ttt, @"""broadcastId"":""([^""]+)""").Groups[1].Value; ;
+                bci.FrontEndId = Regex.Match(ttt, @"""frontendId"":(\d*)").Groups[1].Value; ;
                 //Clipboard.SetText(ttt);
                 var dprops = JObject.Parse(ttt);
                 //Clipboard.SetText(dprops.ToString());
