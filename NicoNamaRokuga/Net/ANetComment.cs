@@ -29,26 +29,29 @@ namespace NicoNamaRokuga.Net
         protected WebSocket _ws = null;
         protected bool _wsconnect = false;
 
-        private long _seq_no = 0;
-        private bool _chat_flg = true;                    //チャットデータの最初かどうか？
-        private const int _MESSAGE_MAX = 1000;
-        private StreamWriter _sw = null;
+        protected long _seq_no = 0;
+        protected bool _chat_flg = true;                    //チャットデータの最初かどうか？
+        protected const int _MESSAGE_MAX = 1000;
+        protected StreamWriter _sw = null;
 
-        System.Threading.Timer _hbTimer;
+        protected System.Threading.Timer _hbTimer;
 
-        private NicoLiveNet _nLiveNet = null;         //WebClient
-        private BroadCastInfo _bci = null;
-        private CommentInfo _cmi = null;
-        private NicoDb _ndb = null;
-        private CommentControl _cCtrl = null;
+        protected NicoLiveNet _nLiveNet = null;         //WebClient
+        protected BroadCastInfo _bci = null;
+        protected CommentInfo _cmi = null;
+        protected NicoDb _ndb = null;
+        protected CommentControl _cCtrl = null;
 
+        protected Form1 _form = null;
+        protected Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
 
-        private Form1 _form = null;
-        private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
-
+        /// サーバーに接続する
         public abstract void Connect(string wsurl);
+        /// 文字列受信(生放送)
         protected abstract void wsReceived(object sender, MessageReceivedEventArgs e);
+        /// 文字列受信(生放送)(DB)
         protected abstract void wsReceivedDB(object sender, MessageReceivedEventArgs e);
+        /// 文字列受信(TS)
         protected abstract void wsReceivedTS(object sender, MessageReceivedEventArgs e);
 
         /// サーバーから切断する
@@ -87,7 +90,7 @@ namespace NicoNamaRokuga.Net
         }
 
         //生放送コメント取得
-        private string SendThread(string threadId, string user_id, int from)
+        protected string SendThread(string threadId, string user_id, int from)
         {
             var s = @"[{""ping"":{""content"":""rs:%%seqno%%""}},{""ping"":{""content"":""ps:%%seqno2%%""}},"
                   + @"{""thread"":{""thread"":""%%threadId%%"",""version"":""20061206"",""fork"":0,"
@@ -105,7 +108,7 @@ namespace NicoNamaRokuga.Net
 
         //TSコメント取得
         //  TSはwebbackkeyを取得し、whenで時間、res_fromで件数か番号を選んでループして取得
-        private string SendThreadTS(string threadId, string user_id, int from, string when, string waybackkey)
+        protected string SendThreadTS(string threadId, string user_id, int from, string when, string waybackkey)
         {
             var s = @"[{""ping"":{""content"":""rs:%%seqno%%""}},{""ping"":{""content"":""ps:%%seqno2%%""}},"
                   + @"{""thread"":{""thread"":""%%threadId%%"",""version"":""20061206"",""fork"":0,"
@@ -124,7 +127,9 @@ namespace NicoNamaRokuga.Net
             return s;
         }
 
+        //TSコメント出力
         protected abstract void AppendComment();
+        //TSコメント出力(DB)
         protected abstract void AppendCommentDB();
 
         public void BeginXmlDoc()
@@ -166,7 +171,7 @@ namespace NicoNamaRokuga.Net
             }
         }
 
-        private bool Json2Db(JObject jmes)
+        protected bool Json2Db(JObject jmes)
         {
             var r_hash = new Dictionary<string, string>();
             var mail = string.Empty;
@@ -246,7 +251,7 @@ namespace NicoNamaRokuga.Net
             return true;
         }
 
-        private string Json2Xml(JObject jmes)
+        protected string Json2Xml(JObject jmes)
         {
             var result = string.Empty;
 
@@ -351,7 +356,8 @@ namespace NicoNamaRokuga.Net
         }
 
 
-        private void StartHBTimer()
+        //Timer Start/Stop
+        protected void StartHBTimer()
         {
             var time = TimeSpan.FromSeconds(40.0);
 
@@ -363,7 +369,7 @@ namespace NicoNamaRokuga.Net
             , null, time, time);
         }
 
-        private void StopHBTimer()
+        protected void StopHBTimer()
         {
             _hbTimer?.Change(Timeout.Infinite, Timeout.Infinite);
             _hbTimer?.Dispose();
