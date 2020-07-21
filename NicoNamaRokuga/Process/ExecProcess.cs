@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms;
 
 using NicoNamaRokuga.Net;
 using NicoNamaRokuga.Rec;
@@ -104,21 +103,15 @@ namespace NicoNamaRokuga.Proc
 
     }
 
-    public class ExecProcess : EProcess, IDisposable
+    public class ExecProcess : AEexecProcess, IDisposable
     {
 
         private bool disposedValue = false; // 重複する呼び出しを検知するには
 
-        //Debug
-        public bool IsDebug { get; set; }
-
-        //public volatile int PsStatus = -1; //実行ファイルの状態
         private Process _ps = null;
 
-        private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
-        private BroadCastInfo _bci = null;
-        private RetryInfo _ri = null;
-        private Form1 _form = null;
+        //Debug
+        public bool IsDebug { get; set; }
 
         public ExecProcess(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment, RetryInfo ri)
         {

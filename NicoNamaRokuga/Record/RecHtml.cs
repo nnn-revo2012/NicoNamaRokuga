@@ -90,7 +90,7 @@ namespace NicoNamaRokuga.Rec
         public string sFile { set; get; }
     }
 
-    public class RecHtml : EProcess, IDisposable
+    public class RecHtml : AEexecProcess, IDisposable
     {
 
         private bool disposedValue = false; // 重複する呼び出しを検知するには
@@ -119,14 +119,6 @@ namespace NicoNamaRokuga.Rec
 
         //Debug
         public bool IsDebug { get; set; }
-
-        //public volatile int PsStatus = -1; //実行ファイルの状態
-
-        private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
-        private BroadCastInfo _bci = null;
-        private NicoDb _ndb = null;
-        private RetryInfo _ri = null;
-        private Form1 _form = null;
 
         public RecHtml(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment, CookieContainer cc, NicoDb ndb, RetryInfo ri)
         {

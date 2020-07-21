@@ -94,7 +94,6 @@ namespace NicoNamaRokuga.Net
         private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
 
         //放送情報
-
         public NicoNetComment(Form1 fo, BroadCastInfo bci, CommentInfo cmi, NicoLiveNet nLiveNet, NicoDb ndb, CommentControl cCtrl)
         {
             IsDebug = false;

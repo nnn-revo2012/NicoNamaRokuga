@@ -141,12 +141,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Net\ANetComment.cs" />
     <Compile Include="Prop\Account.cs" />
     <Compile Include="Form1_Sub.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DebugWrite.cs" />
-    <Compile Include="Process\EProcess.cs" />
+    <Compile Include="Process\AExecProcess.cs" />
     <Compile Include="Process\ExecProcess.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
