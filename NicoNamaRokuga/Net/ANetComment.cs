@@ -63,7 +63,7 @@ namespace NicoNamaRokuga.Net
         //生放送コメント取得
         public void StartGetComment()
         {
-            var ttt = SendThread(_cmi.ThreadId, _cmi.UserId, -1);
+            var ttt = SendThread(_cmi.ThreadId, _cmi.UserId, -150);
             _form.AddLog(ttt, 9);
         }
 
@@ -74,7 +74,7 @@ namespace NicoNamaRokuga.Net
             {
                 if (_cCtrl.status == 0) //TSコメント取得開始
                 {
-                    _cCtrl._waybackkey = _nLiveNet.GetWayBackKeyAsync(_cmi.ThreadId).Result; //waybackkey取得
+                    _cCtrl._waybackkey = null;
                     _cCtrl._when = _cmi.EndTime + 120L;
                     _cCtrl.status = 1; //TSコメント取得中
                 }
@@ -93,7 +93,7 @@ namespace NicoNamaRokuga.Net
         protected string SendThread(string threadId, string user_id, int from)
         {
             var s = @"[{""ping"":{""content"":""rs:%%seqno%%""}},{""ping"":{""content"":""ps:%%seqno2%%""}},"
-                  + @"{""thread"":{""thread"":""%%threadId%%"",""version"":""20061206"",""fork"":0,"
+                  + @"{""thread"":{""thread"":""%%threadId%%"",""version"":""20061206"","
                   + @"""user_id"":""%%user_id%%"",""res_from"":%%from%%,""with_global"":1,""scores"":1,""nicoru"":0}},"
                   + @"{""ping"":{""content"":""pf:%%seqno2%%""}},{""ping"":{""content"":""rf:%%seqno%%""}}]";
             var seqno2 = _seq_no * 5;
@@ -107,11 +107,11 @@ namespace NicoNamaRokuga.Net
         }
 
         //TSコメント取得
-        //  TSはwebbackkeyを取得し、whenで時間、res_fromで件数か番号を選んでループして取得
+        //  TSはwhenで時間、res_fromで件数か番号を選んでループして取得
         protected string SendThreadTS(string threadId, string user_id, int from, string when, string waybackkey)
         {
             var s = @"[{""ping"":{""content"":""rs:%%seqno%%""}},{""ping"":{""content"":""ps:%%seqno2%%""}},"
-                  + @"{""thread"":{""thread"":""%%threadId%%"",""version"":""20061206"",""fork"":0,"
+                  + @"{""thread"":{""thread"":""%%threadId%%"",""version"":""20061206"","
                   + @"""when"":%%when%%,""user_id"":""%%user_id%%"",""res_from"":%%from%%,""with_global"":1,"
                   + @"""scores"":1,""nicoru"":0,""waybackkey"":""%%waybackkey%%""}},"
                   + @"{""ping"":{""content"":""pf:%%seqno2%%""}},{""ping"":{""content"":""rf:%%seqno%%""}}]";
@@ -186,7 +186,7 @@ namespace NicoNamaRokuga.Net
                 JToken jtkn;
                 if (jmes.TryGetValue("thread", out jtkn))
                 {
-                    _ndb.WriteDbKvs("comment/thread", System.Data.DbType.Double, (double)jtkn["thread"]);
+                    _ndb.WriteDbKvs("comment/thread", System.Data.DbType.String, (string)jtkn["thread"]);
                     return true;
                 }
                 else if (!jmes.TryGetValue("chat", out jtkn))

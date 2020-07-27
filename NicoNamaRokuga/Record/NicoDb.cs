@@ -221,7 +221,7 @@ namespace NicoNamaRokuga.Rec
                                         + "mail      TEXT,\n"
                                         + "premium   INTEGER,\n"
                                         + "score     INTEGER,\n"
-                                        + "thread    INTEGER,\n"
+                                        + "thread    TEXT,\n"
                                         + "origin    TEXT,\n"
                                         + "locale    TEXT,\n"
                                         + "hash      TEXT UNIQUE NOT NULL)";
