@@ -200,6 +200,10 @@ namespace NicoNamaRokuga.Net
                         r_hash[it.Key] = "@" + it.Key;
                         mail = it.Value.ToString();
                     }
+                    else if (it.Key == "name")
+                    {
+                        r_hash[it.Key] = "\"" + it.Value.ToString() + "\"";
+                    }
                     else if (it.Key == "user_id")
                     {
                         r_hash[it.Key] = "@" + it.Key;
@@ -313,6 +317,10 @@ namespace NicoNamaRokuga.Net
                                 result += " " + it.Key.ToString() + @"=""" + value + @"""";
                             break;
                         case "mail":
+                            if (value != "")
+                                result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                            break;
+                        case "name":
                             if (value != "")
                                 result += " " + it.Key.ToString() + @"=""" + value + @"""";
                             break;

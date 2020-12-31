@@ -219,6 +219,7 @@ namespace NicoNamaRokuga.Rec
                                         + "user_id   TEXT NOT NULL,\n"
                                         + "content   TEXT NOT NULL,\n"
                                         + "mail      TEXT,\n"
+                                        + "name      TEXT,\n"
                                         + "premium   INTEGER,\n"
                                         + "score     INTEGER,\n"
                                         + "thread    TEXT,\n"
@@ -277,15 +278,20 @@ namespace NicoNamaRokuga.Rec
             StreamWriter sw = null;
             var result = false;
             var data = new Dictionary<string, string>();
+            int rev = 0;
+
             try
             {
+                rev = GetDbCommentRevision();
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "SELECT thread,\n"
                                         + "IFNULL(no, -1) AS no,\n"
                                         + "vpos, date, date_usec,\n"
-                                        + "IFNULL(mail, \"\") AS mail,\n"
-                                        + "user_id,\n"
+                                        + "IFNULL(mail, \"\") AS mail,\n";
+                    if (rev > 0)
+                        command.CommandText += "IFNULL(name, \"\") AS name,\n";
+                    command.CommandText += "user_id,\n"
                                         + "IFNULL(premium, 0) AS premium,\n"
                                         + "IFNULL(anonymity, 0) AS anonymity,\n"
                                         + "IFNULL(locale, \"\") AS locale\n,"
@@ -532,6 +538,31 @@ namespace NicoNamaRokuga.Rec
             catch (Exception Ex)
             {
                 DebugWrite.Writeln(nameof(CountDbComment), Ex);
+                return result;
+            }
+        }
+
+        public int GetDbCommentRevision()
+        {
+            int result = -1;
+            int rev = 0;
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "SELECT COUNT(name) FROM pragma_table_info('comment') WHERE name = 'name'";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            rev = (int )reader.GetInt64(0);
+                    }
+                }
+                if (rev > 0) result = 1;
+                return result;
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(GetDbCommentRevision), Ex);
                 return result;
             }
         }
