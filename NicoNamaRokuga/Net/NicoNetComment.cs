@@ -231,7 +231,9 @@ namespace NicoNamaRokuga.Net
                         break;
                     case "chat":
                         //System.IO.File.AppendAllText(_cmi.SaveFile, Json2Xml(jmes));
+                        if (jmes["chat"]["vpos"] == null) jmes["chat"]["vpos"] = 0;
                         jmes["chat"]["vpos"] = CalcVpos(_cmi.OpenTime, _cmi.Offset, (string)jmes["chat"]["date"], (string)jmes["chat"]["vpos"], _bci.Provider_Type);
+                        if (jmes["chat"]["date_usec"] == null) jmes["chat"]["date_usec"] = 0;
                         _sw.Write(Json2Xml(jmes));
                         break;
                 }
@@ -280,6 +282,8 @@ namespace NicoNamaRokuga.Net
                         }
                         break;
                     case "chat":
+                        if (jmes["chat"]["vpos"] == null) jmes["chat"]["vpos"] = 0;
+                        if (jmes["chat"]["date_usec"] == null) jmes["chat"]["date_usec"] = 0;
                         if (!Json2Db(jmes))
                         {
                             _form.AddLog("コメント出力失敗", 9);
@@ -388,6 +392,8 @@ namespace NicoNamaRokuga.Net
                         foreach (var line in _cCtrl._come_list.ToArray()[i])
                         {
                             var jmes = JObject.Parse(line);
+                            if (jmes["chat"]["vpos"] == null) jmes["chat"]["vpos"] = 0;
+                            if (jmes["chat"]["date_usec"] == null) jmes["chat"]["date_usec"] = 0;
                             come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
                             if (write_flg)
                             {
@@ -436,35 +442,37 @@ namespace NicoNamaRokuga.Net
             try
             {
                 _form.AddLog("コメントファイル出力開始", 1);
-                    for (var i = _seq_no - 1; i >= 0; i--)
+                for (var i = _seq_no - 1; i >= 0; i--)
+                {
+                    var write_flg = (come_time_prev == string.Empty) ? true : false;
+                    foreach (var line in _cCtrl._come_list.ToArray()[i])
                     {
-                        var write_flg = (come_time_prev == string.Empty) ? true : false;
-                        foreach (var line in _cCtrl._come_list.ToArray()[i])
+                        var jmes = JObject.Parse(line);
+                        if (jmes["chat"]["vpos"] == null) jmes["chat"]["vpos"] = 0;
+                        if (jmes["chat"]["date_usec"] == null) jmes["chat"]["date_usec"] = 0;
+                        come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
+                        if (write_flg)
                         {
-                            var jmes = JObject.Parse(line);
-                            come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
-                            if (write_flg)
+                            if (Form1.props.IsSeetNo)
                             {
-                                if (Form1.props.IsSeetNo)
-                                {
-                                    if (line.Contains(Props.Commnet_SeetNo))
-                                        continue;
-                                }
-                                if (!Json2Db(jmes))
-                                {
+                                if (line.Contains(Props.Commnet_SeetNo))
+                                    continue;
+                            }
+                            if (!Json2Db(jmes))
+                            {
                                 _form.AddLog("コメント書き込み失敗", 9);
                                 _form.AddLog(line, 9);
                             }
                         }
-                            else
-                            {
-                                if (come_time == come_time_prev) write_flg = true;
-                            }
+                        else
+                        {
+                            if (come_time == come_time_prev) write_flg = true;
                         }
-                        come_time_prev = come_time;
-                        _cCtrl._come_list.ToArray()[i].Clear();
-                        _cCtrl._come_list.ToArray()[i].TrimExcess();
                     }
+                    come_time_prev = come_time;
+                    _cCtrl._come_list.ToArray()[i].Clear();
+                    _cCtrl._come_list.ToArray()[i].TrimExcess();
+                }
 
                 _form.AddLog("コメントファイル出力終了", 1);
 

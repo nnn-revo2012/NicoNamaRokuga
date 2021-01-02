@@ -224,6 +224,7 @@ namespace NicoNamaRokuga.Net
                     }
                 }
                 if (!r_hash.ContainsKey("vpos")) r_hash["vpos"] = "0";
+                if (!r_hash.ContainsKey("date_usec")) r_hash["date_usec"] = "0";
                 r_hash["date2"] = ((long.Parse(r_hash["date"]) * 1000L * 1000L) + long.Parse(r_hash["date_usec"])).ToString();
 
                 var calc_s = string.Format("{0:N},{1:N},{2:N},{3},{4}", r_hash["vpos"], r_hash["date"], r_hash["date_usec"], user_id, content);
@@ -258,6 +259,7 @@ namespace NicoNamaRokuga.Net
         protected string Json2Xml(JObject jmes)
         {
             var result = string.Empty;
+            var content = string.Empty;
 
             if (string.IsNullOrEmpty(jmes.ToString()))
                 return result;
@@ -271,20 +273,18 @@ namespace NicoNamaRokuga.Net
                     {
                         if (it2.Key.ToString() == "content")
                         {
-                            result += ">" + HttpUtility.HtmlEncode(it2.Value.ToString());
-                            result += "</" + it.Key.ToString();
+                            content = HttpUtility.HtmlEncode(it2.Value.ToString());
                         }
                         else
                         {
                             result += " " + it2.Key.ToString() + @"=""" + it2.Value.ToString() + @"""";
                         }
                     }
+                    if (it.Key.ToString() == "thread")
+                        result += " />\r\n";
+                    else
+                        result += ">" + content + "</" + it.Key.ToString() + ">\r\n";
                 }
-                if (result.IndexOf("<thread") == 0)
-                    result += "/>\r\n";
-                else
-                    result += ">\r\n";
-
             }
             catch (Exception Ex)
             {
@@ -298,6 +298,7 @@ namespace NicoNamaRokuga.Net
         public string Table2Xml(IDictionary<string, string> data)
         {
             var result = string.Empty;
+            var content = string.Empty;
             if (data.Count <= 0)
                 return result;
 
@@ -345,14 +346,14 @@ namespace NicoNamaRokuga.Net
                                 result += " " + it.Key.ToString() + @"=""" + value + @"""";
                             break;
                         case "content":
-                            result += ">" + HttpUtility.HtmlEncode(value) + "</chat>\r\n";
+                            content = HttpUtility.HtmlEncode(value);
                             break;
                         default:
                             result += " " + it.Key.ToString() + @"=""" + value + @"""";
                             break;
                     }
-
                 }
+                result += ">" + content + "</chat>\r\n";
             }
             catch (Exception Ex)
             {
