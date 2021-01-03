@@ -75,7 +75,7 @@ namespace NicoNamaRokuga.Net
                 if (_cCtrl.status == 0) //TSコメント取得開始
                 {
                     _cCtrl._waybackkey = null;
-                    _cCtrl._when = _cmi.EndTime + 120L;
+                    _cCtrl._when = _cmi.EndTime + 600L;
                     _cCtrl.status = 1; //TSコメント取得中
                 }
                 _chat_flg = true;

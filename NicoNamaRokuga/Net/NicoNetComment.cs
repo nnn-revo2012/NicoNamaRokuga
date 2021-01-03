@@ -233,7 +233,6 @@ namespace NicoNamaRokuga.Net
                         //System.IO.File.AppendAllText(_cmi.SaveFile, Json2Xml(jmes));
                         if (jmes["chat"]["vpos"] == null) jmes["chat"]["vpos"] = 0;
                         jmes["chat"]["vpos"] = CalcVpos(_cmi.OpenTime, _cmi.Offset, (string)jmes["chat"]["date"], (string)jmes["chat"]["vpos"], _bci.Provider_Type);
-                        if (jmes["chat"]["date_usec"] == null) jmes["chat"]["date_usec"] = 0;
                         _sw.Write(Json2Xml(jmes));
                         break;
                 }
@@ -283,7 +282,6 @@ namespace NicoNamaRokuga.Net
                         break;
                     case "chat":
                         if (jmes["chat"]["vpos"] == null) jmes["chat"]["vpos"] = 0;
-                        if (jmes["chat"]["date_usec"] == null) jmes["chat"]["date_usec"] = 0;
                         if (!Json2Db(jmes))
                         {
                             _form.AddLog("コメント出力失敗", 9);
@@ -357,7 +355,7 @@ namespace NicoNamaRokuga.Net
                     case "chat":
                         if (_chat_flg == true)
                         {
-                            _cCtrl._when = (long)jmes["chat"]["date"] + 5L;
+                            _cCtrl._when = (long)jmes["chat"]["date"] + 1L;
                             _chat_flg = false;
                         }
                         _cCtrl._come_text.Add(e.Message);
@@ -374,8 +372,8 @@ namespace NicoNamaRokuga.Net
         protected override void AppendComment()
         {
             var enc = new System.Text.UTF8Encoding(false);
-            var come_time_prev = string.Empty;
-            var come_time = string.Empty;
+            long come_time_prev = 0L;
+            long come_time = 0L;
 
             //一時ファイル番号大きい方から読み込み
             //ファイル書き出す
@@ -388,13 +386,13 @@ namespace NicoNamaRokuga.Net
                     BeginXmlDoc();
                     for (var i = _seq_no - 1; i >= 0; i--)
                     {
-                        var write_flg = (come_time_prev == string.Empty) ? true : false;
+                        var write_flg = (come_time_prev <= 0L) ? true : false;
                         foreach (var line in _cCtrl._come_list.ToArray()[i])
                         {
                             var jmes = JObject.Parse(line);
                             if (jmes["chat"]["vpos"] == null) jmes["chat"]["vpos"] = 0;
-                            if (jmes["chat"]["date_usec"] == null) jmes["chat"]["date_usec"] = 0;
-                            come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
+                            come_time = (long)jmes["chat"]["date"];
+                            if (come_time > come_time_prev) write_flg = true;
                             if (write_flg)
                             {
                                 if (Form1.props.IsSeetNo)
@@ -404,10 +402,6 @@ namespace NicoNamaRokuga.Net
                                 }
                                 jmes["chat"]["vpos"] = CalcVpos(_cmi.OpenTime, _cmi.Offset, (string)jmes["chat"]["date"], (string)jmes["chat"]["vpos"], _bci.Provider_Type);
                                 sw.Write(Json2Xml(jmes));
-                            }
-                            else
-                            {
-                                if (come_time == come_time_prev) write_flg = true;
                             }
                         }
                         come_time_prev = come_time;
@@ -434,8 +428,8 @@ namespace NicoNamaRokuga.Net
         //TSコメント出力(DB)
         protected override void AppendCommentDB()
         {
-            var come_time_prev = string.Empty;
-            var come_time = string.Empty;
+            long come_time_prev = 0L;
+            long come_time = 0L;
 
             //一時ファイル番号大きい方から読み込み
             //ファイル書き出す
@@ -444,13 +438,13 @@ namespace NicoNamaRokuga.Net
                 _form.AddLog("コメントファイル出力開始", 1);
                 for (var i = _seq_no - 1; i >= 0; i--)
                 {
-                    var write_flg = (come_time_prev == string.Empty) ? true : false;
+                    var write_flg = (come_time_prev <= 0L) ? true : false;
                     foreach (var line in _cCtrl._come_list.ToArray()[i])
                     {
                         var jmes = JObject.Parse(line);
                         if (jmes["chat"]["vpos"] == null) jmes["chat"]["vpos"] = 0;
-                        if (jmes["chat"]["date_usec"] == null) jmes["chat"]["date_usec"] = 0;
-                        come_time = jmes["chat"]["date"].ToString() + jmes["chat"]["date_usec"].ToString();
+                        come_time = (long)jmes["chat"]["date"];
+                        if (come_time > come_time_prev) write_flg = true;
                         if (write_flg)
                         {
                             if (Form1.props.IsSeetNo)
@@ -463,10 +457,6 @@ namespace NicoNamaRokuga.Net
                                 _form.AddLog("コメント書き込み失敗", 9);
                                 _form.AddLog(line, 9);
                             }
-                        }
-                        else
-                        {
-                            if (come_time == come_time_prev) write_flg = true;
                         }
                     }
                     come_time_prev = come_time;
