@@ -40,7 +40,7 @@ namespace NicoNamaRokuga.Net
         protected BroadCastInfo _bci = null;
         protected CommentInfo _cmi = null;
         protected NicoDb _ndb = null;
-        protected CommentControl _cCtrl = null;
+        protected CommentControl _cctl = null;
 
         protected Form1 _form = null;
         protected Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
@@ -72,14 +72,14 @@ namespace NicoNamaRokuga.Net
         {
             try
             {
-                if (_cCtrl.status == 0) //TSコメント取得開始
+                if (_cctl.status == 0) //TSコメント取得開始
                 {
-                    _cCtrl._waybackkey = null;
-                    _cCtrl._when = _cmi.EndTime + 600L;
-                    _cCtrl.status = 1; //TSコメント取得中
+                    _cctl._waybackkey = null;
+                    _cctl._when = _cmi.EndTime + 600L;
+                    _cctl.status = 1; //TSコメント取得中
                 }
                 _chat_flg = true;
-                var ttt = SendThreadTS(_cmi.ThreadId, _cmi.UserId, -_MESSAGE_MAX, _cCtrl._when.ToString(), _cCtrl._waybackkey);
+                var ttt = SendThreadTS(_cmi.ThreadId, _cmi.UserId, -_MESSAGE_MAX, _cctl._when.ToString(), _cctl._waybackkey);
                 _form.AddLog(ttt, 9);
 
             }

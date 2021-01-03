@@ -142,6 +142,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Net\ANetComment.cs" />
+    <Compile Include="Net\CommentInfo.cs" />
+    <Compile Include="Process\ExecPsInfo.cs" />
     <Compile Include="Prop\Account.cs" />
     <Compile Include="Form1_Sub.cs">
       <SubType>Form</SubType>

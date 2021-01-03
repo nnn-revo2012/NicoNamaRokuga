@@ -185,8 +185,8 @@ namespace NicoNamaRokuga
                 cmi.BeginTime = Props.GetLongParse(kvs["beginTime"]);
                 cmi.EndTime = Props.GetLongParse(kvs["endTime"]);
                 cmi.Offset = 0L;
-                _cCtrl = null;
-                _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, _cCtrl);
+                cctl = null;
+                _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, cctl);
 
                 //映像ファイル出力処理
                 if (_ndb.CountDbMedia() > 0)
@@ -216,10 +216,6 @@ namespace NicoNamaRokuga
                 }
 
                 //終了処理
-                if (_cCtrl != null)
-                {
-                    _cCtrl = null;
-                }
                 if (_ndb != null)
                     _ndb.Dispose();
                 if (_nNetComment != null)
@@ -227,10 +223,6 @@ namespace NicoNamaRokuga
             }
             catch (Exception Ex)
             {
-                if (_cCtrl != null)
-                {
-                    _cCtrl = null;
-                }
                 if (_ndb != null)
                     _ndb.Dispose();
                 if (_nNetComment != null)

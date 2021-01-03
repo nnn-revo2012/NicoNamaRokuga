@@ -201,17 +201,15 @@ namespace NicoNamaRokuga.Net
                 _form.AddLog(e.Message, 9);
 
                 var jmes = JObject.Parse(e.Message);
-                JToken jtkn;
-                if (!jmes.TryGetValue("type", out jtkn))
+                if (jmes["type"] == null)
                 {
                     _form.AddLog("type Error: " + e.Message, 9);
                     return;
                 }
-                if (jtkn.ToString() == "error") return;
-
-                string type = jtkn.ToString();
-                jmes.TryGetValue("data", out jtkn);
-                switch (type)
+                if ((string)jmes["type"] == "error") return;
+ 
+                var jtkn = jmes["data"];
+                switch ((string)jmes["type"])
                 {
                     case "ping":
                         ttt = SendPong();

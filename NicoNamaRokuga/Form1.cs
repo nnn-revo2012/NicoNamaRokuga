@@ -10,7 +10,6 @@ using NicoNamaRokuga.Net;
 using NicoNamaRokuga.Proc;
 using NicoNamaRokuga.Rec;
 
-
 namespace NicoNamaRokuga
 {
     public partial class Form1 : Form
@@ -19,23 +18,25 @@ namespace NicoNamaRokuga
         public static Props props;                   //設定
 
         private static bool IsBatchMode { get; set; } //引数指定で実行か？
+        //0処理待ち 1録画準備 2録画中 3再接続 4中断 5変換処理中 9終了
+        private volatile bool start_flg = false;
+        private static int ProgramStatus { get; set; } //プログラム状態
 
+        //dispose するもの
         private NicoLiveNet _nLiveNet = null;         //WebClient
         private NicoNetStream _nNetStream = null;     //WebSocket(Stream)
         private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
-        private CommentControl _cCtrl = null;         //コメント情報
         private ExecProcess _eProcess = null;         //Process
         private RecHtml _rHtml = null;                //RecHtml
         private NicoDb _ndb = null;                   //NicoDb
 
         private BroadCastInfo bci = null;             //ストリームサーバー情報
         private CommentInfo cmi = null;               //コメントサーバー情報
+        private CommentControl cctl = null;         //コメント情報
         private ExecPsInfo epi = null;                //実行／保存ファイル情報
+        private RetryInfo rti = null;                 //リトライ情報
 
         private string liveId = null;
-
-        private volatile bool start_flg = false;
-        private RetryInfo _ri = null;                 //リトライ情報
 
         private string accountdbfile;
         private readonly object lockObject = new object();  //情報表示用
@@ -98,10 +99,6 @@ namespace NicoNamaRokuga
                     if (_nLiveNet != null)
                     {
                         _nLiveNet.Dispose();
-                    }
-                    if (_cCtrl != null)
-                    {
-                        _cCtrl = null;
                     }
                     if (_ndb != null)
                     {
@@ -329,20 +326,20 @@ namespace NicoNamaRokuga
                     cmi.BeginTime = bci.Begin_Time;
                     cmi.EndTime = bci.End_Time;
                     if (bci.IsTimeShift())
-                        _cCtrl = new CommentControl();
+                        cctl = new CommentControl();
                     else
-                        _cCtrl = null;
-                    _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, _cCtrl);
+                        cctl = null;
+                    _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, cctl);
                 }
                 var ri = new RetryInfo();
-                _ri = ri;
-                _ri.Count = props.Retry;
+                rti = ri;
+                rti.Count = props.Retry;
 
                 if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
-                    _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ndb, _ri);
+                    _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ndb, rti);
                 else
-                    _eProcess = new ExecProcess(this, bci, _nNetComment, _ri);
-                _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
+                    _eProcess = new ExecProcess(this, bci, _nNetComment, rti);
+                _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, rti);
 
                 AddLog("webSocketUrl: " + bci.WsUrl, 9);
                 AddLog("frontendId: " + bci.FrontEndId, 9);
@@ -402,7 +399,7 @@ namespace NicoNamaRokuga
                     {
                         _ndb.Dispose();
                     }
-                    if (_ri.Count > 0)
+                    if (rti.Count > 0)
                     {
                         if (_nNetStream.WsStatus == 5)
                         {
@@ -413,7 +410,7 @@ namespace NicoNamaRokuga
                             {
                                 AddLog("放送情報が取得できませんでした。", 1);
                                 AddLog("Status: " + _bci.Error, 1);
-                                _ri.Count--;
+                                rti.Count--;
                                 return;
                             }
                             if (bci.OnAirStatus == "ON_AIR" && _bci.OnAirStatus != "ON_AIR")
@@ -440,14 +437,14 @@ namespace NicoNamaRokuga
                         if (ExecStatus != 1)
                         {
                             AddLog("再接続します。", 1);
-                            if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, _cCtrl);
+                            if (props.IsComment) _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, cctl);
                             if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
-                                _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ndb, _ri);
+                                _rHtml = new RecHtml(this, bci, _nNetComment, _nLiveNet.GetCookieContainer(), _ndb, rti);
                             else
-                                _eProcess = new ExecProcess(this, bci, _nNetComment, _ri);
-                            _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, _ri);
+                                _eProcess = new ExecProcess(this, bci, _nNetComment, rti);
+                            _nNetStream = new NicoNetStream(this, bci, cmi, epi, _nNetComment, _eProcess, _rHtml, rti);
                             _nNetStream.Connect();
-                            _ri.Count--;
+                            rti.Count--;
                         }
                     }
                     else
@@ -479,10 +476,6 @@ namespace NicoNamaRokuga
                     if (_nLiveNet != null)
                     {
                         _nLiveNet.Dispose();
-                    }
-                    if (_cCtrl != null)
-                    {
-                        _cCtrl = null;
                     }
                     if (_ndb != null)
                     {
@@ -516,10 +509,6 @@ namespace NicoNamaRokuga
             _nNetStream?.Dispose();
             _nNetComment?.Close();
             _nNetComment?.Dispose();
-            if (_cCtrl != null)
-            {
-                _cCtrl = null;
-            }
             _ndb?.Dispose();
 
             _nLiveNet?.Dispose();
@@ -576,10 +565,6 @@ namespace NicoNamaRokuga
             }
             catch (Exception Ex)
             {
-                if (_cCtrl != null)
-                {
-                    _cCtrl = null;
-                }
                 if (_ndb != null)
                 {
                     _ndb.Dispose();
