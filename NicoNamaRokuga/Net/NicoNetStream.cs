@@ -206,9 +206,14 @@ namespace NicoNamaRokuga.Net
                     _form.AddLog("type Error: " + e.Message, 9);
                     return;
                 }
-                if ((string)jmes["type"] == "error") return;
- 
-                var jtkn = jmes["data"];
+                if ((string)jmes["type"] == "error")
+                {
+                    _form.AddLog("type Error: " + e.Message, 9);
+                    return;
+                }
+
+                JToken data;
+                jmes.TryGetValue("data", out data);
                 switch ((string)jmes["type"])
                 {
                     case "ping":
@@ -225,13 +230,13 @@ namespace NicoNamaRokuga.Net
                         if (_wsStatus == 2)
                         {
                             //画質の配列
-                            var qts = (JArray)jtkn["availableQualities"];
+                            var qts = (JArray)data["availableQualities"];
                             _form.AddLog("availableQualities: [" + string.Join(" ", qts) + "]", 9);
                             _wsStatus = 3;
                             //画質一覧から画質を選ぶ
                             var selqu = SelectQuality(Form1.props.QuarityType.ToString(), qts);
                             if (string.IsNullOrEmpty(selqu))
-                                selqu = jtkn["quality"].ToString();
+                                selqu = (string)data["quality"];
                             _form.AddLog("Select: " + selqu, 9);
                             _epi.Quality = selqu;
                             ttt = SendChangeStream(selqu, _epi.Protocol);
@@ -239,18 +244,18 @@ namespace NicoNamaRokuga.Net
                         }
                         else
                         {
-                            ttt = jtkn["quality"].ToString();
+                            ttt = (string)data["quality"];
                             _form.AddLog("Quarity: " + ttt, 9);
                             _form.DispQuality(ttt);
                             //ffmpegを実行する
                             if (_epi.Protocol == "rtmp")
                             {
-                                ttt = jtkn["uri"].ToString() + "/" + jtkn["name"].ToString();
+                                ttt = (string)data["uri"] + "/" + (string)data["name"];
                                 _form.AddLog("RTMPFILE: " + ttt, 9);
                             }
                             else
                             {
-                                ttt = jtkn["uri"].ToString();
+                                ttt = (string)data["uri"];
                                 _form.AddLog("Masterm3u8: " + ttt, 9);
                             }
                             if (Form1.props.Protocol != Protocol.hls || Form1.props.UseExternal != UseExternal.native)
@@ -270,10 +275,10 @@ namespace NicoNamaRokuga.Net
                         {
                             if (!_bci.IsTimeShift() || !_ri.IsRetry)
                             {
-                                ttt = jtkn["messageServer"]["uri"].ToString();
+                                ttt = (string)data["messageServer"]["uri"];
                                 _cmi.WsUrl = ttt;
                                 _form.AddLog("CommentServer: " + ttt, 9);
-                                ttt = jtkn["threadId"].ToString();
+                                ttt = (string)data["threadId"];
                                 _cmi.ThreadId = ttt;
                                 _nNetComment.Connect(_cmi.WsUrl);
                             }
@@ -281,13 +286,13 @@ namespace NicoNamaRokuga.Net
                         break;
                     case "seat":
                         //タイマーをスタートする
-                        ttt = jtkn["keepIntervalSec"].ToString();
+                        ttt = (string)data["keepIntervalSec"];
                         StartWatchTimer(TimeSpan.FromSeconds(double.Parse(ttt)));
                         _form.AddLog("HeartBeatStart: " + ttt, 9);
                         break;
                     case "disconnect":
                         //切断
-                        ttt = jtkn["reason"].ToString();
+                        ttt = (string)data["reason"];
                         _form.AddLog("Disconnect: " + ttt, 9);
                         WsStatus = 3; //再接続
                         if (ttt == "TAKEOVER") //追い出し
