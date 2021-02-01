@@ -39,7 +39,7 @@
       <Value Profile="(Default)">%HEADERS% -i "%PARA%" -c copy "%FILE%";%HEADERS% -i "%PARA%" -c copy "%FILE%"</Value>
     </Setting>
     <Setting Name="BreakCommand" Type="System.String" Scope="User">
-      <Value Profile="(Default)">q;q</Value>
+      <Value Profile="(Default)">;</Value>
     </Setting>
     <Setting Name="IsLogging" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

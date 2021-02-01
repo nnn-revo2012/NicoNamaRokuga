@@ -148,7 +148,7 @@ namespace NicoNamaRokuga.Proc
             {
                 if (string.IsNullOrEmpty(breakkey))
                 {
-                    _ps.Kill();
+                    SendCtrlC(_ps);
                 }
                 else
                 {
@@ -164,7 +164,7 @@ namespace NicoNamaRokuga.Proc
             {
                 if (string.IsNullOrEmpty(breakkey))
                 {
-                    _ps.Kill();
+                    SendCtrlC(_ps);
                 }
                 else
                 {

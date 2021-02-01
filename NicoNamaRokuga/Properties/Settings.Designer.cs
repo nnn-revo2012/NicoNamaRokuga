@@ -168,7 +168,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("q;q")]
+        [global::System.Configuration.DefaultSettingValueAttribute(";")]
         public string BreakCommand {
             get {
                 return ((string)(this["BreakCommand"]));
