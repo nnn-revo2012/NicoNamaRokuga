@@ -162,6 +162,26 @@ namespace NicoNamaRokuga
                 ClearHosoData();
                 ClearLog();
 
+                var exec_file = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
+                exec_file = GetExecFile(exec_file);
+                if (!File.Exists(exec_file))
+                {
+                    AddLog("実行ファイルがありません。", 2);
+                    return;
+                }
+
+                var save_dir = String.IsNullOrEmpty(props.SaveDir) ? System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : props.SaveDir;
+                if (!Directory.Exists(save_dir))
+                {
+                    AddLog("保存フォルダーが存在しません。", 2);
+                    return;
+                }
+
+                LogFile = Props.GetLogfile(save_dir, "conv");
+                LogFile2 = Props.GetExecLogfile(save_dir, "conv");
+                LogFile3 = null;
+
+
                 AddLog("出力開始します。", 1);
 
                 //保存ファイル名作成
@@ -169,6 +189,8 @@ namespace NicoNamaRokuga
                 epi.Sqlite3File = filename;
                 epi.Protocol = Protocol.hls.ToString();
                 epi.Seq = 0;
+                epi.Exec = exec_file;
+                epi.Arg = "-i pipe:0 -c copy \"%FILE%\"";
 
                 //Kvsデーター読み込み
                 _ndb = new NicoDb(this, filename);

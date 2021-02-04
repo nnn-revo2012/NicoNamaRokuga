@@ -298,7 +298,7 @@ namespace NicoNamaRokuga
                 //保存ファイル名作成
                 epi = new ExecPsInfo();
                 epi.Sdir = string.IsNullOrEmpty(props.SaveDir) ? System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : props.SaveDir;
-                epi.Exec = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
+                epi.Exec = GetExecFile(props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())]);
                 epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
                 epi.Sfile = bci.SetRecFileFormat(props.SaveFile);
                 epi.Sfolder = bci.SetRecFolderFormat(props.SaveFolder);

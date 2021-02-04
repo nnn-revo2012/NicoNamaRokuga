@@ -142,19 +142,11 @@ namespace NicoNamaRokuga.Proc
             }
         }
 
-        public void ReadProcess(string breakkey)
+        public void InputProcess(byte[] data)
         {
-            if (_ps != null && !_ps.HasExited)
+            if (data.Length > 0)
             {
-                if (string.IsNullOrEmpty(breakkey))
-                {
-                    SendCtrlC(_ps);
-                }
-                else
-                {
-                    _ps.StandardInput.WriteLine(breakkey);
-                }
-                _ps.StandardInput.Close();
+                _ps.StandardInput.Write(data);
             }
         }
 

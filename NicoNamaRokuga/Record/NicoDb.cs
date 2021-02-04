@@ -137,6 +137,7 @@ namespace NicoNamaRokuga.Rec
         public bool ReadDbMedia(ExecPsInfo epi, CommentInfo cmi, BroadCastInfo bci)
         {
             FileStream fs = null;
+            //ExecConvert ecv = null;
             var result = false;
             try
             {
@@ -149,6 +150,7 @@ namespace NicoNamaRokuga.Rec
                     int size;
                     byte[] data;
                     bool off_flg = true;
+                    //string arg;
 
                     command.CommandText = "SELECT seqno, bandwidth, size, data FROM media\n"
                                         + "WHERE IFNULL(notfound, 0) == 0 AND data IS NOT NULL\n"
@@ -159,7 +161,11 @@ namespace NicoNamaRokuga.Rec
                         epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
                         cmi.SaveFile = epi.SaveFile + epi.Xml;
                         fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
-                        
+                        //ecv = new ExecConvert(_form);
+                        //arg = ExecPsInfo.SetOption(epi, null, 0);
+                        //ecv.ExecPs(epi.Exec, arg);
+                        //Task.Delay(5000).Wait();
+
                         while (reader.Read())
                         {
                             seqno = (long )reader["seqno"];
@@ -178,16 +184,23 @@ namespace NicoNamaRokuga.Rec
                                 else
                                     Debug.WriteLine("SeqNo. skipped: {0} --> {1}\n", prevseqno, seqno);
                                 fs.Dispose();
+                                //ecv.Dispose();
                                 epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
                                 fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
+                                //ecv = new ExecConvert(_form);
+                                //arg = ExecPsInfo.SetOption(epi, null, 0);
+                                //ecv.ExecPs(epi.Exec, arg);
+                                //Task.Delay(5000).Wait();
                             }
                             size = (int )(long )reader["size"];
                             data = (byte[] )reader["data"];
                             fs.Write(data, 0, size);
+                            //ecv.InputProcess(data);
                             prevseqno = seqno;
                             prevbw = bw;
                         }
                         if (fs != null) fs.Dispose();
+                        //if (ecv != null) ecv.Dispose();
                         result = true;
                     }
                 }
@@ -199,6 +212,7 @@ namespace NicoNamaRokuga.Rec
             finally
             {
                 if (fs != null) fs.Dispose();
+                //if (ecv != null) ecv.Dispose();
             }
             return result;
         }
