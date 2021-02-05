@@ -190,7 +190,8 @@ namespace NicoNamaRokuga
                 epi.Protocol = Protocol.hls.ToString();
                 epi.Seq = 0;
                 epi.Exec = exec_file;
-                epi.Arg = "-i pipe:0 -c copy \"%FILE%\"";
+                epi.Arg = "-i - -c copy \"%FILE%\"";
+                epi.Ext2 = ".mp4";
 
                 //Kvsデーター読み込み
                 _ndb = new NicoDb(this, filename);
@@ -213,7 +214,7 @@ namespace NicoNamaRokuga
                 //映像ファイル出力処理
                 if (_ndb.CountDbMedia() > 0)
                 {
-                    if (_ndb.ReadDbMedia(epi, cmi, bci))
+                    if (_ndb.ReadDbMedia2(epi, cmi, bci))
                         AddLog("映像出力終了しました。", 1);
                     else
                         AddLog("映像出力失敗しました。", 1);

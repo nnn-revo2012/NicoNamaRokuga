@@ -23,6 +23,7 @@ namespace NicoNamaRokuga.Proc
         public string Sqlite3File { get; set; }
         public string Ext { get { return (Protocol == "rtmp") ? ".flv" : ".ts"; } }
         public string Xml { get { return ".xml"; } }
+        public string Ext2 { get; set; }
 
         //保存ファイルにシーケンスNoをつける
         public static string GetSaveFileNum(ExecPsInfo epi)
@@ -45,6 +46,18 @@ namespace NicoNamaRokuga.Proc
 
             result = result.Replace("%HEADERS%", headers);
             result = result.Replace("%PARA%", para2);
+            result = result.Replace("%FILE%", ff);
+
+            return result;
+        }
+
+        //実行ファイル用の引数(Convert)
+        public static string SetConvOption(ExecPsInfo epi, string infile)
+        {
+            var result = epi.Arg;
+            var ff = epi.SaveFile + epi.Ext2;
+
+            result = result.Replace("%PARA%", infile);
             result = result.Replace("%FILE%", ff);
 
             return result;

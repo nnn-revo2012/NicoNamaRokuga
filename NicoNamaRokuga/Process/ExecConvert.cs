@@ -146,7 +146,7 @@ namespace NicoNamaRokuga.Proc
         {
             if (data.Length > 0)
             {
-                _ps.StandardInput.Write(data);
+                _ps.StandardInput.BaseStream.Write(data, 0, data.Length);
             }
         }
 
