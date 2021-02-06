@@ -383,10 +383,6 @@ namespace NicoNamaRokuga
                     {
                         _rHtml.BreakProcess("");
                     }
-                    if (_eProcess != null)
-                    {
-                        _eProcess.BreakProcess(epi.BreakKey);
-                    }
                     if (_nNetStream != null)
                     {
                         _nNetStream.Close();
@@ -460,10 +456,6 @@ namespace NicoNamaRokuga
                     if (_rHtml != null)
                     {
                         _rHtml.BreakProcess("");
-                    }
-                    if (_eProcess != null)
-                    {
-                        _eProcess.BreakProcess(epi.BreakKey);
                     }
                     if (_nNetStream != null)
                     {

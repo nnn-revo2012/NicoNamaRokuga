@@ -184,7 +184,43 @@ namespace NicoNamaRokuga.Proc
             }
         }
 
-        public override void BreakProcess(string breakkey) 
+        public void InputProcess(byte[] data)
+        {
+            try
+            {
+                if (_ps.StandardInput.BaseStream.CanWrite == true && data.Length > 0)
+                {
+                    _ps.StandardInput.BaseStream.Write(data, 0, data.Length);
+                    _ps.StandardInput.Flush();
+                }
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(InputProcess), Ex);
+            }
+        }
+
+        public void StopInput()
+        {
+            try
+            {
+                if (_ps != null)
+                {
+                    if (_ps.StandardInput != null)
+                    {
+                        _ps.StandardInput.Flush();
+                        Task.Delay(500).Wait();
+                        _ps.StandardInput.Close();
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(StopInput), Ex);
+            }
+        }
+
+        public override void BreakProcess(string breakkey)
         {
             if (_ps != null && !_ps.HasExited)
             {
@@ -194,9 +230,18 @@ namespace NicoNamaRokuga.Proc
                 }
                 else
                 {
-                    _ps.StandardInput.WriteLine(breakkey);
+                    if (_ps.StandardInput.BaseStream.CanWrite == true)
+                    {
+                        _ps.StandardInput.WriteLine(breakkey);
+                        _ps.StandardInput.Flush();
+                    }
                 }
-                _ps.StandardInput.Close();
+                Task.Delay(1000).Wait();
+                if (_ps != null)
+                {
+                    if (_ps.StandardInput.BaseStream.CanWrite == true)
+                        _ps.StandardInput.Close();
+                }
             }
         }
 
