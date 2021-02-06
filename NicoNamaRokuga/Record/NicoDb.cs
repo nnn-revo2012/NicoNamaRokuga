@@ -187,7 +187,6 @@ namespace NicoNamaRokuga.Rec
                             prevseqno = seqno;
                             prevbw = bw;
                         }
-                        if (fs != null) fs.Dispose();
                         result = true;
                     }
                 }
@@ -233,7 +232,7 @@ namespace NicoNamaRokuga.Rec
                         ecv = new ExecConvert(_form);
                         arg = ExecPsInfo.SetConvOption(epi, null);
                         ecv.ExecPs(epi.Exec, arg);
-                        Task.Delay(4000).Wait();
+                        Task.Delay(2000).Wait();
 
                         while (reader.Read())
                         {
@@ -253,14 +252,15 @@ namespace NicoNamaRokuga.Rec
                                 else
                                     Debug.WriteLine("SeqNo. skipped: {0} --> {1}\n", prevseqno, seqno);
                                 //fs.Dispose();
-                                Task.Delay(5000).Wait();
-                                ecv.Dispose();
+                                ecv.StopInput();
+                                Task.Delay(1000).Wait();
+                                //if (ecv != null) ecv.Dispose();
                                 epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
                                 //fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
                                 ecv = new ExecConvert(_form);
                                 arg = ExecPsInfo.SetConvOption(epi, null);
                                 ecv.ExecPs(epi.Exec, arg);
-                                Task.Delay(4000).Wait();
+                                Task.Delay(2000).Wait();
                             }
                             size = (int)(long)reader["size"];
                             data = (byte[])reader["data"];
@@ -269,8 +269,6 @@ namespace NicoNamaRokuga.Rec
                             prevseqno = seqno;
                             prevbw = bw;
                         }
-                        //if (fs != null) fs.Dispose();
-                        if (ecv != null) ecv.Dispose();
                         result = true;
                     }
                 }
@@ -282,7 +280,9 @@ namespace NicoNamaRokuga.Rec
             finally
             {
                 //if (fs != null) fs.Dispose();
-                if (ecv != null) ecv.Dispose();
+                ecv.StopInput();
+                Task.Delay(1000).Wait();
+                //if (ecv != null) ecv.Dispose();
             }
             return result;
         }
