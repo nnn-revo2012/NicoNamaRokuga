@@ -232,7 +232,7 @@ namespace NicoNamaRokuga.Rec
                         ecv = new ExecConvert(_form);
                         arg = ExecPsInfo.SetConvOption(epi, null);
                         ecv.ExecPs(epi.Exec, arg);
-                        Task.Delay(2000).Wait();
+                        //Task.Delay(2000).Wait();
 
                         while (reader.Read())
                         {
@@ -260,7 +260,7 @@ namespace NicoNamaRokuga.Rec
                                 ecv = new ExecConvert(_form);
                                 arg = ExecPsInfo.SetConvOption(epi, null);
                                 ecv.ExecPs(epi.Exec, arg);
-                                Task.Delay(2000).Wait();
+                                //Task.Delay(2000).Wait();
                             }
                             size = (int)(long)reader["size"];
                             data = (byte[])reader["data"];
@@ -281,7 +281,7 @@ namespace NicoNamaRokuga.Rec
             {
                 //if (fs != null) fs.Dispose();
                 ecv.StopInput();
-                Task.Delay(1000).Wait();
+                //Task.Delay(1000).Wait();
                 //if (ecv != null) ecv.Dispose();
             }
             return result;

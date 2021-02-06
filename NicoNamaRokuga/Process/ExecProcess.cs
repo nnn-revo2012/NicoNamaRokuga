@@ -188,7 +188,7 @@ namespace NicoNamaRokuga.Proc
         {
             try
             {
-                if (_ps.StandardInput.BaseStream.CanWrite == true && data.Length > 0)
+                if (_ps != null && data.Length > 0)
                 {
                     _ps.StandardInput.BaseStream.Write(data, 0, data.Length);
                     _ps.StandardInput.Flush();
@@ -209,7 +209,6 @@ namespace NicoNamaRokuga.Proc
                     if (_ps.StandardInput != null)
                     {
                         _ps.StandardInput.Flush();
-                        Task.Delay(500).Wait();
                         _ps.StandardInput.Close();
                     }
                 }
@@ -230,17 +229,15 @@ namespace NicoNamaRokuga.Proc
                 }
                 else
                 {
-                    if (_ps.StandardInput.BaseStream.CanWrite == true)
+                    if (_ps.StandardInput != null)
                     {
                         _ps.StandardInput.WriteLine(breakkey);
                         _ps.StandardInput.Flush();
                     }
                 }
-                Task.Delay(1000).Wait();
                 if (_ps != null)
                 {
-                    if (_ps.StandardInput.BaseStream.CanWrite == true)
-                        _ps.StandardInput.Close();
+                    _ps.StandardInput.Close();
                 }
             }
         }
