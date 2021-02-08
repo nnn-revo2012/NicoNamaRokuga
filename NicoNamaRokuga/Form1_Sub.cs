@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Diagnostics;
 using System.IO;
+
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -153,44 +157,34 @@ namespace NicoNamaRokuga
             }));
         }
 
+        private void Convert(string filename)
+        {
+            try
+            {
+                AddLog("出力開始します。", 1);
+
+                //録画開始
+                Task.Run(() => StartExtract(filename));
+            }
+            catch (Exception Ex)
+            {
+                AddLog("出力処理エラー。\r\n" + Ex.Message, 2);
+            }
+        }
+
         private void StartExtract(string filename)
         {
             if (filename.IndexOf(".sqlite3") < 0) return;
 
             try
             {
-                ClearHosoData();
-                ClearLog();
-
-                var exec_file = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
-                exec_file = GetExecFile(exec_file);
-                if (!File.Exists(exec_file))
-                {
-                    AddLog("実行ファイルがありません。", 2);
-                    return;
-                }
-
-                var save_dir = String.IsNullOrEmpty(props.SaveDir) ? System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : props.SaveDir;
-                if (!Directory.Exists(save_dir))
-                {
-                    AddLog("保存フォルダーが存在しません。", 2);
-                    return;
-                }
-
-                LogFile = Props.GetLogfile(save_dir, "conv");
-                LogFile2 = Props.GetExecLogfile(save_dir, "conv");
-                LogFile3 = null;
-
-
-                AddLog("出力開始します。", 1);
-
                 //保存ファイル名作成
                 epi = new ExecPsInfo();
                 epi.Sqlite3File = filename;
                 epi.Protocol = Protocol.hls.ToString();
                 epi.Seq = 0;
-                epi.Exec = exec_file;
-                epi.Arg = "-i - -c copy \"%FILE%\"";
+                epi.Exec = GetExecFile(props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())]);
+                epi.Arg = "-i - -c copy -y \"%FILE%\"";
                 epi.Ext2 = ".mp4";
 
                 //Kvsデーター読み込み
@@ -262,8 +256,6 @@ namespace NicoNamaRokuga
                 return Path.Combine(Path.GetDirectoryName(fullAssemblyName), file);
             return file;
         }
-
-
 
     }
 }

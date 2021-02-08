@@ -547,12 +547,31 @@ namespace NicoNamaRokuga
 
             try
             {
-                LogFile = null;
-                LogFile2 = null;
+                ClearHosoData();
+                ClearLog();
+
+                var exec_file = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
+                exec_file = GetExecFile(exec_file);
+                if (!File.Exists(exec_file))
+                {
+                    AddLog("実行ファイルがありません。", 2);
+                    return;
+                }
+
+                var save_dir = String.IsNullOrEmpty(props.SaveDir) ? System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : props.SaveDir;
+                if (!Directory.Exists(save_dir))
+                {
+                    AddLog("保存フォルダーが存在しません。", 2);
+                    return;
+                }
+
+                LogFile = Props.GetLogfile(save_dir, "conv");
+                LogFile2 = Props.GetExecLogfile(save_dir, "conv");
+                LogFile3 = null;
 
                 for (int i = 0; i < files.Length; i++)
                 {
-                    StartExtract(files[i]);
+                    Convert(files[i]);
                 }
             }
             catch (Exception Ex)
