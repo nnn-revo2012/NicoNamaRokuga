@@ -188,7 +188,10 @@ namespace NicoNamaRokuga.Net
                 _form.AddLog("サーバー接続を開始します。", 1);
                 _wsconnect = false;
                 //var clist = _form._nLiveNet.GetCookieList();
-                var _websocket = new WebSocket(_bci.WsUrl + "&frontend_id=" + _bci.FrontEndId, "", null, Props.WsHeaderStream.ToList(), Props.UserAgent, "", WebSocketVersion.Rfc6455, null, System.Security.Authentication.SslProtocols.Tls12, 0);
+                var _websocket = new WebSocket(_bci.WsUrl + "&frontend_id=" + _bci.FrontEndId,
+                                               "", null, Props.WsHeaderStream.ToList(),
+                                               Props.UserAgent, Props.NicoOrigin,
+                                               WebSocketVersion.Rfc6455, null);
                 _ws = _websocket;
             }
 

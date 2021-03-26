@@ -67,7 +67,10 @@ namespace NicoNamaRokuga.Net
             {
                 _form.AddLog("コメントサーバー接続を開始します。", 1);
                 _wsconnect = false;
-                var _websocket = new WebSocket(wsurl, "", null, Props.WsHeaderComment.ToList(), Props.UserAgent, "", WebSocketVersion.Rfc6455);
+                var _websocket = new WebSocket(wsurl, Props.WsSubProtocol, null,
+                                               Props.WsHeaderComment.ToList(), 
+                                               Props.UserAgent, Props.NicoOrigin,
+                                               WebSocketVersion.Rfc6455, null);
                 _ws = _websocket;
             }
 

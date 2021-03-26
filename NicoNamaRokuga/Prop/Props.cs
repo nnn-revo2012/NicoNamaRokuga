@@ -22,7 +22,8 @@ namespace NicoNamaRokuga.Prop
         //public static readonly string UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36";
         public static readonly string NicoDomain = "https://www.nicovideo.jp/";
 
-        public static readonly string NicoLiveUrl = "https://live2.nicovideo.jp/watch/";
+        public static readonly string NicoLiveUrl = "https://live.nicovideo.jp/watch/";
+        public static readonly string NicoOrigin  = "https://live.nicovideo.jp";
         public static readonly string NicoCommUrl = "https://com.nicovideo.jp/community/";
         public static readonly string NicoChannelUrl = "https://ch.nicovideo.jp/";
         public static readonly string NicoUserUrl = "https://www.nicovideo.jp/user/";
@@ -41,13 +42,18 @@ namespace NicoNamaRokuga.Prop
         //public static readonly IDictionary<string, string> WsHeaderStream =
         //    new Dictionary<string, string>()
         //    {{"User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"},
-        //     {"Origin", "https://live2.nicovideo.jp"},
+        //     {"Origin", "https://live.nicovideo.jp"},
         //     {"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"}};
 
+        public static readonly string WsSubProtocol = "msg.nicovideo.jp#json";
         public static readonly IDictionary<string, string> WsHeaderComment =
             new Dictionary<string, string>()
-            {{"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"},
-             {"Sec-WebSocket-Protocol", "msg.nicovideo.jp#json"}};
+            {{"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"}};
+
+        //public static readonly IDictionary<string, string> WsHeaderComment =
+        //    new Dictionary<string, string>()
+        //    {{"Sec-WebSocket-Extensions", "permessage-deflate; client_max_window_bits"},
+        //     {"Sec-WebSocket-Protocol", "msg.nicovideo.jp#json"}};
 
         public static readonly string[] Quality =
             { "3Mbps (suoer_high)","2Mbps (high)", "1Mbps (normal)", "384Kbps (low)", "192Kbps (super_low)" };
