@@ -100,7 +100,7 @@ namespace NicoNamaRokuga
                 comboBox2.Items.Clear();
                 foreach (var qu in Props.Quality.ToArray())
                     comboBox2.Items.Add(qu);
-                comboBox2.SelectedIndex = (int)_props.QuarityType;
+                comboBox2.SelectedIndex = Props.ParseQTypes(_props.QuarityType);
 
                 checkBox2.Checked = _props.IsLogging;
                 checkBox3.Checked = _props.IsComment;
@@ -167,7 +167,7 @@ namespace NicoNamaRokuga
                 _props.SaveFolder = textBox5.Text;
 
                 _props.QuarityType =
-                    (QTypes)Enum.ToObject(typeof(QTypes), comboBox2.SelectedIndex);
+                    Props.EnumQTypes(comboBox2.SelectedIndex);
 
                 _props.IsLogging = checkBox2.Checked;
                 _props.IsComment = checkBox3.Checked;

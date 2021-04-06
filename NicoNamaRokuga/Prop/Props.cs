@@ -11,7 +11,6 @@ namespace NicoNamaRokuga.Prop
 
     public enum IsLogin { always, none, };
     public enum LoginMethod { login, cookie, };
-    public enum QTypes { super_high, high, normal, low, super_low, };
     public enum Protocol { hls, rtmp, };
     public enum UseExternal { native, ext1, ext2, ext3, };
 
@@ -56,7 +55,7 @@ namespace NicoNamaRokuga.Prop
         //     {"Sec-WebSocket-Protocol", "msg.nicovideo.jp#json"}};
 
         public static readonly string[] Quality =
-            { "3Mbps (suoer_high)","2Mbps (high)", "1Mbps (normal)", "384Kbps (low)", "192Kbps (super_low)" };
+            { "6Mbps (6Mbps1080p30fps)", "3Mbps (suoer_high)", "2Mbps (high)", "1Mbps (normal)", "384Kbps (low)", "192Kbps (super_low)", "audio_high (audio_high)" };
 
         public static readonly string Commnet_SeetNo = "/hb ifseetno";
 
@@ -125,7 +124,7 @@ namespace NicoNamaRokuga.Prop
         public string SaveDir { get; set; }
         public string SaveFolder { get; set; }
         public string SaveFile { get; set; }
-        public QTypes QuarityType { get; set; }
+        public string QuarityType { get; set; }
         public Protocol Protocol { get; set; }
         public UseExternal UseExternal { get; set; }
         public string[] ExecFile { get; set; }
@@ -177,7 +176,25 @@ namespace NicoNamaRokuga.Prop
 
         public static int ParseQTypes(string str)
         {
-            return (int)(QTypes)Enum.Parse(typeof(QTypes), str);
+            var result = -1;
+            var str2 = "(" + str + ")";
+            for (var i = 0; i <= Quality.Length - 1; i++)
+            {
+                if (Quality[i].IndexOf(str2) > -1)
+                {
+                    result = i;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        private static Regex RgxQType = new Regex(" \\(([\\w]+)\\)", RegexOptions.Compiled);
+        public static string EnumQTypes(int idx)
+        {
+            if (idx < 0 || idx >= Quality.Length)
+                return "";
+            return RgxQType.Match(Quality[idx]).Groups[1].Value;
         }
 
         public static bool IsQTypes(string str)
@@ -185,7 +202,7 @@ namespace NicoNamaRokuga.Prop
             if (string.IsNullOrEmpty(str))
                 return false;
             else
-                return Enum.IsDefined(typeof(QTypes), str);
+                return ParseQTypes(str) > -1 ? true : false; 
         }
 
         public bool LoadData(string accountdbfile)
@@ -209,8 +226,7 @@ namespace NicoNamaRokuga.Prop
                 this.SaveDir = Properties.Settings.Default.SaveDir;
                 this.SaveFolder = Properties.Settings.Default.SaveFolder;
                 this.SaveFile = Properties.Settings.Default.SaveFile;
-                this.QuarityType =
-                    (QTypes)Enum.Parse(typeof(QTypes), Properties.Settings.Default.QualityType);
+                this.QuarityType = Properties.Settings.Default.QualityType;
                 this.Protocol =
                     (Protocol)Enum.Parse(typeof(Protocol), Properties.Settings.Default.Protocol);
                 this.UseExternal =
@@ -247,7 +263,7 @@ namespace NicoNamaRokuga.Prop
                 Properties.Settings.Default.SaveDir = this.SaveDir;
                 Properties.Settings.Default.SaveFolder = this.SaveFolder;
                 Properties.Settings.Default.SaveFile = this.SaveFile;
-                Properties.Settings.Default.QualityType = this.QuarityType.ToString().ToLower();
+                Properties.Settings.Default.QualityType = this.QuarityType;
                 Properties.Settings.Default.Protocol = this.Protocol.ToString().ToLower();
                 Properties.Settings.Default.UseExternal = this.UseExternal.ToString().ToLower();
                 Properties.Settings.Default.ExecFile = String.Join(";", this.ExecFile);
