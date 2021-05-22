@@ -205,7 +205,7 @@ namespace NicoNamaRokuga.Rec
         public bool ReadDbMedia2(ExecPsInfo epi, CommentInfo cmi, BroadCastInfo bci)
         {
             //FileStream fs = null;
-            ExecConvert ecv = null;
+            var ecv = new List<ExecConvert>();
             var result = false;
             try
             {
@@ -226,13 +226,12 @@ namespace NicoNamaRokuga.Rec
                     //ファイルオープン
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                        epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi, epi.Ext2);
                         cmi.SaveFile = epi.SaveFile + epi.Xml;
                         //fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
-                        ecv = new ExecConvert(_form);
+                        ecv.Add(new ExecConvert(_form));
                         arg = ExecPsInfo.SetConvOption(epi, null);
-                        ecv.ExecPs(epi.Exec, arg);
-                        //Task.Delay(2000).Wait();
+                        ecv[ecv.Count()-1].ExecPs(epi.Exec, arg);
 
                         while (reader.Read())
                         {
@@ -252,20 +251,17 @@ namespace NicoNamaRokuga.Rec
                                 else
                                     Debug.WriteLine("SeqNo. skipped: {0} --> {1}\n", prevseqno, seqno);
                                 //fs.Dispose();
-                                ecv.StopInput();
-                                Task.Delay(1000).Wait();
-                                //if (ecv != null) ecv.Dispose();
-                                epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                                ecv[ecv.Count() - 1].StopInput();
+                                epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi, epi.Ext2);
                                 //fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
-                                ecv = new ExecConvert(_form);
+                                ecv.Add(new ExecConvert(_form));
                                 arg = ExecPsInfo.SetConvOption(epi, null);
-                                ecv.ExecPs(epi.Exec, arg);
-                                //Task.Delay(2000).Wait();
+                                ecv[ecv.Count() - 1].ExecPs(epi.Exec, arg);
                             }
                             size = (int)(long)reader["size"];
                             data = (byte[])reader["data"];
                             //fs.Write(data, 0, size);
-                            ecv.InputProcess(data);
+                            ecv[ecv.Count()-1].InputProcess(data);
                             prevseqno = seqno;
                             prevbw = bw;
                         }
@@ -280,9 +276,35 @@ namespace NicoNamaRokuga.Rec
             finally
             {
                 //if (fs != null) fs.Dispose();
-                ecv.StopInput();
-                //Task.Delay(1000).Wait();
+                ecv[ecv.Count()-1].StopInput();
+                //全プロセスが終了したのを確認
+                //_form.AddLog("プロセス数=" + ecv.Count(), 1);
+                var endflg = false;
+                while (!endflg)
+                {
+                    for (var i = 0; i < ecv.Count; i++)
+                    {
+                        if (ecv[i] != null)
+                        {
+                            if (ecv[i].PsStatus >= 1)
+                            {
+                                ecv[i].Dispose();
+                                ecv[i] = null;
+                            }
+                            else
+                            {
+                                endflg = false;
+                                Task.Delay(1000).Wait();
+                            }
+                        }
+                        else
+                        {
+                            endflg = true;
+                        }
+                    }
+                }
                 //if (ecv != null) ecv.Dispose();
+                //_form.AddLog("全プロセス終了しました", 1);
             }
             return result;
         }

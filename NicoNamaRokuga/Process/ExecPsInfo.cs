@@ -26,12 +26,14 @@ namespace NicoNamaRokuga.Proc
         public string Ext2 { get; set; }
 
         //保存ファイルにシーケンスNoをつける
-        public static string GetSaveFileNum(ExecPsInfo epi)
+        public static string GetSaveFileNum(ExecPsInfo epi, string ext = null)
         {
             var ff = Path.Combine(epi.Sdir, epi.Sfolder, epi.Sfile);
+            var ext2 = epi.Ext;
+            if (ext2 != null) ext2 = ext;
 
             //同名ファイル名がないかチェック
-            while (IsExistFile(ff, epi.Seq, epi.Ext, epi.Xml)) ++epi.Seq;
+            while (IsExistFile(ff, epi.Seq, ext2, epi.Xml)) ++epi.Seq;
 
             return ff + epi.Seq.ToString();
         }
@@ -79,15 +81,17 @@ namespace NicoNamaRokuga.Proc
         }
 
         //Sqlite3の保存ファイルにシーケンスNoをつける
-        public static string GetSaveFileSqlite3Num(ExecPsInfo epi)
+        public static string GetSaveFileSqlite3Num(ExecPsInfo epi, string ext = null)
         {
             int idx = epi.Sqlite3File.IndexOf(".sqlite3");
             if (idx < 0) return null;
 
+            var ext2 = epi.Ext;
+            if (ext2 != null) ext2 = ext;
             var ff = epi.Sqlite3File.Substring(0, idx) + "-";
 
             //同名ファイル名がないかチェック
-            while (IsExistFile(ff, epi.Seq, epi.Ext, epi.Xml)) ++epi.Seq;
+            while (IsExistFile(ff, epi.Seq, ext2, epi.Xml)) ++epi.Seq;
 
             return ff + epi.Seq.ToString();
         }

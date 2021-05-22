@@ -134,6 +134,7 @@ namespace NicoNamaRokuga.Proc
                 {
                     _ps.Dispose();
                     _ps = null;
+
                 }
             }
             catch (Exception Ex)
