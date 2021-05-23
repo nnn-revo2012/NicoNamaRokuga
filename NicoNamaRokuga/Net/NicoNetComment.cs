@@ -301,15 +301,18 @@ namespace NicoNamaRokuga.Net
                         _form.AddLog(e.Message, 9);
                         if ((int)jmes["thread"]["resultcode"] == 0)
                         {
-                            _cctl._last_res = (long)jmes["thread"]["last_res"];
-                            _form.AddLog(_cctl._last_res + " 個のコメントを読み込みます。", 1);
-                            var cmlist = new List<string>();
-                            _cctl._come_text = cmlist;
-                            if (_seq_no == 0)
+                            if (jmes["thread"]["last_res"] != null)
                             {
-                                StartHBTimer();
-                                if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
-                                    Json2Db(jmes);
+                                _cctl._last_res = (long)jmes["thread"]["last_res"];
+                                _form.AddLog(_cctl._last_res + " 個のコメントを読み込みます。", 1);
+                                var cmlist = new List<string>();
+                                _cctl._come_text = cmlist;
+                                if (_seq_no == 0)
+                                {
+                                    StartHBTimer();
+                                    if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
+                                        Json2Db(jmes);
+                                }
                             }
                         }
                         break;
