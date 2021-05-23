@@ -18,29 +18,6 @@ using NicoNamaRokuga.Prop;
 
 namespace NicoNamaRokuga.Net
 {
-    public class GetPlayerStatusInfo
-    {
-        public string Status { set; get; }
-        public string Error { set; get; }
-
-        public string Id { set; get; }
-        public string Title { set; get; }
-        public string User_Id { set; get; }
-        public string Provider_Type { set; get; }
-        public string Default_Community { set; get; }
-        public string Is_Premium_Channel { set; get; } //チャンネルのみ
-        public string Channel_Stream_Status { set; get; } //チャンネルのみ
-        public string Owner_Id { set; get; }
-        public string Owner_Name { set; get; } //ユーザーのみあり
-        public long   Start_Time { set; get; }
-        public long   End_Time { set; get; }
-
-        public GetPlayerStatusInfo()
-        {
-            this.Status = null;
-            this.Error = null;
-        }
-    }
 
     static class TimeoutExtention
     {
@@ -200,76 +177,6 @@ namespace NicoNamaRokuga.Net
             return flag;
         }
 
-        //GetPlayerStatusを実行
-        public async Task<GetPlayerStatusInfo> GetPlayerStatusAsync(string nicoUrl)
-        {
-
-            var gpsi = new GetPlayerStatusInfo();
-            gpsi.Status = "fail";
-            gpsi.Error = "notfound";
-
-            try
-            {
-                var stmp = GetLiveID(nicoUrl);
-                if (string.IsNullOrEmpty(stmp)) return gpsi;
-
-                stmp = Props.NicoGetPlayerStatus + stmp;
-                var xhtml = await _wc.DownloadStringTaskAsync(stmp).Timeout(_wc.timeout);
-                var doc = new XmlDocument();
-                doc.LoadXml(xhtml);
-                gpsi.Status = doc.DocumentElement.GetAttribute("status");
-                if (gpsi.Status != "ok")
-                {
-                    //エラーメッセージを入れてリターン
-                    gpsi.Error = doc.GetElementsByTagName("code").Item(0).InnerText;
-                    return gpsi;
-                }
-                var nodes = doc.GetElementsByTagName("stream");
-                if (nodes.Count > 0)
-                {
-                    gpsi.Id = nodes.Item(0)["id"].InnerText;
-                    gpsi.Title = nodes.Item(0)["title"].InnerText;
-                    gpsi.Provider_Type = nodes.Item(0)["provider_type"].InnerText;
-                    gpsi.Default_Community = nodes.Item(0)["default_community"].InnerText;
-                    gpsi.Owner_Id = nodes.Item(0)["owner_id"].InnerText;
-                    gpsi.Owner_Name = nodes.Item(0)["owner_name"].InnerText;
-                    gpsi.Start_Time = long.Parse(nodes.Item(0)["start_time"].InnerText);
-                    gpsi.End_Time = long.Parse(nodes.Item(0)["end_time"].InnerText);
-                    switch (gpsi.Provider_Type)
-                    {
-                        case "channel":
-                            //gpsi.Is_Premium_Channel = nodes.Item(0)["is_premium_channel"].InnerText;
-                            //gpsi.Channel_Stream_Status = nodes.Item(0)["channel_stream_status"].InnerText;
-                            break;
-                        case "official":
-                            gpsi.Default_Community = gpsi.Provider_Type;
-                            break;
-                    }
-                }
-                nodes = doc.GetElementsByTagName("user");
-                if (nodes.Count > 0)
-                {
-                    gpsi.User_Id = nodes.Item(0)["user_id"].InnerText;
-                }
-
-            }
-            catch (WebException Ex)
-            {
-                DebugWrite.WriteWebln(nameof(GetPlayerStatusAsync), Ex);
-                gpsi.Error = Ex.Status.ToString();
-                return gpsi;
-            }
-            catch (Exception Ex) //その他のエラー
-            {
-                DebugWrite.Writeln(nameof(GetPlayerStatusAsync), Ex);
-                gpsi.Error = Ex.Message;
-                return gpsi;
-            }
-
-            gpsi.Error = "";
-            return gpsi;
-        }
-
         //ログインしているかどうか取得
         public async Task<bool> IsLoginNicoAsync()
         {
@@ -321,8 +228,18 @@ namespace NicoNamaRokuga.Net
                 bci.WsUrl = Regex.Match(ttt, @"""webSocketUrl"":""([^""]+)""").Groups[1].Value;
                 if (string.IsNullOrEmpty(bci.WsUrl))
                 {
-                    bci.Error = "closed";
-                    //< code > require_community_member </ code >
+                    var tsenabled = Regex.Match(ttt, @"""isTimeshiftDownloadEnabled"":(\w+)").Groups[1].Value.ToLower();
+                    var follower = Regex.Match(ttt, @"""isFollowerOnly"":(\w+)").Groups[1].Value.ToLower();
+                    var status = Regex.Match(ttt, @"""status"":""(\w+)""").Groups[1].Value;
+                    if ((status == "ON_AIR" && follower == "true")
+                        || (status == "ENDED" && follower == "true" && tsenabled == "true"))
+                    {
+                        bci.Error = " require_community_member";
+                    }
+                    else
+                    {
+                        bci.Error = " closed";
+                    }
                     return bci;
                 }
                 bci.AuTkn = Regex.Match(ttt, @"""audienceToken"":""([^""]+)""").Groups[1].Value; ;
