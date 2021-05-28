@@ -157,21 +157,6 @@ namespace NicoNamaRokuga
             }));
         }
 
-        private void Convert(string filename)
-        {
-            try
-            {
-                AddLog("出力開始します。", 1);
-
-                //録画開始
-                Task.Run(() => StartExtract(filename));
-            }
-            catch (Exception Ex)
-            {
-                AddLog("出力処理エラー。\r\n" + Ex.Message, 2);
-            }
-        }
-
         private void StartExtract(string filename)
         {
             if (filename.IndexOf(".sqlite3") < 0) return;

@@ -541,7 +541,7 @@ namespace NicoNamaRokuga
             }
         }
 
-        private void Form1_DragDrop(object sender, DragEventArgs e)
+        private async void Form1_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
 
@@ -571,7 +571,9 @@ namespace NicoNamaRokuga
 
                 for (int i = 0; i < files.Length; i++)
                 {
-                    Convert(files[i]);
+                    AddLog("出力開始します。", 1);
+                    //Convert(files[i]);
+                    await Task.Run(() => StartExtract(files[i]));
                 }
             }
             catch (Exception Ex)

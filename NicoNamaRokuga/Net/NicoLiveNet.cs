@@ -234,11 +234,14 @@ namespace NicoNamaRokuga.Net
                     if ((status == "ON_AIR" && follower == "true")
                         || (status == "ENDED" && follower == "true" && tsenabled == "true"))
                     {
-                        bci.Error = " require_community_member";
+                        bci.Error = "require_community_member";
+                    } else if (status == "ENDED" && tsenabled == "true")
+                    {
+                        bci.Error = "notlogin or login premium account";
                     }
                     else
                     {
-                        bci.Error = " closed";
+                        bci.Error = "program closed";
                     }
                     return bci;
                 }
