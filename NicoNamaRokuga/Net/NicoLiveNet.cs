@@ -187,12 +187,12 @@ namespace NicoNamaRokuga.Net
             }
             catch (WebException Ex)
             {
-                DebugWrite.WriteWebln(nameof(GetNicoPageAsync), Ex);
+                DebugWrite.WriteWebln(nameof(IsLoginNicoAsync), Ex);
                 return false;
             }
             catch (Exception Ex) //その他のエラー
             {
-                DebugWrite.Writeln(nameof(GetNicoPageAsync), Ex);
+                DebugWrite.Writeln(nameof(IsLoginNicoAsync), Ex);
                 return false;
             }
         }

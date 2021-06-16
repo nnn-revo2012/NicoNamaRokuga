@@ -572,7 +572,6 @@ namespace NicoNamaRokuga
                 for (int i = 0; i < files.Length; i++)
                 {
                     AddLog("出力開始します。", 1);
-                    //Convert(files[i]);
                     await Task.Run(() => StartExtract(files[i]));
                 }
             }
