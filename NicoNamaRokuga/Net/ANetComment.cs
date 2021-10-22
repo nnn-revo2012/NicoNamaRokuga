@@ -275,6 +275,10 @@ namespace NicoNamaRokuga.Net
                         {
                             content = HttpUtility.HtmlEncode(it2.Value.ToString());
                         }
+                        else if (it2.Key.ToString() == "name")
+                        {
+                            result += " " + it2.Key.ToString() + @"=""" + HttpUtility.HtmlEncode(it2.Value.ToString()) + @"""";
+                        }
                         else
                         {
                             result += " " + it2.Key.ToString() + @"=""" + it2.Value.ToString() + @"""";
@@ -325,7 +329,7 @@ namespace NicoNamaRokuga.Net
                             break;
                         case "name":
                             if (value != "")
-                                result += " " + it.Key.ToString() + @"=""" + value + @"""";
+                                result += " " + it.Key.ToString() + @"=""" + HttpUtility.HtmlEncode(value) + @"""";
                             break;
                         case "premium":
                             if (value != "0")

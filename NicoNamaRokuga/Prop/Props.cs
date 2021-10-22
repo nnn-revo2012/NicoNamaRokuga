@@ -408,12 +408,15 @@ namespace NicoNamaRokuga.Prop
             return RgxChNo.Match(url).Groups[1].Value;
         }
 
-        public static long GetUnixTime() {
-            return (long)(((TimeSpan)(DateTime.Now - new DateTime(1970, 1, 1))).TotalSeconds);
+        private static readonly DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        public static long GetUnixTime(DateTime localtime)
+        {
+            DateTime utc = localtime.ToUniversalTime();
+            return (long)(((TimeSpan)(utc - UNIX_EPOCH)).TotalSeconds);
         }
 
-        public static DateTime GetUnixToDateTime(long unix) {
-            DateTime UNIX_EPOCH = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+        public static DateTime GetUnixToDateTime(long unix)
+        {
             return UNIX_EPOCH.AddSeconds(unix).ToLocalTime();
         }
 
