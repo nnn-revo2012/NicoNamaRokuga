@@ -55,7 +55,7 @@ namespace NicoNamaRokuga.Prop
         //     {"Sec-WebSocket-Protocol", "msg.nicovideo.jp#json"}};
 
         public static readonly string[] Quality =
-            { "6Mbps (6Mbps1080p30fps)", "3Mbps (suoer_high)", "2Mbps (high)", "1Mbps (normal)", "384Kbps (low)", "192Kbps (super_low)", "audio_high (audio_high)" };
+            { "8Mbps (8Mbps1080p60fps)", "6Mbps (6Mbps1080p30fps)", "4Mbps (4Mbps720p60fps)", "3Mbps (suoer_high)", "2Mbps (high)", "1Mbps (normal)", "384Kbps (low)", "192Kbps (super_low)", "audio_high (audio_high)" };
 
         public static readonly string Commnet_SeetNo = "/hb ifseetno";
 
@@ -426,6 +426,17 @@ namespace NicoNamaRokuga.Prop
             double.TryParse(ttt, out dd);
             return (long )dd;
 
+        }
+        //特殊文字をエンコードする
+        public static string HtmlEncode(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return null;
+            s = s.Replace("<", "&lt;");
+            s = s.Replace(">", "&gt;");
+            s = s.Replace("&", "&amp;");
+            s = s.Replace("\"", "&quot;");
+
+            return s;
         }
 
     }

@@ -273,11 +273,11 @@ namespace NicoNamaRokuga.Net
                     {
                         if (it2.Key.ToString() == "content")
                         {
-                            content = HttpUtility.HtmlEncode(it2.Value.ToString());
+                            content = Props.HtmlEncode(it2.Value.ToString());
                         }
                         else if (it2.Key.ToString() == "name")
                         {
-                            result += " " + it2.Key.ToString() + @"=""" + HttpUtility.HtmlEncode(it2.Value.ToString()) + @"""";
+                            result += " " + it2.Key.ToString() + @"=""" + Props.HtmlEncode(it2.Value.ToString()) + @"""";
                         }
                         else
                         {
@@ -329,7 +329,7 @@ namespace NicoNamaRokuga.Net
                             break;
                         case "name":
                             if (value != "")
-                                result += " " + it.Key.ToString() + @"=""" + HttpUtility.HtmlEncode(value) + @"""";
+                                result += " " + it.Key.ToString() + @"=""" + Props.HtmlEncode(value) + @"""";
                             break;
                         case "premium":
                             if (value != "0")
@@ -352,7 +352,7 @@ namespace NicoNamaRokuga.Net
                                 result += " " + it.Key.ToString() + @"=""" + value + @"""";
                             break;
                         case "content":
-                            content = HttpUtility.HtmlEncode(value);
+                            content = Props.HtmlEncode(value);
                             break;
                         default:
                             result += " " + it.Key.ToString() + @"=""" + value + @"""";
