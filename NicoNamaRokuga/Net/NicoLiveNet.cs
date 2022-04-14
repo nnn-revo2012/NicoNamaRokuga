@@ -133,7 +133,7 @@ namespace NicoNamaRokuga.Net
             try {
                 var ps = new NameValueCollection();
                 //ログイン認証(POST)
-                ps.Add("mail", mail);
+                ps.Add("mail_tel", mail);
                 ps.Add("password", pass);
 
                 byte[] resArray = await _wc.UploadValuesTaskAsync(Props.NicoLoginUrl, ps).Timeout(_wc.timeout);
@@ -152,6 +152,7 @@ namespace NicoNamaRokuga.Net
                 {
                     //エラー
                 }
+                IsLoginStatus = true;
 
                 if (IsDebug)
                 {
