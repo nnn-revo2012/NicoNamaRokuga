@@ -137,23 +137,15 @@ namespace NicoNamaRokuga.Net
                 ps.Add("password", pass);
 
                 byte[] resArray = await _wc.UploadValuesTaskAsync(Props.NicoLoginUrl, ps).Timeout(_wc.timeout);
-                string ttt = _wc.ResponseHeaders.Get("x-niconico-authflag");
-                int authflg;
-                if (int.TryParse(ttt, out authflg))
-                {
-                    //ヘッダーに x-niconico-authflag があれば正常にログイン
-                    if (authflg > 0)
-                    {
-                        flag = true;
-                        IsLoginStatus = true;
-                    }
-                }
-                else
-                {
-                    //エラー
-                }
-                IsLoginStatus = true;
-
+                var data = System.Text.Encoding.UTF8.GetString(resArray);
+                flag = Regex.IsMatch(data, "user\\.login_status += +\\'login\\'", RegexOptions.Compiled) ? true : false;
+                IsLoginStatus = flag;
+                /*
+                user.login_status = 'login';
+                user.member_status = 'premium';
+                user.ui_area = 'jp';
+                user.ui_lang = 'ja-jp';
+                */
                 if (IsDebug)
                 {
                     //responseヘッダーの数と内容を表示
@@ -221,7 +213,7 @@ namespace NicoNamaRokuga.Net
                     return bci;
                 }
                 bci.User_Id = Regex.Match(hs, "\"user_id\":([^,]*),", RegexOptions.Compiled).Groups[1].Value;
-                bci.AccountType = Regex.Match(hs, "\"member_status\":\"([^,]*)\",", RegexOptions.Compiled).Groups[1].Value;
+                bci.AccountType = Regex.Match(hs, "\"member_status\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
                 providertype = Regex.Match(hs, "\"content_type\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
                 bci.Provider_Type = providertype;
                 var ttt = WebUtility.HtmlDecode(Regex.Match(hs, "<script +id=\"embedded-data\" +data-props=\"([^\"]*)\"></script>", RegexOptions.Compiled).Groups[1].Value);
