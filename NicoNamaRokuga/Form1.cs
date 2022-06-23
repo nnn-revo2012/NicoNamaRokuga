@@ -343,6 +343,7 @@ namespace NicoNamaRokuga
 
                 AddLog("webSocketUrl: " + bci.WsUrl, 9);
                 AddLog("frontendId: " + bci.FrontEndId, 9);
+                //bci.FrontEndId = "90";
 
                 //放送情報を表示
                 DispHosoData(bci);
