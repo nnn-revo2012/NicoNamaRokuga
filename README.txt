@@ -1,12 +1,12 @@
 ﻿===============================================================================
 【タイトル】 NicoNamaRokuga
 【ファイル】 NicoNamaRokuga.exe
-【作成月日】 2020/07/06
+【作成月日】 2023/04/17
 【著 作 者】 nnn-revo2012
 【開発環境】 Microsoft Windows 10
-             Microsoft Visual Studio 2015
+             Microsoft Visual Studio 2019
 【動作環境】 Microsoft Windows 10 / Windows 8.1 / Windows 7
-             .NET Framework 4.6.1
+             .NET Framework 4.8
 【推奨環境】 Microsoft Windows 10
 【配布形態】 フリーウェア
 【Web Site】 https://github.com/nnn-revo2012/NicoNamaRokuga
@@ -44,9 +44,8 @@
 8.映像ファイル(*.ts)とコメントファイル(*.xml)が作成されます。
 
 ■動作環境
-.Net Framework 4.6.1以降が必要です。Windows 10では標準でインストールされています。
-https://www.microsoft.com/ja-jp/download/details.aspx?id=49981
-
+.Net Framework 4.8が必要です。Windows 10では標準でインストールされているので新たにインストールする必要はありません。
+https://dotnet.microsoft.com/ja-jp/download/dotnet-framework/thank-you/net48-web-installer
 ■免責事項
 本ソフトウェアを利用して発生した如何なる損害について著作者は一切の責任を負いません。
 また著作者はバージョンアップ、不具合修正の義務を負いません。

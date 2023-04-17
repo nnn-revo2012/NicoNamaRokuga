@@ -214,12 +214,12 @@ namespace NicoNamaRokuga
                                     AddLog("ログイン開始", 1);
                                     if (!db.ReadDbUser(alias, out user, out pass))
                                     {
-                                        AddLog("Login Failed", 1);
+                                        AddLog("Login Failed: can't read user or pass", 1);
                                         return;
                                     }
                                     if (!(await _nLiveNet.LoginNico(props.UserID, props.Password)))
                                     {
-                                        AddLog("Login Failed", 1);
+                                        AddLog("Login Failed: login error", 1);
                                         return;
                                     }
                                     else

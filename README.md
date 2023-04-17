@@ -14,16 +14,16 @@
 
 # 開発環境
 
-- Windows 7 以降  
-- Microsoft Visual Studio 2015 以降  
-- .NET 4.6.1  
+- Windows 10  
+- Microsoft Visual Studio 2019以降  
+- .NET 4.8  
 
 # パッケージ
 
 以下のパッケージをインストールしてください。  
 
-- SnkLib.App.CookieGetter 2.4.0  
-https://github.com/nnn-revo2012/SnkLib.App.CookieGetter/releases/tag/v2.4.0  
+- SnkLib.App.CookieGetter 2.4.2  
+https://github.com/nnn-revo2012/SnkLib.App.CookieGetter/releases/tag/v2.4.2  
 namoshikaさんのSnkLib.App.CookieGetter(https://github.com/namoshika/SnkLib.App.CookieGetter)を元にguest-nicoさんがGoogleChrome80対応されたもの(https://github.com/guest-nico/SnkLib.App.CookieGetter)です。  
 ※同時にインストールする Json.net は11.0.2以上にしてください  
 
