@@ -25,7 +25,8 @@
 - SnkLib.App.CookieGetter 2.4.2  
 https://github.com/nnn-revo2012/SnkLib.App.CookieGetter/releases/tag/v2.4.2  
 namoshikaさんのSnkLib.App.CookieGetter(https://github.com/namoshika/SnkLib.App.CookieGetter)を元にguest-nicoさんがGoogleChrome80対応されたもの(https://github.com/guest-nico/SnkLib.App.CookieGetter)です。  
-※同時にインストールする Json.net は11.0.2以上にしてください  
+※同時にインストールする Json.net は11.0.3以上にしてください  
+※BouncyCastle は1.8.9にしてください(実行時にエラーになります)  
 
 - WebSocket4Net 0.15.2  
 https://www.nuget.org/packages/WebSocket4Net  

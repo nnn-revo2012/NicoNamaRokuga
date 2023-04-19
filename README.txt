@@ -1,7 +1,7 @@
 ﻿===============================================================================
 【タイトル】 NicoNamaRokuga
 【ファイル】 NicoNamaRokuga.exe
-【作成月日】 2023/04/17
+【作成月日】 2023/04/19
 【著 作 者】 nnn-revo2012
 【開発環境】 Microsoft Windows 10
              Microsoft Visual Studio 2019
