@@ -70,7 +70,7 @@ namespace NicoNamaRokuga.Net
                 var _websocket = new WebSocket(wsurl, Props.WsSubProtocol, null,
                                                Props.WsHeaderComment.ToList(), 
                                                Props.UserAgent, Props.NicoOrigin,
-                                               WebSocketVersion.Rfc6455, null);
+                                               WebSocketVersion.Rfc6455, null, System.Security.Authentication.SslProtocols.Tls12);
                 _ws = _websocket;
             }
 
