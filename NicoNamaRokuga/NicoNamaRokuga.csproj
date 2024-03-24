@@ -71,10 +71,10 @@
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SnkLib.App.CookieGetter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a3da78f8578efe02, processorArchitecture=MSIL">
-      <HintPath>..\packages\SnkLib.App.CookieGetter.2.4.3.0\lib\net45\SnkLib.App.CookieGetter.dll</HintPath>
+      <HintPath>..\packages\SnkLib.App.CookieGetter.2.4.3\lib\net45\SnkLib.App.CookieGetter.dll</HintPath>
     </Reference>
     <Reference Include="SnkLib.App.CookieGetter.Forms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8af6ef08b40d8c7e, processorArchitecture=MSIL">
-      <HintPath>..\packages\SnkLib.App.CookieGetter.Forms.1.4.4.0\lib\net45\SnkLib.App.CookieGetter.Forms.dll</HintPath>
+      <HintPath>..\packages\SnkLib.App.CookieGetter.Forms.1.4.4\lib\net45\SnkLib.App.CookieGetter.Forms.dll</HintPath>
     </Reference>
     <Reference Include="SuperSocket.ClientEngine, Version=0.10.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
       <HintPath>..\packages\SuperSocket.ClientEngine.Core.0.10.0\lib\net45\SuperSocket.ClientEngine.dll</HintPath>
@@ -262,11 +262,11 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\SnkLib.App.CookieGetter.2.4.0.0\build\net45\SnkLib.App.CookieGetter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SnkLib.App.CookieGetter.2.4.0.0\build\net45\SnkLib.App.CookieGetter.targets'))" />
     <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets'))" />
-    <Error Condition="!Exists('..\packages\SnkLib.App.CookieGetter.2.4.3.0\build\net45\SnkLib.App.CookieGetter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SnkLib.App.CookieGetter.2.4.3.0\build\net45\SnkLib.App.CookieGetter.targets'))" />
+    <Error Condition="!Exists('..\packages\SnkLib.App.CookieGetter.2.4.3\build\net45\SnkLib.App.CookieGetter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SnkLib.App.CookieGetter.2.4.3\build\net45\SnkLib.App.CookieGetter.targets'))" />
   </Target>
   <Import Project="..\packages\SnkLib.App.CookieGetter.2.4.0.0\build\net45\SnkLib.App.CookieGetter.targets" Condition="Exists('..\packages\SnkLib.App.CookieGetter.2.4.0.0\build\net45\SnkLib.App.CookieGetter.targets')" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets')" />
-  <Import Project="..\packages\SnkLib.App.CookieGetter.2.4.3.0\build\net45\SnkLib.App.CookieGetter.targets" Condition="Exists('..\packages\SnkLib.App.CookieGetter.2.4.3.0\build\net45\SnkLib.App.CookieGetter.targets')" />
+  <Import Project="..\packages\SnkLib.App.CookieGetter.2.4.3\build\net45\SnkLib.App.CookieGetter.targets" Condition="Exists('..\packages\SnkLib.App.CookieGetter.2.4.3\build\net45\SnkLib.App.CookieGetter.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
