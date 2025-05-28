@@ -40,7 +40,7 @@ namespace NicoNamaRokuga.Net
         public bool   FollowerOnly { set; get; }
         public long   Open_Time { set; get; }
         public long   Begin_Time { set; get; }
-        //public long   VposBase_Time { set; get; }
+        public long   VposBase_Time { set; get; }
         public long   End_Time { set; get; }
         public long   Server_Time { set; get; }
         public string OnAirStatus { set; get; }
@@ -145,6 +145,7 @@ namespace NicoNamaRokuga.Net
         private ExecProcess _eProcess = null;         //Process
         private RecHtml _rHtml = null;                //RecHtml
         private RetryInfo _ri = null;
+        private CookieContainer _cookieContainer = null;
 
         System.Threading.Timer _watchTimer;
 
@@ -152,7 +153,7 @@ namespace NicoNamaRokuga.Net
 
         //放送情報
 
-        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi, NicoNetComment nNetComment, ExecProcess eProcess, RecHtml rHtml, RetryInfo ri)
+        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi, NicoNetComment nNetComment, ExecProcess eProcess, CookieContainer cookieContainer, RecHtml rHtml, RetryInfo ri)
         {
             IsDebug = false;
 
@@ -168,6 +169,7 @@ namespace NicoNamaRokuga.Net
             this._bci = bci;
             this._cmi = cmi;
             this._epi = epi;
+            this._cookieContainer = cookieContainer;
             this._form = fo;
 
         }
@@ -250,17 +252,28 @@ namespace NicoNamaRokuga.Net
                             ttt = (string)data["quality"];
                             _form.AddLog("Quarity: " + ttt, 9);
                             _form.DispQuality(ttt);
+                            //cookieを追加する
+                            if (_cookieContainer != null)
+                            {
+                                foreach (var ck in (JArray)data["cookies"])
+                                {
+                                    var cookie = new Cookie();
+                                    if (!string.IsNullOrEmpty((string)ck["name"]))
+                                    {
+                                        cookie.Name = (string)ck["name"];
+                                        cookie.Value = (string)ck["value"];
+                                        cookie.Expires = DateTime.Parse((string)ck["expires"]);
+                                        cookie.Domain = (string)ck["domain"];
+                                        cookie.Path = (string)ck["path"];
+                                        cookie.Secure = (string)ck["value"] == "true" ? true : false;
+                                        _cookieContainer.Add(cookie);
+                                    }
+                                }
+
+                            }
                             //ffmpegを実行する
-                            if (_epi.Protocol == "rtmp")
-                            {
-                                ttt = (string)data["uri"] + "/" + (string)data["name"];
-                                _form.AddLog("RTMPFILE: " + ttt, 9);
-                            }
-                            else
-                            {
-                                ttt = (string)data["uri"];
-                                _form.AddLog("Masterm3u8: " + ttt, 9);
-                            }
+                            ttt = (string)data["uri"];
+                            _form.AddLog("Masterm3u8: " + ttt, 9);
                             if (Form1.props.Protocol != Protocol.hls || Form1.props.UseExternal != UseExternal.native)
                                 _epi.SaveFile = ExecPsInfo.GetSaveFileNum(_epi);
                             if (Form1.props.IsComment)
@@ -272,18 +285,17 @@ namespace NicoNamaRokuga.Net
                                 _eProcess.ExecPs(_epi.Exec, argument);
                         }
                         break;
-                    case "room":
-                        //コメントサーバー接続設定
+                    case "room":    //2024/08/05　新メッセージサーバーに変更された
+                        break;
+                    case "messageServer":   //2024/08/05～
                         if (Form1.props.IsComment)
                         {
                             if (!_bci.IsTimeShift() || !_ri.IsRetry)
                             {
-                                ttt = (string)data["messageServer"]["uri"];
+                                ttt = (string)data["viewUri"];
                                 _cmi.WsUrl = ttt;
-                                _form.AddLog("CommentServer: " + ttt, 9);
-                                ttt = (string)data["threadId"];
-                                _cmi.ThreadId = ttt;
-                                _nNetComment.Connect(_cmi.WsUrl);
+                                _form.AddLog("MessageServer: " + ttt, 9);
+                                //_nNetComment.Connect(_cmi.WsUrl);
                             }
                         }
                         break;
@@ -394,7 +406,8 @@ namespace NicoNamaRokuga.Net
         {
             //StartWatching
             var s = @"{""type"":""startWatching"",""data"":{ ""stream"":{ ""quality"":""normal"","
-                    + @"""protocol"":""%%proto%%"",""latency"":""high"",""chasePlay"":false},"
+                    + @"""protocol"":""%%proto%%"",""latency"":""high"",""accessRightMethod"":""single_cookie"","
+                    + @"""chasePlay"":false},"
                     + @"""room"":{ ""protocol"":""webSocket"",""commentable"":true},""reconnect"":false} }";
             s = s.Replace("%%proto%%", protocol);
             _ws.Send(s);
@@ -405,7 +418,8 @@ namespace NicoNamaRokuga.Net
         {
             //changeStream
             var s = @"{""type"":""changeStream"",""data"":{ ""quality"":""%%quality%%"","
-                    + @"""protocol"":""%%proto%%"",""latency"":""high"",""chasePlay"":false} }";
+                    + @"""protocol"":""%%proto%%"",""latency"":""high"",""accessRightMethod"":""single_cookie"","
+                    + @"""chasePlay"":false} }";
             s = s.Replace("%%quality%%", quality);
             s = s.Replace("%%proto%%", protocol);
             _ws.Send(s);

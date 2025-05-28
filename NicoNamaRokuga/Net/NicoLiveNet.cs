@@ -37,13 +37,8 @@ namespace NicoNamaRokuga.Net
         }
     }
 
-    public class NicoLiveNet : IDisposable
+    public class NicoLiveNet
     {
-
-        private bool disposedValue = false; // 重複する呼び出しを検知するには
-
-        private WebClientEx _wc = null;
-
         private class WebClientEx : WebClient
         {
             public CookieContainer cookieContainer = new CookieContainer();
@@ -74,26 +69,12 @@ namespace NicoNamaRokuga.Net
             IsDebug = false;
 
             IsLoginStatus = false;
-
-            var wc = new WebClientEx();
-            _wc = wc;
-
-            _wc.Encoding = Encoding.UTF8;
-            _wc.Proxy = null;
-            _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
-            _wc.timeout = 30000;
         }
 
-        ~NicoLiveNet()
-        {
-            this.Dispose();
-        }
-
-
-        public IList<KeyValuePair<string, string>> GetCookieList()
+        private IList<KeyValuePair<string, string>> GetCookieList(WebClientEx wc)
         {
             var result = new Dictionary<string, string>();
-            var cc = _wc.cookieContainer;
+            var cc = wc.cookieContainer;
 
             foreach (Cookie ck in cc.GetCookies(new Uri(Props.NicoDomain)))
                 result.Add(ck.Name.ToString(), ck.Value.ToString());
@@ -101,11 +82,17 @@ namespace NicoNamaRokuga.Net
             return result.ToList();
         }
 
-        public CookieContainer GetCookieContainer()
+        private CookieContainer GetCookieContainer(WebClientEx wc)
         {
-            return _wc.cookieContainer;
+            return wc.cookieContainer;
         }
 
+        private void SetCookieContainer(WebClientEx wc, CookieContainer cookie)
+        {
+            if (cookie != null)
+                wc.cookieContainer = cookie;
+            return;
+        }
         //*************** URL系 *******************
 
         //放送URLから放送IDをゲット(lv00000000000)
@@ -126,11 +113,22 @@ namespace NicoNamaRokuga.Net
         //*************** HTTP系 *******************
 
         //ニコニコにログイン
-        public async Task<bool> LoginNico(string mail, string pass)
+        public async Task<(bool flag, string err, int neterr)> LoginNico(CookieContainer cookie, string mail, string pass)
         {
+            bool flag = false;
+            string err = null;
+            int neterr = 0;
 
-            var flag = false;
-            try {
+            var _wc = new WebClientEx();
+            try
+            {
+                _wc.Encoding = Encoding.UTF8;
+                _wc.Proxy = null;
+                _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
+                _wc.timeout = 30000;
+                _wc.Headers.Add(HttpRequestHeader.ContentType, "application/x-www-form-urlencoded");
+                SetCookieContainer(_wc, cookie);
+
                 var ps = new NameValueCollection();
                 //ログイン認証(POST)
                 ps.Add("mail_tel", mail);
@@ -159,59 +157,123 @@ namespace NicoNamaRokuga.Net
             catch (WebException Ex)
             {
                 DebugWrite.WriteWebln(nameof(LoginNico), Ex);
-                return flag;
+                if (Ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    HttpWebResponse errres = (HttpWebResponse)Ex.Response;
+                    neterr = (int)errres.StatusCode;
+                    err = neterr.ToString() + " " + errres.StatusDescription;
+                }
+                else
+                    err = Ex.Message;
             }
             catch (Exception Ex) //その他のエラー
             {
                 DebugWrite.Writeln(nameof(LoginNico), Ex);
-                return flag;
+                err = Ex.Message;
+            }
+            finally
+            {
+                cookie = GetCookieContainer(_wc);
+                _wc?.Dispose();
             }
 
-            return flag;
+            return (flag, err, neterr);
         }
 
+
         //ログインしているかどうか取得
-        public async Task<bool> IsLoginNicoAsync()
+        public async Task<(bool flag, string err, int neterr)> IsLoginNicoAsync(CookieContainer cookie)
         {
+            bool flag = false;
+            string err = null;
+            int neterr = 0;
+
+            var _wc = new WebClientEx();
             try
             {
+                _wc.Encoding = Encoding.UTF8;
+                _wc.Proxy = null;
+                _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
+                _wc.timeout = 30000;
+                _wc.Headers.Add(HttpRequestHeader.ContentType, "text/html; charset=UTF-8");
+                _wc.Headers.Add(HttpRequestHeader.Accept, "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+                _wc.Headers.Add(HttpRequestHeader.AcceptLanguage, "ja,en-US;q=0.9,en;q=0.8");
+                SetCookieContainer(_wc, cookie);
+
                 var hs = await _wc.DownloadStringTaskAsync(Props.NicoDomain).Timeout(_wc.timeout);
-                return Regex.IsMatch(hs, "user\\.login_status += +\\'login\\'", RegexOptions.Compiled) ? true : false;
+                if (string.IsNullOrEmpty(hs))
+                {
+                    _wc?.Dispose();
+                    return (false, "result is null", neterr);
+                }
+                flag = Regex.IsMatch(hs, "user\\.login_status += +\\'login\\'", RegexOptions.Compiled) ? true : false;
             }
             catch (WebException Ex)
             {
                 DebugWrite.WriteWebln(nameof(IsLoginNicoAsync), Ex);
-                return false;
+                if (Ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    HttpWebResponse errres = (HttpWebResponse)Ex.Response;
+                    neterr = (int)errres.StatusCode;
+                    err = neterr.ToString() + " " + errres.StatusDescription;
+                }
+                else
+                    err = Ex.Message;
             }
             catch (Exception Ex) //その他のエラー
             {
                 DebugWrite.Writeln(nameof(IsLoginNicoAsync), Ex);
-                return false;
+                err = Ex.Message;
             }
+            finally
+            {
+                _wc?.Dispose();
+            }
+            return (flag, err, neterr);
         }
 
+
         //生放送ページから放送情報を取得
-        public async Task<BroadCastInfo> GetNicoPageAsync(string nicoUrl)
+        public async Task<(BroadCastInfo bci, string err, int neterr)> GetNicoPageAsync(CookieContainer cookie, string nicoUrl)
         {
             var bci = new BroadCastInfo(null, null, null, null);
-            bci.Status = "fail";
-            bci.Error = "notfound";
+            bci.Status = "";
+            bci.Error = "";
+            string err = null;
+            int neterr = 0;
 
+            var liveid = GetLiveID(nicoUrl);
+            if (string.IsNullOrEmpty(liveid)) return (bci, "liveid is null", neterr);
+
+            var _wc = new WebClientEx();
             try
             {
-                var liveid = GetLiveID(nicoUrl);
-                if (string.IsNullOrEmpty(liveid)) return bci;
 
                 var providertype = "unama";
                 bci.Provider_Type = providertype;
 
+                _wc.Encoding = Encoding.UTF8;
+                _wc.Proxy = null;
+                _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
+                _wc.timeout = 30000;
+                _wc.Headers.Add(HttpRequestHeader.ContentType, "text/html; charset=UTF-8");
+                _wc.Headers.Add(HttpRequestHeader.Accept, "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+                _wc.Headers.Add(HttpRequestHeader.AcceptLanguage, "ja,en-US;q=0.9,en;q=0.8");
+                SetCookieContainer(_wc, cookie);
+
                 var hs = await _wc.DownloadStringTaskAsync(Props.NicoLiveUrl + liveid).Timeout(_wc.timeout);
-                if (string.IsNullOrEmpty(hs)) return bci;
+                if (string.IsNullOrEmpty(hs))
+                {
+                    _wc?.Dispose();
+                    return (bci, "result is null", neterr);
+                }
+
                 if (hs.IndexOf("window.NicoGoogleTagManagerDataLayer = [];") > 0)
                 {
-                    bci.Error = "notlogin";
-                    return bci;
+                    _wc?.Dispose();
+                    return (bci, "Need login.", neterr);
                 }
+      
                 bci.User_Id = Regex.Match(hs, "\"user_id\":([^,]*),", RegexOptions.Compiled).Groups[1].Value;
                 bci.AccountType = Regex.Match(hs, "\"member_status\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
                 providertype = Regex.Match(hs, "\"content_type\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
@@ -227,16 +289,16 @@ namespace NicoNamaRokuga.Net
                     if ((status == "ON_AIR" && follower == "true")
                         || (status == "ENDED" && follower == "true" && tsenabled == "true"))
                     {
-                        bci.Error = "require_community_member";
+                        err = "require_community_member";
                     } else if (status == "ENDED" && tsenabled == "true")
                     {
-                        bci.Error = "notlogin or login premium account";
+                        err = "notlogin or login premium account";
                     }
                     else
                     {
-                        bci.Error = "program closed";
+                        err = "program closed";
                     }
-                    return bci;
+                    return (bci, err, neterr);
                 }
                 bci.AuTkn = Regex.Match(ttt, @"""audienceToken"":""([^""]+)""").Groups[1].Value; ;
                 bci.FrontEndId = Regex.Match(ttt, @"""frontendId"":(\d*)").Groups[1].Value; ;
@@ -278,20 +340,29 @@ namespace NicoNamaRokuga.Net
             catch (WebException Ex)
             {
                 DebugWrite.WriteWebln(nameof(GetNicoPageAsync), Ex);
-                bci.Error = Ex.Status.ToString();
-                return bci;
+                if (Ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    HttpWebResponse errres = (HttpWebResponse)Ex.Response;
+                    neterr = (int)errres.StatusCode;
+                    err = neterr.ToString() + " " + errres.StatusDescription;
+                }
+                else
+                    err = Ex.Message;
             }
             catch (Exception Ex) //その他のエラー
             {
                 DebugWrite.Writeln(nameof(GetNicoPageAsync), Ex);
-                bci.Error = Ex.Message;
-                return bci;
+                err = Ex.Message;
             }
-
-            return bci;
+            finally
+            {
+                _wc?.Dispose();
+            }
+            return (bci, err, neterr);
         }
 
         //ＴＳコメント取得用のwaybackkeyを取得
+/*
         public async Task<string> GetWayBackKeyAsync(string thread_id)
         {
             var result = string.Empty;
@@ -315,23 +386,24 @@ namespace NicoNamaRokuga.Net
 
             return result;
         }
-
+*/
 
         //*************** Cookie用 *******************
         // 指定Cookie情報のブラウザーのニコニコのCookieを取得してセット
-        public async Task<bool> SetNicoCookie(CookieSourceInfo csi)
+        public async Task<(CookieContainer cookies, bool)> SetNicoCookie(CookieSourceInfo csi)
         {
+            CookieContainer cookies = new CookieContainer();
             try
             {
-                if (csi == null) return false;
+                if (csi == null) return (cookies, false);
 
                 // ニコニコのCookieを取得
                 var targetUrl = new Uri(Props.NicoDomain);
                 var cookieGetter =
                     await CookieGetters.Default.GetInstanceAsync(csi, true);
                 var result = await cookieGetter.GetCookiesAsync(targetUrl);
-                if (result.Status != CookieImportState.Success) return false;
-                if (result.Cookies.Count <= 0) return false;
+                if (result.Status != CookieImportState.Success) return (cookies, false);
+                if (result.Cookies.Count <= 0) return (cookies, false);
 
                 if (IsDebug)
                 {
@@ -342,14 +414,14 @@ namespace NicoNamaRokuga.Net
                 // Cookieをセット
                 foreach (Cookie ck in result.Cookies)
                     if (ck.Name == "user_session" || ck.Name == "user_session_secure")
-                        _wc.cookieContainer.Add(new Cookie(ck.Name, ck.Value, "/", ".nicovideo.jp"));
+                        cookies.Add(new Cookie(ck.Name, ck.Value, "/", ".nicovideo.jp"));
                     else if (ck.Name == "age_auth")
-                        _wc.cookieContainer.Add(ck);
+                        cookies.Add(ck);
                 IsLoginStatus = true;
 
                 if (IsDebug)
                 {
-                    var cc = _wc.cookieContainer;
+                    var cc = cookies;
                     Debug.WriteLine(string.Format("Cookie GetCookieHeader: \r\n{0}\r\n",
                         cc.GetCookieHeader(targetUrl)));
                 }
@@ -357,37 +429,10 @@ namespace NicoNamaRokuga.Net
             catch (Exception Ex) //エラー
             {
                 DebugWrite.Writeln(nameof(SetNicoCookie), Ex);
-                return false;	
+                return (cookies, false);	
             }
 
-            return true;
-        }
-
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
-                    _wc?.Dispose();
-                }
-
-                // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
-                // TODO: 大きなフィールドを null に設定します。
-
-                disposedValue = true;
-            }
-        }
-
-        // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
-        public void Dispose()
-        {
-            // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
-            Dispose(true);
-            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
-            //GC.SuppressFinalize(this);
+            return (cookies, true);
         }
 
     }
