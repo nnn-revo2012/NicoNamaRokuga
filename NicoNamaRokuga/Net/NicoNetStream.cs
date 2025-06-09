@@ -16,6 +16,7 @@ using WebSocket4Net;
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Proc;
 using NicoNamaRokuga.Rec;
+using NicoNamaRokuga.Message;
 
 namespace NicoNamaRokuga.Net
 {
@@ -28,6 +29,7 @@ namespace NicoNamaRokuga.Net
         public string AuTkn { set; get; }
         public string WsUrl { set; get; }
         public string FrontEndId { set; get; }
+        public string MessageUrl { set; get; }
 
         public string Title { set; get; }
         public string Description { set; get; }
@@ -40,8 +42,8 @@ namespace NicoNamaRokuga.Net
         public bool   FollowerOnly { set; get; }
         public long   Open_Time { set; get; }
         public long   Begin_Time { set; get; }
-        public long   VposBase_Time { set; get; }
         public long   End_Time { set; get; }
+        public long   VposBase_Time { set; get; }
         public long   Server_Time { set; get; }
         public string OnAirStatus { set; get; }
         public string User_Id { set; get; }
@@ -55,6 +57,7 @@ namespace NicoNamaRokuga.Net
             this.AuTkn = autkn;
             this.WsUrl = wsurl;
             this.FrontEndId = frontendid;
+            this.MessageUrl = null;
             this.Status = null;
             this.Error = null;
             this.StartTs_Time = 0;
@@ -138,10 +141,10 @@ namespace NicoNamaRokuga.Net
         private int _wsStatus = -1;
 
         private BroadCastInfo _bci = null;
-        private CommentInfo _cmi = null;
+        //private CommentInfo _cmi = null;
         private ExecPsInfo _epi = null;
 
-        private NicoNetComment _nNetComment = null;   //WebSocket(Comment)
+        private NicoStartMessage _nsm = null;   //WebSocket(Comment)
         private ExecProcess _eProcess = null;         //Process
         private RecHtml _rHtml = null;                //RecHtml
         private RetryInfo _ri = null;
@@ -153,7 +156,7 @@ namespace NicoNamaRokuga.Net
 
         //放送情報
 
-        public NicoNetStream(Form1 fo, BroadCastInfo bci, CommentInfo cmi, ExecPsInfo epi, NicoNetComment nNetComment, ExecProcess eProcess, CookieContainer cookieContainer, RecHtml rHtml, RetryInfo ri)
+        public NicoNetStream(Form1 fo, BroadCastInfo bci, ExecPsInfo epi, NicoStartMessage nsm, ExecProcess eProcess, CookieContainer cookieContainer, RecHtml rHtml, RetryInfo ri)
         {
             IsDebug = false;
 
@@ -162,12 +165,12 @@ namespace NicoNamaRokuga.Net
             _wsStatus = -1;
 
             WsStatus = -1;
-            this._nNetComment = nNetComment;
+            this._nsm = nsm;
             this._eProcess = eProcess;
             this._rHtml = rHtml;
             this._ri = ri;
             this._bci = bci;
-            this._cmi = cmi;
+            //this._cmi = cmi;
             this._epi = epi;
             this._cookieContainer = cookieContainer;
             this._form = fo;
@@ -277,7 +280,7 @@ namespace NicoNamaRokuga.Net
                             if (Form1.props.Protocol != Protocol.hls || Form1.props.UseExternal != UseExternal.native)
                                 _epi.SaveFile = ExecPsInfo.GetSaveFileNum(_epi);
                             if (Form1.props.IsComment)
-                                _cmi.SaveFile = _epi.SaveFile + _epi.Xml;
+                                _epi.SaveCommentFile = _epi.SaveFile + _epi.Xml;
                             var argument = ExecPsInfo.SetOption(_epi, ttt, _bci.StartTs_Time);
                             if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
                                 _rHtml.ExecPs(ttt, _epi.SaveFile);
@@ -293,9 +296,10 @@ namespace NicoNamaRokuga.Net
                             if (!_bci.IsTimeShift() || !_ri.IsRetry)
                             {
                                 ttt = (string)data["viewUri"];
-                                _cmi.WsUrl = ttt;
+                                _bci.MessageUrl = ttt;
                                 _form.AddLog("MessageServer: " + ttt, 9);
                                 //_nNetComment.Connect(_cmi.WsUrl);
+                                //_nsm.NicoStartMessage(_form, _bci, _epi, _ndb);
                             }
                         }
                         break;

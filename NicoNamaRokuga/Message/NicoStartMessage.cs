@@ -18,119 +18,51 @@ using Org.BouncyCastle.Crypto.Digests;
 
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Rec;
+using NicoNamaRokuga.Net;
 
-namespace NicoNamaRokuga.Net
+namespace NicoNamaRokuga.Message
 {
-    public abstract class ANetComment
+    public class NicoStartMessage : IDisposable
     {
-        public volatile int WsStatus = -1; //WebSocketの状態
+        private bool disposedValue = false; // 重複する呼び出しを検知するには
 
-        //WebSocket
-        protected WebSocket _ws = null;
-        protected bool _wsconnect = false;
+        //Debug
+        public bool IsDebug { get; set; }
 
-        protected long _seq_no = 0;
-        protected bool _chat_flg = true;                    //チャットデータの最初かどうか？
-        protected const int _MESSAGE_MAX = 1000;
-        protected StreamWriter _sw = null;
+        public volatile int MessageStatus = -1; //MessageServerの状態
 
-        protected System.Threading.Timer _hbTimer;
+        private StreamWriter _sw = null;
 
-        protected NicoLiveNet _nLiveNet = null;         //WebClient
-        protected BroadCastInfo _bci = null;
-        protected CommentInfo _cmi = null;
-        protected NicoDb _ndb = null;
-        protected CommentControl _cctl = null;
+        private NicoLiveNet _nLiveNet = null;         //WebClient
+        private BroadCastInfo _bci = null;
+        private NicoDb _ndb = null;
 
-        protected Form1 _form = null;
-        protected Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
+        private Form1 _form = null;
+        private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
 
-        /// サーバーに接続する
-        public abstract void Connect(string wsurl);
-        /// 文字列受信(生放送)
-        protected abstract void wsReceived(object sender, MessageReceivedEventArgs e);
-        /// 文字列受信(生放送)(DB)
-        protected abstract void wsReceivedDB(object sender, MessageReceivedEventArgs e);
-        /// 文字列受信(TS)
-        protected abstract void wsReceivedTS(object sender, MessageReceivedEventArgs e);
+        public NicoStartMessage(Form1 fo, BroadCastInfo bci, NicoLiveNet nLiveNet, NicoDb ndb)
+        {
+            IsDebug = false;
+
+            MessageStatus = -1;
+            this._nLiveNet = nLiveNet;
+            this._bci = bci;
+            this._ndb = ndb;
+            this._form = fo;
+
+            MessageStatus = 0;
+        }
+
+        ~NicoStartMessage()
+        {
+            this.Dispose();
+        }
 
         /// サーバーから切断する
         public void Close()
         {
-            _ws?.Close();
+            MessageStatus = 1;
         }
-
-        //生放送コメント取得
-        public void StartGetComment()
-        {
-            var ttt = SendThread(_cmi.ThreadId, _cmi.UserId, -150);
-            _form.AddLog(ttt, 9);
-        }
-
-        //TSコメント取得
-        public void StartGetTSComment()
-        {
-            try
-            {
-                if (_cctl.status == 0) //TSコメント取得開始
-                {
-                    _cctl._waybackkey = null;
-                    _cctl._when = _cmi.EndTime + 600L;
-                    _cctl.status = 1; //TSコメント取得中
-                }
-                _chat_flg = true;
-                var ttt = SendThreadTS(_cmi.ThreadId, _cmi.UserId, -_MESSAGE_MAX, _cctl._when.ToString(), _cctl._waybackkey);
-                _form.AddLog(ttt, 9);
-
-            }
-            catch (Exception Ex)
-            {
-                DebugWrite.Writeln(nameof(StartGetTSComment), Ex);
-            }
-        }
-
-        //生放送コメント取得
-        protected string SendThread(string threadId, string user_id, int from)
-        {
-            var s = @"[{""ping"":{""content"":""rs:%%seqno%%""}},{""ping"":{""content"":""ps:%%seqno2%%""}},"
-                  + @"{""thread"":{""thread"":""%%threadId%%"",""version"":""20061206"","
-                  + @"""user_id"":""%%user_id%%"",""res_from"":%%from%%,""with_global"":1,""scores"":1,""nicoru"":0}},"
-                  + @"{""ping"":{""content"":""pf:%%seqno2%%""}},{""ping"":{""content"":""rf:%%seqno%%""}}]";
-            var seqno2 = _seq_no * 5;
-            s = s.Replace("%%seqno%%", _seq_no.ToString());
-            s = s.Replace("%%seqno2%%", seqno2.ToString());
-            s = s.Replace("%%threadId%%", threadId);
-            s = s.Replace("%%user_id%%", user_id);
-            s = s.Replace("%%from%%", from.ToString());
-            _ws.Send(s);
-            return s;
-        }
-
-        //TSコメント取得
-        //  TSはwhenで時間、res_fromで件数か番号を選んでループして取得
-        protected string SendThreadTS(string threadId, string user_id, int from, string when, string waybackkey)
-        {
-            var s = @"[{""ping"":{""content"":""rs:%%seqno%%""}},{""ping"":{""content"":""ps:%%seqno2%%""}},"
-                  + @"{""thread"":{""thread"":""%%threadId%%"",""version"":""20061206"","
-                  + @"""when"":%%when%%,""user_id"":""%%user_id%%"",""res_from"":%%from%%,""with_global"":1,"
-                  + @"""scores"":1,""nicoru"":0,""waybackkey"":""%%waybackkey%%""}},"
-                  + @"{""ping"":{""content"":""pf:%%seqno2%%""}},{""ping"":{""content"":""rf:%%seqno%%""}}]";
-            var seqno2 = _seq_no * 5;
-            s = s.Replace("%%seqno%%", _seq_no.ToString());
-            s = s.Replace("%%seqno2%%", seqno2.ToString());
-            s = s.Replace("%%threadId%%", threadId);
-            s = s.Replace("%%user_id%%", user_id);
-            s = s.Replace("%%from%%", from.ToString());
-            s = s.Replace("%%when%%", when);
-            s = s.Replace("%%waybackkey%%", waybackkey);
-            _ws.Send(s);
-            return s;
-        }
-
-        //TSコメント出力
-        protected abstract void AppendComment();
-        //TSコメント出力(DB)
-        protected abstract void AppendCommentDB();
 
         public void BeginXmlDoc()
         {
@@ -171,7 +103,7 @@ namespace NicoNamaRokuga.Net
             }
         }
 
-        protected bool Json2Db(JObject jmes)
+        private bool Json2Db(JObject jmes)
         {
             var r_hash = new Dictionary<string, string>();
             var mail = string.Empty;
@@ -256,7 +188,7 @@ namespace NicoNamaRokuga.Net
             return true;
         }
 
-        protected string Json2Xml(JObject jmes)
+        private string Json2Xml(JObject jmes)
         {
             var result = string.Empty;
             var content = string.Empty;
@@ -371,25 +303,30 @@ namespace NicoNamaRokuga.Net
         }
 
 
-        //Timer Start/Stop
-        protected void StartHBTimer()
+        protected virtual void Dispose(bool disposing)
         {
-            var time = TimeSpan.FromSeconds(40.0);
-
-            _hbTimer = new System.Threading.Timer(_ =>
+            if (!disposedValue)
             {
-                _ws?.Send(string.Empty);
-                _form.AddLog("Comment HeartBeat", 9);
-            }
-            , null, time, time);
-        }
+                if (disposing)
+                {
+                    // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
+                }
 
-        protected void StopHBTimer()
+                // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。
+                // TODO: 大きなフィールドを null に設定します。
+
+                disposedValue = true;
+            }
+        }
+        // このコードは、破棄可能なパターンを正しく実装できるように追加されました。
+        public void Dispose()
         {
-            _hbTimer?.Change(Timeout.Infinite, Timeout.Infinite);
-            _hbTimer?.Dispose();
-            _hbTimer = null;
+            // このコードを変更しないでください。クリーンアップ コードを上の Dispose(bool disposing) に記述します。
+            Dispose(true);
+            // TODO: 上のファイナライザーがオーバーライドされる場合は、次の行のコメントを解除してください。
+            //GC.SuppressFinalize(this);
         }
 
     }
 }
+

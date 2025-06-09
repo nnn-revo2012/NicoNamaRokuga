@@ -15,22 +15,16 @@ namespace NicoNamaRokuga.Net
 {
     public class CommentInfo
     {
-        public string WsUrl { set; get; }
-        public string UserId { set; get; }
-        public string ThreadId { set; get; }
+        public string Url { set; get; }
         public string SaveFile { get; set; }
         public long OpenTime { get; set; }
         public long BeginTime { get; set; }
         public long EndTime { get; set; }
-        //public long   VposBaseTime { get; set; }
+        public long   VposBaseTime { get; set; }
         public long Offset { get; set; }
 
         public CommentInfo(string userid)
         {
-            if (userid == "null" || userid == "NaN")
-                this.UserId = "";
-            else
-                this.UserId = userid;
         }
     }
 

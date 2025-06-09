@@ -8,6 +8,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 
 using NicoNamaRokuga.Net;
+using NicoNamaRokuga.Message;
 using NicoNamaRokuga.Rec;
 
 namespace NicoNamaRokuga.Proc
@@ -16,7 +17,7 @@ namespace NicoNamaRokuga.Proc
     {
         public volatile int PsStatus = -1; //実行ファイルの状態
 
-        protected NicoNetComment _nNetComment = null;   //WebSocket(Comment)
+        protected NicoStartMessage _nsm = null;   //MessageServer
         protected BroadCastInfo _bci = null;
         protected NicoDb _ndb = null;
         protected RetryInfo _ri = null;

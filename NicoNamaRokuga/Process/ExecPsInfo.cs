@@ -20,10 +20,12 @@ namespace NicoNamaRokuga.Proc
         public string Protocol { get; set; }
         public string Quality { get; set; }
         public string SaveFile { get; set; }
+        public string SaveCommentFile { get; set; }
         public string Sqlite3File { get; set; }
         public string Ext { get { return (Protocol == "rtmp") ? ".flv" : ".ts"; } }
         public string Xml { get { return ".xml"; } }
         public string Ext2 { get; set; }
+        public long   Comment_Offset { get; set; }
 
         //保存ファイルにシーケンスNoをつける
         public static string GetSaveFileNum(ExecPsInfo epi, string ext = null)

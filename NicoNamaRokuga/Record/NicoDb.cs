@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Net;
+using NicoNamaRokuga.Message;
 using NicoNamaRokuga.Proc;
 
 namespace NicoNamaRokuga.Rec
@@ -134,7 +135,7 @@ namespace NicoNamaRokuga.Rec
             return true;
         }
 
-        public bool ReadDbMedia(ExecPsInfo epi, CommentInfo cmi, BroadCastInfo bci)
+        public bool ReadDbMedia(ExecPsInfo epi, BroadCastInfo bci)
         {
             FileStream fs = null;
             var result = false;
@@ -157,7 +158,7 @@ namespace NicoNamaRokuga.Rec
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
-                        cmi.SaveFile = epi.SaveFile + epi.Xml;
+                        epi.SaveCommentFile = epi.SaveFile + epi.Xml;
                         fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
 
                         while (reader.Read())
@@ -165,7 +166,7 @@ namespace NicoNamaRokuga.Rec
                             seqno = (long )reader["seqno"];
                             if (off_flg)
                             {
-                                cmi.Offset = bci.IsTimeShift() ? seqno * 500L : bci.Server_Time / 10L - cmi.OpenTime * 100L;
+                                epi.Comment_Offset = bci.IsTimeShift() ? seqno * 500L : bci.Server_Time / 10L - bci.Open_Time * 100L;
                                 off_flg = false;
                             }
                             bw = (int )(long )reader["bandwidth"];
@@ -202,7 +203,7 @@ namespace NicoNamaRokuga.Rec
             return result;
         }
 
-        public bool ReadDbMedia2(ExecPsInfo epi, CommentInfo cmi, BroadCastInfo bci)
+        public bool ReadDbMedia2(ExecPsInfo epi, BroadCastInfo bci)
         {
             //FileStream fs = null;
             var ecv = new List<ExecConvert>();
@@ -227,7 +228,7 @@ namespace NicoNamaRokuga.Rec
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi, epi.Ext2);
-                        cmi.SaveFile = epi.SaveFile + epi.Xml;
+                        epi.SaveCommentFile = epi.SaveFile + epi.Xml;
                         //fs = new FileStream(epi.SaveFile + epi.Ext, FileMode.Create);
                         ecv.Add(new ExecConvert(_form));
                         arg = ExecPsInfo.SetConvOption(epi, null);
@@ -238,7 +239,7 @@ namespace NicoNamaRokuga.Rec
                             seqno = (long)reader["seqno"];
                             if (off_flg)
                             {
-                                cmi.Offset = bci.IsTimeShift() ? seqno * 500L : bci.Server_Time / 10L - cmi.OpenTime * 100L;
+                                epi.Comment_Offset = bci.IsTimeShift() ? seqno * 500L : bci.Server_Time / 10L - bci.Open_Time * 100L;
                                 off_flg = false;
                             }
                             bw = (int)(long)reader["bandwidth"];
@@ -378,7 +379,7 @@ namespace NicoNamaRokuga.Rec
             return true;
         }
 
-        public bool ReadDbComment(CommentInfo cmi, BroadCastInfo bci, NicoNetComment nNetComment)
+        public bool ReadDbComment(ExecPsInfo epi, BroadCastInfo bci, NicoStartMessage nsm)
         {
             var enc = new System.Text.UTF8Encoding(false);
             StreamWriter sw = null;
@@ -407,20 +408,20 @@ namespace NicoNamaRokuga.Rec
                                         + "FROM comment ORDER BY date2";
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
-                        sw = new StreamWriter(cmi.SaveFile, true, enc);
-                        nNetComment.SetStreamWriter(sw);
-                        nNetComment.BeginXmlDoc();
+                        sw = new StreamWriter(epi.SaveCommentFile, true, enc);
+                        nsm.SetStreamWriter(sw);
+                        nsm.BeginXmlDoc();
                         while (reader.Read())
                         {
                             for (int i = 0; i < reader.FieldCount; i++)
                             {
                                 data[reader.GetName(i)] = reader.GetValue(i).ToString();
                             }
-                            data["vpos"] = nNetComment.CalcVpos(cmi.OpenTime, cmi.Offset, data["date"], data["vpos"], bci.Provider_Type);
-                            sw.Write(nNetComment.Table2Xml(data));
+                            data["vpos"] = nsm.CalcVpos(bci.Open_Time,epi.Comment_Offset, data["date"], data["vpos"], bci.Provider_Type);
+                            sw.Write(nsm.Table2Xml(data));
                         }
-                        nNetComment.EndXmlDoc();
-                        nNetComment.DisposeStreamWriter();
+                        nsm.EndXmlDoc();
+                        nsm.DisposeStreamWriter();
                         if (sw != null)
                             sw.Dispose();
                         result = true;

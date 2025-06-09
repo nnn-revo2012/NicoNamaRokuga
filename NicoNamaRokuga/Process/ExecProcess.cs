@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 
 using NicoNamaRokuga.Net;
+using NicoNamaRokuga.Message;
 using NicoNamaRokuga.Rec;
 
 namespace NicoNamaRokuga.Proc
@@ -22,12 +23,12 @@ namespace NicoNamaRokuga.Proc
         //Debug
         public bool IsDebug { get; set; }
 
-        public ExecProcess(Form1 fo, BroadCastInfo bci, NicoNetComment nNetComment, RetryInfo ri)
+        public ExecProcess(Form1 fo, BroadCastInfo bci, NicoStartMessage nsm, RetryInfo ri)
         {
             IsDebug = false;
 
             PsStatus = -1;
-            this._nNetComment = nNetComment;
+            this._nsm = nsm;
             this._bci = bci;
             this._ri = ri;
             this._form = fo;
@@ -87,18 +88,18 @@ namespace NicoNamaRokuga.Proc
                 {
                     if (!_bci.IsTimeShift())
                     {
-                        if (_nNetComment.WsStatus < 1)
+                        if (_nsm.MessageStatus < 1)
                         {
-                            while (_nNetComment.WsStatus != 0) ;
-                            _nNetComment.StartGetComment();
+                            while (_nsm.MessageStatus != 0) ;
+                            //_nsm.StartGetComment();
                         }
                     }
                     else if (_bci.IsTimeShift() && !_ri.IsRetry)
                     {
-                        if (_nNetComment.WsStatus < 1)
+                        if (_nsm.MessageStatus < 1)
                         {
-                            while (_nNetComment.WsStatus != 0) ;
-                            _nNetComment.StartGetTSComment();
+                            while (_nsm.MessageStatus != 0) ;
+                            //_nsm.StartGetTSComment();
                         }
                     }
                 }
@@ -168,13 +169,13 @@ namespace NicoNamaRokuga.Proc
                 //生放送の場合プロセスが終了したらコメントサーバーを切断する。
                 if (Form1.props.IsComment)
                 {
-                    if (!_bci.IsTimeShift() && _nNetComment.WsStatus == 0)
+                    if (!_bci.IsTimeShift() && _nsm.MessageStatus == 0)
                     {
-                        _nNetComment?.Close();
+                        _nsm?.Close();
                         _form.AddLog("コメントファイル出力終了", 1);
-                        _nNetComment.EndXmlDoc();
-                        _nNetComment?.Dispose();
-                        _nNetComment.WsStatus = 1;  //再接続なし
+                        _nsm.EndXmlDoc();
+                        _nsm?.Dispose();
+                        _nsm.MessageStatus = 1;  //再接続なし
                     }
                 }
             }

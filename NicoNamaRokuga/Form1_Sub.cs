@@ -5,12 +5,12 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Net;
+using NicoNamaRokuga.Message;
 using NicoNamaRokuga.Proc;
 using NicoNamaRokuga.Rec;
 
@@ -182,32 +182,31 @@ namespace NicoNamaRokuga
                 bci.Server_Time = Props.GetLongParse(kvs["serverTime"]);
 
                 //コメント情報
-                cmi = new CommentInfo("NaN");
-                cmi.OpenTime = Props.GetLongParse(kvs["openTime"]);
-                cmi.BeginTime = Props.GetLongParse(kvs["beginTime"]);
-                cmi.EndTime = Props.GetLongParse(kvs["endTime"]);
-                cmi.Offset = 0L;
-                cctl = null;
-                _nNetComment = new NicoNetComment(this, bci, cmi, _nLiveNet, _ndb, cctl);
+                bci.Open_Time = Props.GetLongParse(kvs["openTime"]);
+                bci.Begin_Time = Props.GetLongParse(kvs["beginTime"]);
+                bci.End_Time = Props.GetLongParse(kvs["endTime"]);
+                bci.VposBase_Time = Props.GetLongParse(kvs["vposBaseTime"]);
+                epi.Comment_Offset = 0L;
+                //_nsm = new NicStartComment(this, bci, _nLiveNet, _ndb);
 
                 //映像ファイル出力処理
                 if (_ndb.CountDbMedia() > 0)
                 {
-                    if (_ndb.ReadDbMedia2(epi, cmi, bci))
+                    if (_ndb.ReadDbMedia2(epi, bci))
                         AddLog("映像出力終了しました。", 1);
                     else
                         AddLog("映像出力失敗しました。", 1);
-                    AddLog("offset = " + cmi.Offset.ToString(), 1);
+                    AddLog("offset = " + epi.Comment_Offset.ToString(), 1);
                 }
                 else
                 {
                     AddLog("映像データーはありません。", 1);
                     epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
-                    cmi.SaveFile = epi.SaveFile + epi.Xml;
+                    epi.SaveCommentFile = epi.SaveFile + epi.Xml;
                 }
                 if (_ndb.CountDbComment() > 0)
                 {
-                    if (_ndb.ReadDbComment(cmi, bci, _nNetComment))
+                    if (_ndb.ReadDbComment(epi, bci, _nsm))
                         AddLog("コメント出力終了しました。", 1);
                     else
                         AddLog("コメント出力失敗しました。", 1);
@@ -220,15 +219,15 @@ namespace NicoNamaRokuga
                 //終了処理
                 if (_ndb != null)
                     _ndb.Dispose();
-                if (_nNetComment != null)
-                    _nNetComment.Dispose();
+                if (_nsm != null)
+                    _nsm.Dispose();
             }
             catch (Exception Ex)
             {
                 if (_ndb != null)
                     _ndb.Dispose();
-                if (_nNetComment != null)
-                    _nNetComment.Dispose();
+                if (_nsm != null)
+                    _nsm.Dispose();
                 AddLog("出力処理エラー。\r\n" + Ex.Message, 2);
             }
         }
