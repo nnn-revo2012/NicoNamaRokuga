@@ -323,9 +323,10 @@ namespace NicoNamaRokuga.Net
                 bci.Open_Time = (long)dprogram["openTime"];
                 bci.Begin_Time = (long)dprogram["beginTime"];
                 bci.End_Time = (long)dprogram["endTime"];
+                bci.VposBase_Time = (long)dprogram["vposBaseTime"];
                 bci.OnAirStatus = dprogram["status"].ToString();
                 bci.Server_Time = (long)dprops["site"]["serverTime"];
-
+                bci.StreamType = "dlive";
                 bci.Community_Id = providertype;
                 bci.Community_Title = "公式生放送";
                 if (dprops["socialGroup"].Count() > 0)

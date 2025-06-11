@@ -46,6 +46,7 @@ namespace NicoNamaRokuga.Net
         public long   VposBase_Time { set; get; }
         public long   Server_Time { set; get; }
         public string OnAirStatus { set; get; }
+        public string StreamType { set; get; }
         public string User_Id { set; get; }
         public string AccountType { set; get; }
         public int    StartTs_Time { set; get; }

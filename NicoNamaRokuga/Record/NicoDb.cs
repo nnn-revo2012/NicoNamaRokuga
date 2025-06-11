@@ -69,6 +69,7 @@ namespace NicoNamaRokuga.Rec
             CreateDbMedia();
             CreateDbComment();
             CreateDbKvs();
+            CreateDbSync();
         }
 
         public void CreateDbMedia()
@@ -557,6 +558,57 @@ namespace NicoNamaRokuga.Rec
             return kvs;
         }
 
+        public void CreateDbSync()
+        {
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "CREATE TABLE IF NOT EXISTS sync (\n"
+                                        + "seqno INTEGER PRIMARY KEY NOT NULL UNIQUE,\n"
+                                        + "date  INTEGER NOT NULL)";
+                    command.ExecuteNonQuery();
+                    command.CommandText = "CREATE UNIQUE INDEX IF NOT EXISTS sync0 ON sync(seqno)";
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(CreateDbSync), Ex);
+            }
+        }
+
+        public IList<string> ReadDbSync()
+        {
+            var sync = new List<string>();
+
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "SELECT seqno, date FROM sync ORDER by seqno";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        //fmt.Printf("data: %d,%d\n", seqno, date)
+                        //data = append(data, fmt.Sprintf("%d,%d", seqno, date))
+                        string data;
+                        while (reader.Read())
+                        {
+                            data = reader["seqno"].ToString() + "," +
+                                   reader["date"].ToString();
+                            sync.Add(data);
+                        }
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(ReadDbSync), Ex);
+                return sync;
+            }
+            return sync;
+        }
+
         public double GetDbMediaLastPos()
         {
             double dbl = 0.0D;
@@ -661,10 +713,26 @@ namespace NicoNamaRokuga.Rec
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
-                            rev = (int )reader.GetInt64(0);
+                            rev = (int)reader.GetInt64(0);
                     }
+                    if (rev > 0) result = 1;
+                    //2024/8/5以降（メッセージサーバーに変更後）
+                    command.CommandText = "SELECT COUNT(k) FROM kvs WHERE k = 'vposBaseTime'";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            rev = (int)reader.GetInt64(0);
+                    }
+                    if (rev > 0) result = 2;
+                    //2025/2以降（新動画サーバーに変更後）
+                    command.CommandText = "SELECT COUNT(k) FROM 'kvs' WHERE k = 'streamType'";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            rev = (int)reader.GetInt64(0);
+                    }
+                    if (rev > 0) result = 3;
                 }
-                if (rev > 0) result = 1;
                 return result;
             }
             catch (Exception Ex)

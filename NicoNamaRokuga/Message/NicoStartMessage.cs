@@ -33,19 +33,19 @@ namespace NicoNamaRokuga.Message
 
         private StreamWriter _sw = null;
 
-        private NicoLiveNet _nLiveNet = null;         //WebClient
+        private NicoLiveNet _nln = null;         //WebClient
         private BroadCastInfo _bci = null;
         private NicoDb _ndb = null;
 
         private Form1 _form = null;
         private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
 
-        public NicoStartMessage(Form1 fo, BroadCastInfo bci, NicoLiveNet nLiveNet, NicoDb ndb)
+        public NicoStartMessage(Form1 fo, BroadCastInfo bci, NicoLiveNet nln, NicoDb ndb)
         {
             IsDebug = false;
 
             MessageStatus = -1;
-            this._nLiveNet = nLiveNet;
+            this._nln = nln;
             this._bci = bci;
             this._ndb = ndb;
             this._form = fo;
@@ -101,6 +101,25 @@ namespace NicoNamaRokuga.Message
                 long.TryParse(vpos, out ll);
                 return (ll - offset).ToString();
             }
+        }
+
+        //2024/8/5以降（メッセージサーバーに変更後）
+        public string CalcVpos(long start, long offset, string date, string vpos, long vposbasetime, int premium)
+        {
+            long ll = 0L;
+            if (premium == 3)
+            {
+                // ret = (date - opentime) * 100 - offset
+                long.TryParse(date, out ll);
+                return ((ll - start) * 100L - offset).ToString();
+            }
+            else
+            {
+                // ret = vpos + ((vposbasetime - opentime) * 100) - offset
+                long.TryParse(vpos, out ll);
+                return (ll + ((vposbasetime - start) * 100L) - offset).ToString();
+            }
+
         }
 
         private bool Json2Db(JObject jmes)
