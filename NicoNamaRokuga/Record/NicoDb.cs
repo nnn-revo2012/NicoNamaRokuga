@@ -380,7 +380,7 @@ namespace NicoNamaRokuga.Rec
             return true;
         }
 
-        public bool ReadDbComment(ExecPsInfo epi, BroadCastInfo bci, NicoStartMessage nsm)
+        public bool ReadDbComment(ExecPsInfo epi, BroadCastInfo bci, NicoMessage nsm)
         {
             var enc = new System.Text.UTF8Encoding(false);
             StreamWriter sw = null;

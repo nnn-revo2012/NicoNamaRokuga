@@ -145,9 +145,9 @@ namespace NicoNamaRokuga.Net
         //private CommentInfo _cmi = null;
         private ExecPsInfo _epi = null;
 
-        private NicoStartMessage _nsm = null;   //WebSocket(Comment)
-        private ExecProcess _eProcess = null;         //Process
-        private RecHtml _rHtml = null;                //RecHtml
+        private NicoMessage _nms = null;        //MessageServer
+        private ExecProcess _eProcess = null;   //Process
+        private RecHtml _rHtml = null;          //RecHtml
         private RetryInfo _ri = null;
         private CookieContainer _cookieContainer = null;
 
@@ -157,7 +157,7 @@ namespace NicoNamaRokuga.Net
 
         //放送情報
 
-        public NicoNetStream(Form1 fo, BroadCastInfo bci, ExecPsInfo epi, NicoStartMessage nsm, ExecProcess eProcess, CookieContainer cookieContainer, RecHtml rHtml, RetryInfo ri)
+        public NicoNetStream(Form1 fo, BroadCastInfo bci, ExecPsInfo epi, NicoMessage nms, ExecProcess eProcess, CookieContainer cookieContainer, RecHtml rHtml, RetryInfo ri)
         {
             IsDebug = false;
 
@@ -166,7 +166,7 @@ namespace NicoNamaRokuga.Net
             _wsStatus = -1;
 
             WsStatus = -1;
-            this._nsm = nsm;
+            this._nms = nms;
             this._eProcess = eProcess;
             this._rHtml = rHtml;
             this._ri = ri;

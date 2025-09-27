@@ -17,7 +17,7 @@ namespace NicoNamaRokuga.Proc
     {
         public volatile int PsStatus = -1; //実行ファイルの状態
 
-        protected NicoStartMessage _nsm = null;   //MessageServer
+        protected NicoMessage _nms = null;   //MessageServer
         protected BroadCastInfo _bci = null;
         protected NicoDb _ndb = null;
         protected RetryInfo _ri = null;

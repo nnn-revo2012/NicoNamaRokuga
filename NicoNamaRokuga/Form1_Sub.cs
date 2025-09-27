@@ -187,7 +187,7 @@ namespace NicoNamaRokuga
                 bci.End_Time = Props.GetLongParse(kvs["endTime"]);
                 bci.VposBase_Time = Props.GetLongParse(kvs["vposBaseTime"]);
                 epi.Comment_Offset = 0L;
-                //_nsm = new NicStartComment(this, bci, _nLiveNet, _ndb);
+                //_nms = new NicStartComment(this, bci, _nln, _ndb);
 
                 //映像ファイル出力処理
                 if (_ndb.CountDbMedia() > 0)
@@ -206,7 +206,7 @@ namespace NicoNamaRokuga
                 }
                 if (_ndb.CountDbComment() > 0)
                 {
-                    if (_ndb.ReadDbComment(epi, bci, _nsm))
+                    if (_ndb.ReadDbComment(epi, bci, _nms))
                         AddLog("コメント出力終了しました。", 1);
                     else
                         AddLog("コメント出力失敗しました。", 1);
@@ -219,15 +219,15 @@ namespace NicoNamaRokuga
                 //終了処理
                 if (_ndb != null)
                     _ndb.Dispose();
-                if (_nsm != null)
-                    _nsm.Dispose();
+                if (_nms != null)
+                    _nms.Dispose();
             }
             catch (Exception Ex)
             {
                 if (_ndb != null)
                     _ndb.Dispose();
-                if (_nsm != null)
-                    _nsm.Dispose();
+                if (_nms != null)
+                    _nms.Dispose();
                 AddLog("出力処理エラー。\r\n" + Ex.Message, 2);
             }
         }

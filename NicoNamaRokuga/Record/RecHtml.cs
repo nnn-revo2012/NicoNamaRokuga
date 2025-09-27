@@ -121,12 +121,12 @@ namespace NicoNamaRokuga.Rec
         //Debug
         public bool IsDebug { get; set; }
 
-        public RecHtml(Form1 fo, BroadCastInfo bci, NicoStartMessage nsm, CookieContainer cc, NicoDb ndb, RetryInfo ri)
+        public RecHtml(Form1 fo, BroadCastInfo bci, NicoMessage nms, CookieContainer cc, NicoDb ndb, RetryInfo ri)
         {
             IsDebug = false;
 
             PsStatus = -1;
-            this._nsm = nsm;
+            this._nms = nms;
             this._bci = bci;
             this._ndb = ndb;
             this._ri = ri;
@@ -168,18 +168,18 @@ namespace NicoNamaRokuga.Rec
                 {
                     if (!_bci.IsTimeShift())
                     {
-                        if (_nsm.MessageStatus < 1)
+                        if (_nms.MessageStatus < 1)
                         {
-                            while (_nsm.MessageStatus != 0) ;
-                            //_nsm.StartGetComment();
+                            while (_nms.MessageStatus != 0) ;
+                            //_nms.StartGetComment();
                         }
                     }
                     else if (_bci.IsTimeShift() && !_ri.IsRetry)
                     {
-                        if (_nsm.MessageStatus < 1)
+                        if (_nms.MessageStatus < 1)
                         {
-                            while (_nsm.MessageStatus != 0) ;
-                            //_nsm.StartGetTSComment();
+                            while (_nms.MessageStatus != 0) ;
+                            //_nms.StartGetTSComment();
                         }
                     }
                 }
@@ -346,12 +346,12 @@ namespace NicoNamaRokuga.Rec
             //生放送の場合プロセスが終了したらコメントサーバーを切断する。
             if (Form1.props.IsComment)
             {
-                if (!_bci.IsTimeShift() && _nsm.MessageStatus == 0)
+                if (!_bci.IsTimeShift() && _nms.MessageStatus == 0)
                 {
-                    _nsm?.Close();
+                    _nms?.Close();
                     _form.AddLog("コメントファイル出力終了", 1);
-                    _nsm?.Dispose();
-                    _nsm.MessageStatus = 1;  //再接続なし
+                    _nms?.Dispose();
+                    _nms.MessageStatus = 1;  //再接続なし
                 }
             }
         }

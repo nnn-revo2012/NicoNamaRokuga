@@ -22,7 +22,7 @@ using NicoNamaRokuga.Net;
 
 namespace NicoNamaRokuga.Message
 {
-    public class NicoStartMessage : IDisposable
+    public class NicoMessage : IDisposable
     {
         private bool disposedValue = false; // 重複する呼び出しを検知するには
 
@@ -40,7 +40,7 @@ namespace NicoNamaRokuga.Message
         private Form1 _form = null;
         private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
 
-        public NicoStartMessage(Form1 fo, BroadCastInfo bci, NicoLiveNet nln, NicoDb ndb)
+        public NicoMessage(Form1 fo, BroadCastInfo bci, NicoLiveNet nln, NicoDb ndb)
         {
             IsDebug = false;
 
@@ -53,7 +53,12 @@ namespace NicoNamaRokuga.Message
             MessageStatus = 0;
         }
 
-        ~NicoStartMessage()
+        public void Connect()
+        {
+
+        }
+
+        ~NicoMessage()
         {
             this.Dispose();
         }

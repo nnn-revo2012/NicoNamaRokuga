@@ -28,7 +28,7 @@ namespace NicoNamaRokuga
 
         //dispose するもの
         private NicoNetStream _nns = null;     //WebSocket(Stream)
-        private NicoStartMessage _nsm = null;  //MessageServer
+        private NicoMessage _nms = null;       //MessageServer
         private ExecProcess _eProcess = null;  //Process
         private RecHtml _rHtml = null;         //RecHtml
         private NicoDb _ndb = null;            //NicoDb
@@ -94,9 +94,9 @@ namespace NicoNamaRokuga
                     {
                         _nns.Close();
                     }
-                    if (_nsm != null)   //MessageServer
+                    if (_nms != null)   //MessageServer
                     {
-                        _nsm.Close();
+                        _nms.Close();
                     }
                     if (_ndb != null)
                     {
@@ -313,7 +313,7 @@ namespace NicoNamaRokuga
                 //コメント情報
                 if (props.IsComment)
                 {
-                    _nsm = new NicoStartMessage(this, bci, _nln, _ndb);
+                    _nms = new NicoMessage(this, bci, _nln, _ndb);
                 }
 
                 var ri = new RetryInfo();
@@ -321,10 +321,10 @@ namespace NicoNamaRokuga
                 rti.Count = props.Retry;
 
                 if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
-                    _rHtml = new RecHtml(this, bci, _nsm, cookiecontainer, _ndb, rti);
+                    _rHtml = new RecHtml(this, bci, _nms, cookiecontainer, _ndb, rti);
                 else
-                    _eProcess = new ExecProcess(this, bci, _nsm, rti);
-                _nns = new NicoNetStream(this, bci, epi, _nsm, _eProcess, cookiecontainer, _rHtml, rti);
+                    _eProcess = new ExecProcess(this, bci, _nms, rti);
+                _nns = new NicoNetStream(this, bci, epi, _nms, _eProcess, cookiecontainer, _rHtml, rti);
 
                 AddLog("webSocketUrl: " + bci.WsUrl, 9);
                 AddLog("frontendId: " + bci.FrontEndId, 9);
@@ -358,7 +358,7 @@ namespace NicoNamaRokuga
             string err;
             int neterr;
 
-            if (props.IsComment) MessageStatus = _nsm.MessageStatus;
+            if (props.IsComment) MessageStatus = _nms.MessageStatus;
             if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
                 ExecStatus = _rHtml.PsStatus;
             else
@@ -376,9 +376,9 @@ namespace NicoNamaRokuga
                     {
                         _nns.Close();
                     }
-                    if (_nsm != null)
+                    if (_nms != null)
                     {
-                        _nsm.Close();
+                        _nms.Close();
                     }
                     if (_ndb != null)
                     {
@@ -412,12 +412,12 @@ namespace NicoNamaRokuga
                         if (ExecStatus != 1)
                         {
                             AddLog("再接続します。", 1);
-                            if (props.IsComment) _nsm = new NicoStartMessage(this, bci, _nln, _ndb);
+                            if (props.IsComment) _nms = new NicoMessage(this, bci, _nln, _ndb);
                             if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
-                                _rHtml = new RecHtml(this, bci, _nsm, cookiecontainer, _ndb, rti);
+                                _rHtml = new RecHtml(this, bci, _nms, cookiecontainer, _ndb, rti);
                             else
-                                _eProcess = new ExecProcess(this, bci, _nsm, rti);
-                            _nns = new NicoNetStream(this, bci, epi, _nsm, _eProcess, null, _rHtml, rti);
+                                _eProcess = new ExecProcess(this, bci, _nms, rti);
+                            _nns = new NicoNetStream(this, bci, epi, _nms, _eProcess, null, _rHtml, rti);
                             _nns.Connect();
                             rti.Count--;
                         }
@@ -440,9 +440,9 @@ namespace NicoNamaRokuga
                     {
                         _nns.Close();
                     }
-                    if (_nsm != null)
+                    if (_nms != null)
                     {
-                        _nsm.Close();
+                        _nms.Close();
                     }
                     if (_ndb != null)
                     {
@@ -474,8 +474,8 @@ namespace NicoNamaRokuga
             }
             _nns?.Close();
             _nns?.Dispose();
-            _nsm?.Close();
-            _nsm?.Dispose();
+            _nms?.Close();
+            _nms?.Dispose();
             _ndb?.Dispose();
         }
 
