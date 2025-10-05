@@ -19,6 +19,7 @@ using Org.BouncyCastle.Crypto.Digests;
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Rec;
 using NicoNamaRokuga.Net;
+using Dwango.Nicolive.Chat.Service.Edge;
 
 namespace NicoNamaRokuga.Message
 {
@@ -36,6 +37,7 @@ namespace NicoNamaRokuga.Message
         private NicoLiveNet _nln = null;         //WebClient
         private BroadCastInfo _bci = null;
         private NicoDb _ndb = null;
+        private MessageServer _msc = null;
 
         private Form1 _form = null;
         private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
@@ -44,18 +46,75 @@ namespace NicoNamaRokuga.Message
         {
             IsDebug = false;
 
-            MessageStatus = -1;
             this._nln = nln;
             this._bci = bci;
             this._ndb = ndb;
             this._form = fo;
 
             MessageStatus = 0;
+            this._msc = null;
         }
 
-        public void Connect()
+        public async Task Connect(string uri)
         {
+            try
+            {
+                _form.AddLog("メッセージサーバーに接続開始します:", 1);
+                if (_msc == null)
+                    _msc = new MessageServer(uri, null, MessageDataAsync);
+                MessageStatus = 0;
+                var ii = 3;
+                while (MessageStatus == 0)
+                {
+                    _form.AddLog("メッセージサーバーに接続します:" + _msc.GetNextStreamAt(), 1);
+                    await _msc.ConnectAsync();
+                    if (--ii < 0)
+                        MessageStatus = 1;
+                }
+                _form.AddLog("メッセージサーバーから切断しました", 1);
 
+            }
+            catch (Exception Ex)
+            {
+                _form.AddLog("メッセージサーバー接続エラー: \r\n" + Ex.Message, 2);
+            }
+        }
+
+        public async Task MessageDataAsync(ChunkedEntry entry)
+        {
+            try
+            {
+                //解析処理
+                //_form.AddLog("Enrty: " + entry.ToString(), 9);
+                //_form.AddLog("EnrtyCase: " + entry.EntryCase.ToString(), 9);
+                if (entry.Previous != null)
+                {
+                    //_form.AddLog("Previous: " + entry.Previous.Uri.ToString(), 9);
+                }
+                else if (entry.Backward != null)
+                {
+                    _form.AddLog("Backward: " + entry.Backward.Segment.Uri.ToString(), 9);
+                }
+                else if (entry.Segment != null)
+                {
+                    _form.AddLog("Segment: " + entry.Segment.Uri.ToString(), 9);
+                }
+                else if (entry.Next != null)
+                {
+                    _form.AddLog("NextAt: " + entry.Next.At.ToString(), 9);
+                    _msc.SetNextStreamAt(entry.Next.At.ToString());
+                }
+                else
+                {
+                    _form.AddLog("Unknown entry: " + entry.ToString(), 9);
+                }
+                await Task.Delay(100);
+
+            }
+            catch (Exception Ex)
+            {
+                    _form.AddLog("メッセージサーバー接続エラー: \r\n" + Ex.Message, 2);
+            }
         }
 
         ~NicoMessage()

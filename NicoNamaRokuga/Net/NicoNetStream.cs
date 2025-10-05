@@ -300,7 +300,7 @@ namespace NicoNamaRokuga.Net
                                 _bci.MessageUrl = ttt;
                                 _form.AddLog("MessageServer: " + ttt, 9);
                                 //_nNetComment.Connect(_cmi.WsUrl);
-                                //_nsm.NicoStartMessage(_form, _bci, _epi, _ndb);
+                                Task.Run(() => _nms.Connect(ttt));
                             }
                         }
                         break;

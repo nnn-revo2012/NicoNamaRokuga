@@ -21,15 +21,15 @@ namespace NicoNamaRokuga.Message
         private bool unexpectedDisconnect;
         private readonly BinaryStream stream;
         private readonly CancellationTokenSource cancelSource;
-        private readonly ChannelWriter<ChunkedEntry> entryWriter;
+        private Func<ChunkedEntry, Task> processData;
         private readonly object mu = new Object();
 
         private static HttpClient ClientMessage = new HttpClient();
 
-        public MessageServer(string uri, string proxy, ChannelWriter<ChunkedEntry> entryWriter)
+        public MessageServer(string uri, string proxy, Func<ChunkedEntry, Task> processData)
         {
             this.uri = uri;
-            this.entryWriter = entryWriter;
+            this.processData = processData;
             headers = new Dictionary<string, string>
             {
                 { "header", "u=1, i" }
@@ -50,7 +50,7 @@ namespace NicoNamaRokuga.Message
 
             ClientMessage = new HttpClient(handler)
             {
-                Timeout = TimeSpan.FromSeconds(45)
+                Timeout = TimeSpan.FromSeconds(40)
             };
         }
 
@@ -109,10 +109,15 @@ namespace NicoNamaRokuga.Message
 
         public void SetNextStreamAt(string nextat)
         {
-            if (!string.IsNullOrEmpty(nextat))
-                nextStreamAt = nextat;
+            lock (mu)
+            {
+                if (!string.IsNullOrEmpty(nextat))
+                {
+                    beforeNextStreamAt = nextStreamAt;
+                    nextStreamAt = nextat;
+                }
+            }
         }
-
         private void StopReceiving() => cancelSource.Cancel();
 
         private async Task MessageData(byte[] data)
@@ -127,7 +132,7 @@ namespace NicoNamaRokuga.Message
                     var entry = ChunkedEntry.Parser.ParseFrom(item);
                     if (!string.IsNullOrEmpty(entry.ToString()) && !isDisconnect)
                     {
-                        await entryWriter.WriteAsync(entry);
+                        await processData(entry);
                     }
                 }
                 catch (Exception ex)
