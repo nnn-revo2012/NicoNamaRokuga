@@ -97,6 +97,7 @@ namespace NicoNamaRokuga
                     if (_nms != null)   //MessageServer
                     {
                         Task.Run(() => _nms.Disconnect());
+                        _nms.Dispose();
                     }
                     if (_ndb != null)
                     {
@@ -379,6 +380,7 @@ namespace NicoNamaRokuga
                     if (_nms != null)
                     {
                         await _nms.Disconnect();
+                        _nms.Dispose();
                     }
                     if (_ndb != null)
                     {
@@ -443,6 +445,7 @@ namespace NicoNamaRokuga
                     if (_nms != null)
                     {
                         await _nms.Disconnect();
+                        _nms.Dispose();
                     }
                     if (_ndb != null)
                     {

@@ -45,12 +45,12 @@ namespace NicoNamaRokuga.Message
             {
                 Proxy = string.IsNullOrEmpty(proxy) ? null : new WebProxy(proxy),
                 UseProxy = !string.IsNullOrEmpty(proxy),
-                MaxConnectionsPerServer = 4
+                MaxConnectionsPerServer = 2
             };
 
             ClientMessage = new HttpClient(handler)
             {
-                Timeout = TimeSpan.FromSeconds(40)
+                Timeout = TimeSpan.FromSeconds(30)
             };
         }
 
@@ -89,7 +89,6 @@ namespace NicoNamaRokuga.Message
             }
             catch (OperationCanceledException)
             {
-                //Console.WriteLine("Read operation was canceled due to a timeout or external cancellation.");
                 ret = "Read operation was canceled due to a timeout or external cancellation.";
                 return ret;
             }
@@ -105,7 +104,7 @@ namespace NicoNamaRokuga.Message
         {
             StopReceiving();
             isDisconnect = true;
-            Console.WriteLine("disconnect message server.");
+            //Console.WriteLine("disconnect message server.");
             return true;
         }
 
@@ -120,19 +119,19 @@ namespace NicoNamaRokuga.Message
 
         public void SetNextStreamAt(string nextat)
         {
-            //lock (mu)
-            //{
+            lock (mu)
+            {
                 if (!string.IsNullOrEmpty(nextat))
                     nextStreamAt = nextat;
-            //}
+            }
         }
         public void SetBeforeNextStreamAt(string beforenextat)
         {
-            //lock (mu)
-            //{
+            lock (mu)
+            {
                 if (!string.IsNullOrEmpty(beforenextat))
                     beforeNextStreamAt = beforenextat;
-            //}
+            }
         }
         private void StopReceiving() => cancelSource.Cancel();
 

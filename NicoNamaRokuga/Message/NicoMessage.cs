@@ -71,7 +71,10 @@ namespace NicoNamaRokuga.Message
                 while (MessageStatus == 0)
                 {
                     _form.AddLog("メッセージサーバーに接続します:" + _msc.GetNextStreamAt(), 1);
-                    NextStreamAt = _msc.GetNextStreamAt();
+                    if (_msc != null)
+                        NextStreamAt = _msc.GetNextStreamAt();
+                    else
+                        break;
                     if ((NextStreamAt.ToLower() == "now") && IsMessageStart == true)
                     {
                         _form.AddLog("MessageServer Connect Error: " + _msc.GetNextStreamAt(), 1);
@@ -87,18 +90,18 @@ namespace NicoNamaRokuga.Message
                             _form.AddLog("ConnectAsync() Error: " + status, 1);
                             break;
                         }
-                        while (NextStreamAt == _msc.GetNextStreamAt())
-                        {
-                            _form.AddLog("**NextStreamAt: " + NextStreamAt, 1);
-                            _form.AddLog("**_msc.GetNextStreamAt(): " + _msc.GetNextStreamAt(), 1);
-                        }
                     }
-                    Task.Delay(500);
+                    while ((NextStreamAt == _msc.GetNextStreamAt()) && MessageStatus == 0)
+                    {
+                        //_form.AddLog("**NextStreamAt: " + NextStreamAt, 1);
+                        //_form.AddLog("**_msc.GetNextStreamAt(): " + _msc.GetNextStreamAt(), 1);
+                        await Task.Delay(500);
+                    }
                 }
             }
             catch (Exception Ex)
             {
-                _form.AddLog("メッセージサーバー接続エラー: \r\n" + Ex.Message, 1);
+                _form.AddLog("メッセージサーバー接続エラー(Connect): \r\n" + Ex.Message, 1);
             }
         }
 
@@ -138,7 +141,7 @@ namespace NicoNamaRokuga.Message
             }
             catch (Exception Ex)
             {
-                    _form.AddLog("メッセージサーバー接続エラー: \r\n" + Ex.Message, 1);
+                    _form.AddLog("メッセージサーバー接続エラー(MessageDataAsync): \r\n" + Ex.Message, 1);
             }
         }
 
@@ -149,15 +152,15 @@ namespace NicoNamaRokuga.Message
             {
                 MessageStatus = 1;
                 _msc.Disconnect();
-                await Task.CompletedTask;
+                await Task.Delay(500);
+                _form.AddLog("メッセージサーバーから切断しました(Disconnect)", 1);
                 _msc = null;
-                _form.AddLog("メッセージサーバーから切断しました", 1);
             }
         }
 
         ~NicoMessage()
         {
-            Task.Run(() => this.Disconnect());
+            //Task.Run(() => this.Disconnect());
             this.Dispose();
         }
 
