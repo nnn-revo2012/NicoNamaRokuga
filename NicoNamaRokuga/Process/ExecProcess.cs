@@ -171,7 +171,7 @@ namespace NicoNamaRokuga.Proc
                 {
                     if (!_bci.IsTimeShift() && _nms.MessageStatus == 0)
                     {
-                        _nms?.Close();
+                        Task.Run(() => _nms.Disconnect());
                         _form.AddLog("コメントファイル出力終了", 1);
                         _nms.EndXmlDoc();
                         _nms?.Dispose();

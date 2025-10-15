@@ -96,7 +96,7 @@ namespace NicoNamaRokuga
                     }
                     if (_nms != null)   //MessageServer
                     {
-                        _nms.Close();
+                        Task.Run(() => _nms.Disconnect());
                     }
                     if (_ndb != null)
                     {
@@ -378,7 +378,7 @@ namespace NicoNamaRokuga
                     }
                     if (_nms != null)
                     {
-                        _nms.Close();
+                        await _nms.Disconnect();
                     }
                     if (_ndb != null)
                     {
@@ -442,7 +442,7 @@ namespace NicoNamaRokuga
                     }
                     if (_nms != null)
                     {
-                        _nms.Close();
+                        await _nms.Disconnect();
                     }
                     if (_ndb != null)
                     {
@@ -472,11 +472,23 @@ namespace NicoNamaRokuga
                 _eProcess.Dispose();
                 _eProcess = null;
             }
-            _nns?.Close();
-            _nns?.Dispose();
-            _nms?.Close();
-            _nms?.Dispose();
-            _ndb?.Dispose();
+            if (_nns != null)
+            {
+                _nns?.Close();
+                _nns?.Dispose();
+                _nns = null;
+            }
+            if (_nms != null)
+            {
+                Task.Run(() => _nms.Disconnect());
+                _nms?.Dispose();
+                _nms = null;
+            }
+            if (_ndb != null)
+            {
+                _ndb?.Dispose();
+                _ndb = null;
+            }
         }
 
         private void 録画フォルダーを開くOToolStripMenuItem_Click(object sender, EventArgs e)

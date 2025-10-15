@@ -55,31 +55,54 @@ namespace NicoNamaRokuga.Message
             this._msc = null;
         }
 
+        //メッセージサーバー接続
         public async Task Connect(string uri)
         {
+            bool IsMessageStart = false;
+            string NextStreamAt = string.Empty;
+
             try
             {
                 _form.AddLog("メッセージサーバーに接続開始します:", 1);
                 if (_msc == null)
                     _msc = new MessageServer(uri, null, MessageDataAsync);
+
                 MessageStatus = 0;
-                var ii = 3;
                 while (MessageStatus == 0)
                 {
                     _form.AddLog("メッセージサーバーに接続します:" + _msc.GetNextStreamAt(), 1);
-                    await _msc.ConnectAsync();
-                    if (--ii < 0)
-                        MessageStatus = 1;
+                    NextStreamAt = _msc.GetNextStreamAt();
+                    if ((NextStreamAt.ToLower() == "now") && IsMessageStart == true)
+                    {
+                        _form.AddLog("MessageServer Connect Error: " + _msc.GetNextStreamAt(), 1);
+                    }
+                    else
+                    {
+                        IsMessageStart = true;
+                        //_form.AddLog("*NextStreamAt: " + NextStreamAt, 1);
+                        //_form.AddLog("*_msc.GetNextStreamAt(): " + _msc.GetNextStreamAt(), 1);
+                        var status = await _msc.ConnectAsync();
+                        if (!string.IsNullOrEmpty(status))
+                        {
+                            _form.AddLog("ConnectAsync() Error: " + status, 1);
+                            break;
+                        }
+                        while (NextStreamAt == _msc.GetNextStreamAt())
+                        {
+                            _form.AddLog("**NextStreamAt: " + NextStreamAt, 1);
+                            _form.AddLog("**_msc.GetNextStreamAt(): " + _msc.GetNextStreamAt(), 1);
+                        }
+                    }
+                    Task.Delay(500);
                 }
-                _form.AddLog("メッセージサーバーから切断しました", 1);
-
             }
             catch (Exception Ex)
             {
-                _form.AddLog("メッセージサーバー接続エラー: \r\n" + Ex.Message, 2);
+                _form.AddLog("メッセージサーバー接続エラー: \r\n" + Ex.Message, 1);
             }
         }
 
+        //メッセージサーバーからのデーター処理
         public async Task MessageDataAsync(ChunkedEntry entry)
         {
             try
@@ -87,45 +110,55 @@ namespace NicoNamaRokuga.Message
                 //解析処理
                 //_form.AddLog("Enrty: " + entry.ToString(), 9);
                 //_form.AddLog("EnrtyCase: " + entry.EntryCase.ToString(), 9);
-                if (entry.Previous != null)
+                switch (entry.EntryCase)
                 {
-                    //_form.AddLog("Previous: " + entry.Previous.Uri.ToString(), 9);
-                }
-                else if (entry.Backward != null)
-                {
-                    _form.AddLog("Backward: " + entry.Backward.Segment.Uri.ToString(), 9);
-                }
-                else if (entry.Segment != null)
-                {
-                    _form.AddLog("Segment: " + entry.Segment.Uri.ToString(), 9);
-                }
-                else if (entry.Next != null)
-                {
-                    _form.AddLog("NextAt: " + entry.Next.At.ToString(), 9);
-                    _msc.SetNextStreamAt(entry.Next.At.ToString());
-                }
-                else
-                {
-                    _form.AddLog("Unknown entry: " + entry.ToString(), 9);
+                    case ChunkedEntry.EntryOneofCase.Previous:
+                        //_form.AddLog("Previous: " + entry.Previous.Uri.ToString(), 9);
+                        break;
+                    case ChunkedEntry.EntryOneofCase.Backward:
+                        _form.AddLog("Backward: " + entry.Backward.Segment.Uri.ToString(), 9);
+                        break;
+                    case ChunkedEntry.EntryOneofCase.Segment:
+                        _form.AddLog("Segment: " + entry.Segment.Uri.ToString(), 9);
+                        break;
+                    case ChunkedEntry.EntryOneofCase.Next:
+                        _form.AddLog("NextAt: " + entry.Next.At.ToString(), 9);
+                        if (_msc.GetNextStreamAt().ToLower() != "now")
+                            _msc.SetBeforeNextStreamAt(_msc.GetNextStreamAt());
+                        _msc.SetNextStreamAt(entry.Next.At.ToString());
+                        break;
+                    case ChunkedEntry.EntryOneofCase.None:
+                        break;
+                    default:
+                        _form.AddLog("Unknown entry: " + entry.ToString(), 9);
+                        break;
                 }
                 await Task.Delay(100);
 
             }
             catch (Exception Ex)
             {
-                    _form.AddLog("メッセージサーバー接続エラー: \r\n" + Ex.Message, 2);
+                    _form.AddLog("メッセージサーバー接続エラー: \r\n" + Ex.Message, 1);
+            }
+        }
+
+        //メッセージサーバー切断
+        public async Task Disconnect()
+        {
+            if (_msc != null)
+            {
+                MessageStatus = 1;
+                _msc.Disconnect();
+                await Task.CompletedTask;
+                _msc = null;
+                _form.AddLog("メッセージサーバーから切断しました", 1);
             }
         }
 
         ~NicoMessage()
         {
+            Task.Run(() => this.Disconnect());
             this.Dispose();
-        }
-
-        /// サーバーから切断する
-        public void Close()
-        {
-            MessageStatus = 1;
         }
 
         public void BeginXmlDoc()

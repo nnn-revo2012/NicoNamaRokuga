@@ -45,7 +45,7 @@ namespace NicoNamaRokuga.Message
             {
                 Proxy = string.IsNullOrEmpty(proxy) ? null : new WebProxy(proxy),
                 UseProxy = !string.IsNullOrEmpty(proxy),
-                MaxConnectionsPerServer = 2
+                MaxConnectionsPerServer = 4
             };
 
             ClientMessage = new HttpClient(handler)
@@ -54,8 +54,9 @@ namespace NicoNamaRokuga.Message
             };
         }
 
-        public async Task ConnectAsync()
+        public async Task<string> ConnectAsync()
         {
+            string ret = string.Empty;
             string messageUri = $"{uri}?at={nextStreamAt}";
             var request = new HttpRequestMessage(HttpMethod.Get, messageUri);
             foreach (var kv in headers)
@@ -65,37 +66,47 @@ namespace NicoNamaRokuga.Message
 
             try
             {
-                var resp = await ClientMessage.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancelSource.Token);
-                if (resp.StatusCode != HttpStatusCode.OK)
-                    throw new HttpRequestException($"unexpected status code: {(int)resp.StatusCode}");
-
-                var streamResp = await resp.Content.ReadAsStreamAsync();
-                var buffer = new byte[8192];
-                while (!cancelSource.Token.IsCancellationRequested)
+                using (var resp = await ClientMessage.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancelSource.Token))
                 {
-                    int n = await streamResp.ReadAsync(buffer, 0, buffer.Length, cancelSource.Token);
-                    if (n == 0) break; // EOF
-                    var chunk = new byte[n];
-                    Array.Copy(buffer, chunk, n);
-                    await MessageData(chunk);
+                    if (resp.StatusCode != HttpStatusCode.OK)
+                    {
+                        ret = "Unexpected status code: " + (int)resp.StatusCode;
+                        return ret;
+                    }
+                    var streamResp = await resp.Content.ReadAsStreamAsync();
+                    var buffer = new byte[8192];
+                    while (!cancelSource.Token.IsCancellationRequested)
+                    {
+                        int n = await streamResp.ReadAsync(buffer, 0, buffer.Length, cancelSource.Token);
+                        if (n == 0) break; // EOF
+                        var chunk = new byte[n];
+                        Array.Copy(buffer, chunk, n);
+                        await MessageData(chunk);
+                    }
                 }
+                ret = string.Empty;
+                return ret;
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine("Read operation was canceled due to a timeout or external cancellation.");
+                //Console.WriteLine("Read operation was canceled due to a timeout or external cancellation.");
+                ret = "Read operation was canceled due to a timeout or external cancellation.";
+                return ret;
             }
-            catch (Exception)
+            catch (Exception Ex)
             {
                 lock (mu) unexpectedDisconnect = true;
-                throw;
+                ret = Ex.Message;
+                return ret;
             }
         }
 
-        public void Disconnect()
+        public bool Disconnect()
         {
             StopReceiving();
             isDisconnect = true;
             Console.WriteLine("disconnect message server.");
+            return true;
         }
 
         public bool IsUnexpectedDisconnect()
@@ -109,14 +120,19 @@ namespace NicoNamaRokuga.Message
 
         public void SetNextStreamAt(string nextat)
         {
-            lock (mu)
-            {
+            //lock (mu)
+            //{
                 if (!string.IsNullOrEmpty(nextat))
-                {
-                    beforeNextStreamAt = nextStreamAt;
                     nextStreamAt = nextat;
-                }
-            }
+            //}
+        }
+        public void SetBeforeNextStreamAt(string beforenextat)
+        {
+            //lock (mu)
+            //{
+                if (!string.IsNullOrEmpty(beforenextat))
+                    beforeNextStreamAt = beforenextat;
+            //}
         }
         private void StopReceiving() => cancelSource.Cancel();
 

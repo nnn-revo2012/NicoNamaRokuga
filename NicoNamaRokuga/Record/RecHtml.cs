@@ -348,7 +348,7 @@ namespace NicoNamaRokuga.Rec
             {
                 if (!_bci.IsTimeShift() && _nms.MessageStatus == 0)
                 {
-                    _nms?.Close();
+                    Task.Run(() => _nms.Disconnect());
                     _form.AddLog("コメントファイル出力終了", 1);
                     _nms?.Dispose();
                     _nms.MessageStatus = 1;  //再接続なし
