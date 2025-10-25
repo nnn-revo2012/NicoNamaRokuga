@@ -65,7 +65,7 @@ namespace NicoNamaRokuga.Message
             {
                 _form.AddLog("メッセージサーバーに接続開始します:", 1);
                 if (_msc == null)
-                    _msc = new MessageServer(uri, null, MessageDataAsync);
+                    _msc = new MessageServer(uri, null, MessageDataAsync, this);
 
                 MessageStatus = 0;
                 while (MessageStatus == 0)
@@ -113,16 +113,20 @@ namespace NicoNamaRokuga.Message
                 //解析処理
                 //_form.AddLog("Enrty: " + entry.ToString(), 9);
                 //_form.AddLog("EnrtyCase: " + entry.EntryCase.ToString(), 9);
+                if (MessageStatus != 0)
+                    return;
                 switch (entry.EntryCase)
                 {
                     case ChunkedEntry.EntryOneofCase.Previous:
                         //_form.AddLog("Previous: " + entry.Previous.Uri.ToString(), 9);
+                        //await ConnectSegment(entry.Previous.Uri, "Previous");
                         break;
                     case ChunkedEntry.EntryOneofCase.Backward:
                         _form.AddLog("Backward: " + entry.Backward.Segment.Uri.ToString(), 9);
                         break;
                     case ChunkedEntry.EntryOneofCase.Segment:
                         _form.AddLog("Segment: " + entry.Segment.Uri.ToString(), 9);
+                        await ConnectSegment(entry.Segment.Uri, "Segment");
                         break;
                     case ChunkedEntry.EntryOneofCase.Next:
                         _form.AddLog("NextAt: " + entry.Next.At.ToString(), 9);
@@ -137,7 +141,6 @@ namespace NicoNamaRokuga.Message
                         break;
                 }
                 await Task.Delay(100);
-
             }
             catch (Exception Ex)
             {
@@ -152,15 +155,84 @@ namespace NicoNamaRokuga.Message
             {
                 MessageStatus = 1;
                 _msc.Disconnect();
-                await Task.Delay(500);
+                await Task.Delay(100);
                 _form.AddLog("メッセージサーバーから切断しました(Disconnect)", 1);
-                _msc = null;
             }
         }
 
+        //セグメントサーバー接続
+        public async Task ConnectSegment(string uri, string servername)
+        {
+            SegmentServer _ssc = null;
+
+            try
+            {
+                if (_ssc == null)
+                    _ssc = new SegmentServer(uri, null, servername, SegmentDataAsync, this);
+
+                _form.AddLog(servername + "サーバーに接続します", 1);
+                if (_ssc != null)
+                {
+                    var status = await _ssc.ConnectAsync();
+                    if (!string.IsNullOrEmpty(status))
+                    {
+                        _form.AddLog("ConnectSegmentAsync() Error: " + status, 1);
+                    }
+                    else
+                    {
+                        _form.AddLog("ConnectSegmentAsync() Wait 100ms", 9);
+                        await Task.Delay(100);
+                    }
+                }
+                _form.AddLog(servername + "サーバーから切断されました", 1);
+                _ssc = null;
+            }
+            catch (Exception Ex)
+            {
+                _form.AddLog("セグメントサーバー接続エラー(ConnectSegment): \r\n" + Ex.Message, 1);
+                _ssc = null;
+            }
+        }
+
+        //セグメントサーバーからのデーター処理
+        public async Task SegmentDataAsync(ChunkedMessage message)
+        {
+            try
+            {
+                //解析処理
+                //_form.AddLog("Message: " + message.ToString(), 9);
+                _form.AddLog("MessagePayloadCase: " + message.PayloadCase.ToString(), 9);
+                if (MessageStatus != 0)
+                    return;
+                switch (message.PayloadCase)
+                {
+                    case ChunkedMessage.PayloadOneofCase.Signal:
+                        //_form.AddLog("Signal:" + message.ToString(), 9);
+                        break;
+                    case ChunkedMessage.PayloadOneofCase.State:
+                        //_form.AddLog("State:" + message.ToString(), 9);
+                        break;
+                    case ChunkedMessage.PayloadOneofCase.Message:
+                        _form.AddLog("Mes:" + message.ToString(), 9);
+                        break;
+                    case ChunkedMessage.PayloadOneofCase.None:
+                        break;
+                    default:
+                        _form.AddLog("Unknown message: " + message.ToString(), 9);
+                        break;
+                }
+                await Task.Delay(100);
+
+            }
+            catch (Exception Ex)
+            {
+                    _form.AddLog("セグメントサーバー接続エラー(SegmentDataAsync): \r\n" + Ex.Message, 1);
+            }
+        }
+
+
         ~NicoMessage()
         {
-            //Task.Run(() => this.Disconnect());
             this.Dispose();
         }
 

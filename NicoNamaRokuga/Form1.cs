@@ -75,7 +75,7 @@ namespace NicoNamaRokuga
             if (IsBatchMode) button1.PerformClick();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace NicoNamaRokuga
                     }
                     if (_nms != null)   //MessageServer
                     {
-                        Task.Run(() => _nms.Disconnect());
+                        await _nms.Disconnect();
                         _nms.Dispose();
                     }
                     if (_ndb != null)
@@ -171,7 +171,7 @@ namespace NicoNamaRokuga
                 return;
 #endif
                 //録画開始
-                Task.Run(() => StartRec());
+                await StartRec();
 
             }
             catch (Exception Ex)
@@ -181,7 +181,7 @@ namespace NicoNamaRokuga
 
         }
 
-        public async void StartRec()
+        public async Task StartRec()
         {
             cookiecontainer = new CookieContainer();
 
@@ -463,7 +463,7 @@ namespace NicoNamaRokuga
             }
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_rHtml != null)
             {
@@ -483,7 +483,7 @@ namespace NicoNamaRokuga
             }
             if (_nms != null)
             {
-                Task.Run(() => _nms.Disconnect());
+                await _nms.Disconnect();
                 _nms?.Dispose();
                 _nms = null;
             }
