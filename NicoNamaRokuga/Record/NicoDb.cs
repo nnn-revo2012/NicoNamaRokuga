@@ -5,11 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 using System.Data.SQLite;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using NicoNamaRokuga.Prop;
@@ -460,11 +458,14 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        public bool WriteDbKvsProps(string data_props)
+        public bool WriteDbKvsProps(BroadCastInfo bci)
         {
             try
             {
-                var datap = JObject.Parse(data_props);
+                if (bci == null || bci.Data_Props == null)
+                    return false;
+
+                var datap = JObject.Parse(bci.Data_Props);
                 var ttt = string.Empty;
 
                 foreach (var item in Props.PropLists)
@@ -494,6 +495,9 @@ namespace NicoNamaRokuga.Rec
                 if (ttt != null)
                     WriteDbKvs("userId", System.Data.DbType.String, Props.GetChNo(ttt));
 
+                WriteDbKvs("streamType", System.Data.DbType.String, bci.StreamType);
+                WriteDbKvs("socId", System.Data.DbType.String, bci.Community_Id);
+                WriteDbKvs("socName", System.Data.DbType.String, bci.Community_Title);
             }
             catch (Exception Ex)
             {
@@ -609,6 +613,36 @@ namespace NicoNamaRokuga.Rec
             return sync;
         }
 
+        public bool WriteDbSync(string data)
+        {
+            try
+            {
+                long seqno = 0, date = 0;
+                var m = Regex.Match(data, @"""beginning_timestamp"":(\d+),""sequence"":(\d+)");
+                if (m.Success)
+                {
+                    date = long.Parse(m.Groups[1].Value);
+                    seqno = long.Parse(m.Groups[2].Value);
+                }
+                else
+                {
+                    return false;
+                }
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    command.CommandText = "INSERT OR IGNORE INTO sync(seqno, date) VALUES \n" +
+                                          "(" + seqno + ", " + date + ");";
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(WriteDbSync), Ex);
+                return false;
+            }
+
+            return true;
+        }
         public double GetDbMediaLastPos()
         {
             double dbl = 0.0D;

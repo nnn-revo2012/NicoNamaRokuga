@@ -273,7 +273,6 @@ namespace NicoNamaRokuga.Net
                                         _cookieContainer.Add(cookie);
                                     }
                                 }
-
                             }
                             //ffmpegを実行する
                             ttt = (string)data["uri"];

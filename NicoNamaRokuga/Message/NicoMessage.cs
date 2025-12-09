@@ -212,6 +212,7 @@ namespace NicoNamaRokuga.Message
                         break;
                     case ChunkedMessage.PayloadOneofCase.State:
                         //_form.AddLog("State:" + message.ToString(), 9);
+                        CommentHandler("chat", message);
                         break;
                     case ChunkedMessage.PayloadOneofCase.Message:
                         //_form.AddLog("Mes:" + message.ToString(), 9);
@@ -402,14 +403,29 @@ namespace NicoNamaRokuga.Message
             try
             {
                 if (message.Message != null)
+                {
                     s = message.Message.ToString();
+                    e = message.Message.DataCase.ToString();
+                }
                 else if (message.State != null)
+                {
                     s = message.State.ToString();
+                    if (message.State.Marquee != null)
+                        e = "Marquee";
+                    else if (message.State.Enquete != null)
+                        e = "Enquete";
+                    else if (message.State.MoveOrder != null)
+                        e = "MoveOrder";
+                    else if (message.State.TrialPanel != null)
+                        e = "TrialPanel";
+                    else
+                        return;
+                }
                 else
+                {
                     return;
+                }
                 //Console.WriteLine("s: " + s);
-
-                e = message.Message.DataCase.ToString();
                 //Console.WriteLine("DataCase: " + e);
 
                 string jsonStr = null;
@@ -443,7 +459,11 @@ namespace NicoNamaRokuga.Message
                         return;
                     //ここからstate
                     case "Marquee":
-                        jsonStr = message.State.Marquee.ToString();
+                        //_form.AddLog($"Marquee: {message.State.Marquee.ToString()}", 9);
+                        if (message.State.Marquee.Display == null)
+                            return;
+                        else
+                            jsonStr = message.State.Marquee.Display.ToString();
                         break;
                     case "Enquete":
                         jsonStr = message.State.Enquete.ToString();
@@ -457,7 +477,8 @@ namespace NicoNamaRokuga.Message
                     case "ProgramStatus":
                         //jsonStr = message.State.ProgramStatus.ToString();
                         return;
-                    case "move_order":
+                    case "MoveOrder":
+                        _form.AddLog($"MoveOrder: {message.ToString()}", 9);
                         jsonStr = message.State.MoveOrder.ToString();
                         break;
                     default:
@@ -488,7 +509,11 @@ namespace NicoNamaRokuga.Message
                 {
                     (date, date_usec, err) = GetUnixTimeAndMicros(metaDate);
                     if (!string.IsNullOrEmpty(err))
+                    {
                         _form.AddLog("CommentHandler: " + err, 9);
+                        _form.AddLog("metaDate: " + metaDate, 9);
+                    }
+
                 }
                 //Console.WriteLine("date=" + date + " date_usec=" + date_usec);
                 attrMap["date"] = date;
@@ -560,8 +585,8 @@ namespace NicoNamaRokuga.Message
                             content = "/info 10 " + jtkn.ToString();
                         else
                         {
+                            _form.AddLog($"Unknown SimpleNotification: {message.ToString()}", 1);
                             content = "/info 10 " + jsonStr;
-                            _form.AddLog($"{content}", 9);
                         }
                         break;
                     case "SimpleNotificationV2":
@@ -570,7 +595,12 @@ namespace NicoNamaRokuga.Message
                         var type = string.Empty;
                         if (jsonObj.TryGetValue("type", out jtkn))
                             type = jtkn.ToString();
-                        if (type == "EMOTION")
+                        if (type == "ICHIBA")
+                        {
+                            if (jsonObj.TryGetValue("message", out jtkn))
+                                content = "/info 10 " + jtkn.ToString();
+                        }
+                        else if (type == "EMOTION")
                         {
                             if (jsonObj.TryGetValue("message", out jtkn))
                                 content = "/emotion " + jtkn.ToString();
@@ -579,11 +609,6 @@ namespace NicoNamaRokuga.Message
                         {
                             if (jsonObj.TryGetValue("message", out jtkn))
                                 content = "/cruise \"" + jtkn.ToString() + "\"";
-                        }
-                        else if (type == "QUOTE")
-                        {
-                            if (jsonObj.TryGetValue("message", out jtkn))
-                                content = "/quote \"" + jtkn.ToString() + "\"";
                         }
                         else if (type == "PROGRAM_EXTENDED")
                         {
@@ -595,26 +620,30 @@ namespace NicoNamaRokuga.Message
                             if (jsonObj.TryGetValue("message", out jtkn))
                                 content = "/info 8 " + jtkn.ToString(); //8秒
                         }
-                        else if (type == "RANKING_UPDATED")
-                        {
-                            if (jsonObj.TryGetValue("message", out jtkn))
-                                content = "/info 8 " + jtkn.ToString(); //8秒
-                        }
                         else if (type == "VISITED")
                         {
                             if (jsonObj.TryGetValue("message", out jtkn))
                                 content = "/info 3 " + jtkn.ToString();
                         }
-                        else if (type == "ICHIBA")
+                        else if (type == "SUPPORTER_REGISTERED")
                         {
                             if (jsonObj.TryGetValue("message", out jtkn))
-                                content = "/info 10 " + jtkn.ToString();
+                                content = "/info 5 " + jtkn.ToString();
                         }
+                        else if (type == "USER_LEVEL_UP")
+                        {
+                            if (jsonObj.TryGetValue("message", out jtkn))
+                                content = "/info 5 " + jtkn.ToString();
+                        }
+                        //else if (type == "")
+                        //{
+                        //    if (jsonObj.TryGetValue("message", out jtkn))
+                        //        content = "/info 5 " + jtkn.ToString();
+                        //}
                         else
                         {
-                            _form.AddLog($"Unknown V2: {message.ToString()}", 1);
+                            _form.AddLog($"Unknown SimpleNotificationV2: {message.ToString()}", 1);
                             content = "/info 10 " + jsonStr;
-                            _form.AddLog($"{content}", 9);
                         }
                         break;
                     case "Gift":
@@ -667,25 +696,86 @@ namespace NicoNamaRokuga.Message
                             _form.AddLog($"[FIXME]: {content}", 9);
                         }
                         break;
-                    case "marquee":
-                        modifier = new List<string>();
-                        (modifier, _) = GetModifier(jsonObj);
-                        if (modifier.Count > 0)
-                            attrMap["mail"] = string.Join(" ", modifier);
-
+                    case "Marquee":
                         attrMap["premium"] = 3;
-                        if (jsonObj.TryGetValue("content", out jtkn))
-                            content += " " + jtkn.ToString();
-                        if (jsonObj.TryGetValue("link", out jtkn))
-                            content += "(\"" + jtkn.ToString() + "\")";
+                        if (jsonObj.TryGetValue("operatorComment", out jtkn))
+                        {
+                            jsonObj2 = (JObject)jtkn;
+                            modifier = new List<string>();
+                            (modifier, _) = GetModifier(jsonObj2);
+                            if (modifier.Count > 0)
+                                attrMap["mail"] = string.Join(" ", modifier);
+                            if (jsonObj2.TryGetValue("content", out jtkn))
+                                content = jtkn.ToString();
+                            if (jsonObj2.TryGetValue("link", out jtkn))
+                                content += "(\"" + jtkn.ToString() + "\")";
+                        }
+                        break;
+                    case "Enquete":
+                        _form.AddLog($"Enquete: {message.ToString()}", 9);
+                        attrMap["premium"] = 3;
+                        if (message.State.Enquete.Status.ToString() == "Close")
+                        {
+                            content = "/vote stop";
+                        }
+                        else
+                        {
+                            if (message.State.Enquete.Choices != null)
+                            {
+                                if (message.State.Enquete.Choices.FirstOrDefault().HasPerMille)
+                                {
+                                    content = "/vote showresult per ";
+                                    content += string.Join(" ", message.State.Enquete.Choices.Select(x => x.PerMille.ToString()).ToArray());
+                                }
+                                else
+                                {
+                                    //s.Enquete.Choices.Select(x =>
+                                    //"[" + x.Description +
+                                    //(s.Enquete.status.ToString() == "Result"
+                                    //? (" " + (x.PerMille / 10.0) + "%") : "") + "]").ToArray()));
+                                    content = "/vote start \"" + message.State.Enquete.Question.ToString() + "\" ";
+                                    content += string.Join(" ", message.State.Enquete.Choices.Select(x => "\"" + x.Description + "\"").ToArray());
+                                }
+                            }
+                        }
+                        break;
+                    case "TrialPanel":
+                        break;
+                    case "MoveOrder":
+                        attrMap["premium"] = 3;
+                        string _message = string.Empty, _content = string.Empty;
+                        if (jsonObj.TryGetValue("jump", out jtkn))
+                        {
+                            jsonObj2 = (JObject)jtkn;
+                            if (jsonObj2.TryGetValue("message", out jtkn))
+                                _message = jtkn.ToString();
+                            if (jsonObj2.TryGetValue("content", out jtkn))
+                                _content = jtkn.ToString();
+                            content = "/move_order " + _message +
+                              "(https://live.nicovideo.jp/watch/" + _content + ")";
+                        }
+                        else if (jsonObj.TryGetValue("redirect", out jtkn))
+                        {
+                            jsonObj2 = (JObject)jtkn;
+                            if (jsonObj2.TryGetValue("message", out jtkn))
+                                _message = jtkn.ToString();
+                            if (jsonObj2.TryGetValue("uri", out jtkn))
+                                _content = jtkn.ToString();
+                            content = "/move_order " + _message +
+                                    "(" + _content + ")";
+                        }
+                        else
+                        {
+                            content = "/move_order " + jsonStr;
+                            _form.AddLog($"[FIXME]: {content}", 9);
+                        }
                         break;
                     default:
-                        _form.AddLog($"[FIXME] DataCase: {message.ToString()}", 1);
+                        _form.AddLog($"DataCase: {message.ToString()}", 1);
                         break;
                 }
                 attrMap["content"] = content;
 
-                //TEST
                 if (string.IsNullOrEmpty(content))
                     return;
 

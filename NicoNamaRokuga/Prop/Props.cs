@@ -112,6 +112,8 @@ namespace NicoNamaRokuga.Prop
             // "user"
             {"accountType", "user.accountType"}, // "premium"
             {"isLoggedIn", "user.isLoggedIn"}, // bool
+            //stream
+            { "streamType", "stream.type"}, // "dmc" or "dlive"
         };
 
         public bool IsDebug { get; set; }

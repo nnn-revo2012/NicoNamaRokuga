@@ -249,8 +249,7 @@ namespace NicoNamaRokuga.Net
             try
             {
 
-                var providertype = "unama";
-                bci.Provider_Type = providertype;
+                string providertype;
 
                 _wc.Encoding = Encoding.UTF8;
                 _wc.Proxy = null;
@@ -273,10 +272,10 @@ namespace NicoNamaRokuga.Net
                     _wc?.Dispose();
                     return (bci, "Need login.", neterr);
                 }
-      
-                bci.User_Id = Regex.Match(hs, "\"user_id\":([^,]*),", RegexOptions.Compiled).Groups[1].Value;
-                bci.AccountType = Regex.Match(hs, "\"member_status\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
-                providertype = Regex.Match(hs, "\"content_type\":\"([^\"]*)\"", RegexOptions.Compiled).Groups[1].Value;
+
+                bci.User_Id = Regex.Match(hs, "&quot;user_id&quot;:([^,]*),", RegexOptions.Compiled).Groups[1].Value;
+                bci.AccountType = Regex.Match(hs, "&quot;member_status&quot;:&quot;([^\\&]*)&quot;", RegexOptions.Compiled).Groups[1].Value;
+                providertype = Regex.Match(hs, "&quot;content_type&quot;:&quot;([^\\&]*)&quot;", RegexOptions.Compiled).Groups[1].Value;
                 bci.Provider_Type = providertype;
                 var ttt = WebUtility.HtmlDecode(Regex.Match(hs, "<script +id=\"embedded-data\" +data-props=\"([^\"]*)\"></script>", RegexOptions.Compiled).Groups[1].Value);
                 bci.Data_Props = ttt;
@@ -300,7 +299,7 @@ namespace NicoNamaRokuga.Net
                     }
                     return (bci, err, neterr);
                 }
-                bci.AuTkn = Regex.Match(ttt, @"""audienceToken"":""([^""]+)""").Groups[1].Value; ;
+                //bci.AuTkn = Regex.Match(ttt, @"""audienceToken"":""([^""]+)""").Groups[1].Value; ;
                 bci.FrontEndId = Regex.Match(ttt, @"""frontendId"":(\d*)").Groups[1].Value; ;
                 //Clipboard.SetText(ttt);
                 var dprops = JObject.Parse(ttt);
@@ -309,15 +308,15 @@ namespace NicoNamaRokuga.Net
                 bci.LiveId = dprogram["nicoliveProgramId"].ToString();
                 bci.Title = dprogram["title"].ToString();
                 bci.Description = dprogram["description"].ToString();
-                bci.Provider_Id = providertype;
-                bci.Provider_Name = "公式生放送";
-                bci.Community_Thumbnail = dprogram["thumbnail"]["small"].ToString();
+                bci.Provider_Type = providertype;
                 JToken aaa;
                 if (dprogram.TryGetValue("supplier", out aaa))
                 {
                     bci.Provider_Name = dprogram["supplier"]["name"].ToString();
                     if (providertype == "user")
                         bci.Provider_Id = Props.GetChNo(dprogram["supplier"]["pageUrl"].ToString());
+                    else
+                        bci.Provider_Id = dprops["socialGroup"]["id"].ToString();
                 }
                 bci.FollowerOnly = (bool)dprogram["isFollowerOnly"];
                 bci.Open_Time = (long)dprogram["openTime"];
@@ -327,13 +326,17 @@ namespace NicoNamaRokuga.Net
                 bci.OnAirStatus = dprogram["status"].ToString();
                 bci.Server_Time = (long)dprops["site"]["serverTime"];
                 bci.StreamType = "dlive";
-                bci.Community_Id = providertype;
-                bci.Community_Title = "公式生放送";
-                if (dprops["socialGroup"].Count() > 0)
+                if (providertype == "user")
+                {
+                    bci.Community_Id = "co0";
+                    bci.Community_Title = "削除されたコミュニティ";
+                    //bci.Community_Thumbnail = dprops["socialGroup"]["thumbnailSmallImageUrl"].ToString();
+                }
+                else
                 {
                     bci.Community_Id = dprops["socialGroup"]["id"].ToString();
                     bci.Community_Title = dprops["socialGroup"]["name"].ToString();
-                    //bci.Community_Thumbnail = dprops["socialGroup"]["thumbnailSmallImageUrl"].ToString();
+                    bci.Community_Thumbnail = dprops["socialGroup"]["thumbnailSmallImageUrl"].ToString();
                 }
                 bci.Status = "ok";
                 bci.Error = "";

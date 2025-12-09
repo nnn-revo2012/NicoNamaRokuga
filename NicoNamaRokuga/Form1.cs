@@ -308,13 +308,22 @@ namespace NicoNamaRokuga
                     _ndb = new NicoDb(this, epi.SaveFile);
                     _ndb.CreateDbAll();
 
-                    _ndb.WriteDbKvsProps(bci.Data_Props);
+                    _ndb.WriteDbKvsProps(bci);
                 }
 
                 //コメント情報
                 if (props.IsComment)
                 {
                     _nms = new NicoMessage(this, bci, _nln, _ndb);
+                    if (!bci.IsTimeShift())
+                    {
+                        if (bci.StreamType == "dlive")
+                        {
+                            var sync = string.Format("\"encoding_id\":\"1\",\"beginning_timestamp\":"+ bci.Server_Time.ToString() + ",\"sequence\":0");
+                            _ndb.WriteDbSync(sync);
+                            _ndb.WriteDbKvs("seqno", System.Data.DbType.Int32, (Int32)0);
+                        }
+                    }
                 }
 
                 var ri = new RetryInfo();
