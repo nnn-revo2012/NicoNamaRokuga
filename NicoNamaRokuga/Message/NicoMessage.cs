@@ -233,7 +233,76 @@ namespace NicoNamaRokuga.Message
             }
         }
 
+        public async void ConnectPacked(string uri)
+        {
+            PackedServer _psc = null;
 
+            try
+            {
+                if (_psc == null)
+                    _psc = new PackedServer(uri, null, PackedDataAsync, this);
+
+                _form.AddLog("Packedサーバーに接続します", 1);
+                if (_psc != null)
+                {
+                    var status = await _psc.ConnectAsync();
+                    if (!string.IsNullOrEmpty(status))
+                    {
+                        _form.AddLog("ConnectPackedAsync() Error: " + status, 1);
+                    }
+                    else
+                    {
+                        _form.AddLog("ConnectPackedAsync() Wait 100ms", 9);
+                        await Task.Delay(100);
+                    }
+                }
+                _form.AddLog("Packedサーバーから切断されました", 1);
+                _psc = null;
+            }
+            catch (Exception Ex)
+            {
+                _form.AddLog("Packedサーバー接続エラー(ConnectPacked): \r\n" + Ex.Message, 1);
+                _psc = null;
+            }
+        }
+
+        //Packedサーバーからのデーター処理
+        public async Task PackedDataAsync(PackedSegment segment)
+        {
+            try
+            {
+                //解析処理
+                //_form.AddLog("Segment: " + segment.ToString(), 9);
+                //_form.AddLog("MessagePayloadCase: " + message.PayloadCase.ToString(), 9);
+                if (MessageStatus != 0)
+                    return;
+                switch (segment.Messages)
+                {
+                    case ChunkedMessage.PayloadOneofCase.Signal:
+                        //_form.AddLog("Signal:" + message.ToString(), 9);
+                        break;
+                    case ChunkedMessage.PayloadOneofCase.State:
+                        //_form.AddLog("State:" + message.ToString(), 9);
+                        CommentHandler("chat", message);
+                        break;
+                    case ChunkedMessage.PayloadOneofCase.Message:
+                        //_form.AddLog("Mes:" + message.ToString(), 9);
+                        CommentHandler("chat", message);
+                        break;
+                    case ChunkedMessage.PayloadOneofCase.None:
+                        break;
+                    default:
+                        _form.AddLog("Unknown message: " + message.ToString(), 9);
+                        break;
+                }
+                await Task.Delay(100);
+
+            }
+            catch (Exception Ex)
+            {
+                _form.AddLog("Packedサーバー接続エラー(PackedDataAsync): \r\n" + Ex.Message, 1);
+            }
+        }
         ~NicoMessage()
         {
             this.Dispose();
@@ -591,7 +660,6 @@ namespace NicoNamaRokuga.Message
                         break;
                     case "SimpleNotificationV2":
                         attrMap["premium"] = 3;
-                        //_form.AddLog($"SimpleNotificationV2: {message.ToString()}", 1);
                         var type = string.Empty;
                         if (jsonObj.TryGetValue("type", out jtkn))
                             type = jtkn.ToString();
@@ -635,6 +703,11 @@ namespace NicoNamaRokuga.Message
                             if (jsonObj.TryGetValue("message", out jtkn))
                                 content = "/info 5 " + jtkn.ToString();
                         }
+                        else if (type == "USER_FOLLOW ")
+                        {
+                            if (jsonObj.TryGetValue("message", out jtkn))
+                                content = "/info 5 " + jtkn.ToString();
+                        }
                         //else if (type == "")
                         //{
                         //    if (jsonObj.TryGetValue("message", out jtkn))
@@ -673,7 +746,7 @@ namespace NicoNamaRokuga.Message
                         break;
                     case "Nicoad":
                         attrMap["premium"] = 3;
-                        _form.AddLog($"Nicoad: {message.ToString()}", 1);
+                        //_form.AddLog($"Nicoad: {message.ToString()}", 1);
                         if (jsonObj.TryGetValue("v1", out jtkn))
                         {
                             jsonObj2 = (JObject)jtkn;
@@ -729,10 +802,6 @@ namespace NicoNamaRokuga.Message
                                 }
                                 else
                                 {
-                                    //s.Enquete.Choices.Select(x =>
-                                    //"[" + x.Description +
-                                    //(s.Enquete.status.ToString() == "Result"
-                                    //? (" " + (x.PerMille / 10.0) + "%") : "") + "]").ToArray()));
                                     content = "/vote start \"" + message.State.Enquete.Question.ToString() + "\" ";
                                     content += string.Join(" ", message.State.Enquete.Choices.Select(x => "\"" + x.Description + "\"").ToArray());
                                 }

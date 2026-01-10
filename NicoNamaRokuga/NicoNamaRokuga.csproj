@@ -191,6 +191,7 @@
     <Compile Include="Message\BinaryStream.cs" />
     <Compile Include="Message\MessageServer.cs" />
     <Compile Include="Message\NicoMessage.cs" />
+    <Compile Include="Message\PackedServer.cs" />
     <Compile Include="Message\SegmentServer.cs" />
     <Compile Include="Net\CommentInfo.cs" />
     <Compile Include="Process\ExecConvert.cs" />
