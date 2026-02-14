@@ -734,6 +734,47 @@ namespace NicoNamaRokuga.Rec
                 return result;
             }
         }
+        public long GetDbFromWhen()
+        {
+            long when = 0L;
+            try
+            {
+                using (SQLiteCommand command = _cn.CreateCommand())
+                {
+                    long date2 = 0L;
+                    command.CommandText = "SELECT date2, FROM comment ORDER BY date2 ASC LIMIT 1";
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            date2 = reader.GetInt64(0);
+                    }
+                    if (date2 == 0L)
+                    {
+                        double endTime = 0.0;
+                        command.CommandText = "SELECT v FROM kvs WHERE k = \"endTime\"";
+                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                                endTime = reader.GetDouble(0);
+                        }
+                        when = (long)endTime + 360L;
+                        var unix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                        if (unix < when)
+                            when = unix;
+                    }
+                    else
+                    {
+                        when = date2 / (1000 * 1000) + 1;
+                    }
+                }
+                return when;
+            }
+            catch (Exception Ex)
+            {
+                DebugWrite.Writeln(nameof(GetDbFromWhen), Ex);
+                return when;
+            }
+        }
 
         public int GetDbCommentRevision()
         {

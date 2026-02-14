@@ -703,7 +703,7 @@ namespace NicoNamaRokuga.Message
                             if (jsonObj.TryGetValue("message", out jtkn))
                                 content = "/info 5 " + jtkn.ToString();
                         }
-                        else if (type == "USER_FOLLOW ")
+                        else if (type == "USER_FOLLOW")
                         {
                             if (jsonObj.TryGetValue("message", out jtkn))
                                 content = "/info 5 " + jtkn.ToString();
