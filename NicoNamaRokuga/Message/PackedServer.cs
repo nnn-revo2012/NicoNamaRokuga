@@ -13,7 +13,7 @@ namespace NicoNamaRokuga.Message
 {
     public class PackedServer
     {
-        private readonly string uri;
+        private string uri;
         private readonly Dictionary<string, string> headers;
         private bool isDisconnect;
         private bool unexpectedDisconnect;
@@ -33,7 +33,7 @@ namespace NicoNamaRokuga.Message
             this.nMsg = nicomessage;
             headers = new Dictionary<string, string>
             {
-            //    { "header", "u=1, i" }
+                //    { "header", "u=1, i" }
             };
             isDisconnect = false;
             unexpectedDisconnect = false;
@@ -92,10 +92,9 @@ namespace NicoNamaRokuga.Message
                 {
                     var segment = PackedSegment.Parser.ParseFrom(_buffer.ToArray());
                     if (!string.IsNullOrEmpty(segment.ToString()))
-                        await processData(segment);
+                        await this.processData(segment);
                 }
 
-                processData = null;
                 return ret;
             }
             catch (OperationCanceledException)
@@ -132,30 +131,24 @@ namespace NicoNamaRokuga.Message
 
         private void StopReceiving() => cancelSource.Cancel();
 
-        //private async Task PackedData(byte[] data)
-        //{
-            //stream.AddBuffer(stream, data);
+        public void ClearBuffer()
+        {
+            _buffer.Clear();
+       
+        }
+        public string GetNextUri()
+        {
+            return this.uri;
+        }
 
-            //foreach (var item in stream.Read(stream))
-            //{
-            //    try
-            //    {
-            //        // Google.Protobuf generated class
-            //        var segment = PackedSegment.Parser.ParseFrom(item);
-            //        if (!string.IsNullOrEmpty(segment.ToString()) && !isDisconnect)
-            //        {
-            //            await processData(segment);
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine(ex);
-            //        continue;
-            //    }
-            //}
+        public bool SetNextUri(string nexturi)
+        {
+            if (!string.IsNullOrEmpty(nexturi))
+            {
+                this.uri = nexturi;
+            }
+            return true;
+        }
 
-            //stream.ClearBuffer(stream);
-        //}
     }
-
 }

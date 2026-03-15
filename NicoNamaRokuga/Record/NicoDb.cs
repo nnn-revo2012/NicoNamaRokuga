@@ -742,7 +742,7 @@ namespace NicoNamaRokuga.Rec
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     long date2 = 0L;
-                    command.CommandText = "SELECT date2, FROM comment ORDER BY date2 ASC LIMIT 1";
+                    command.CommandText = "SELECT date2 FROM comment ORDER BY date2 ASC LIMIT 1";
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())

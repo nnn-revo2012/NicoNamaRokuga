@@ -39,6 +39,9 @@ namespace NicoNamaRokuga.Message
         private BroadCastInfo _bci = null;
         private NicoDb _ndb = null;
         private MessageServer _msc = null;
+        private PackedServer _psc = null;
+        private volatile bool _is_ts_start = true;
+        private int _count_previous = 0;
 
         private Form1 _form = null;
         private Regex RgxCommand = new Regex(@"^{""([^""]+)"":", RegexOptions.Compiled);
@@ -54,6 +57,8 @@ namespace NicoNamaRokuga.Message
 
             MessageStatus = 0;
             this._msc = null;
+            _is_ts_start = true;
+            _count_previous = 0;
         }
 
         //メッセージサーバー接続
@@ -61,6 +66,8 @@ namespace NicoNamaRokuga.Message
         {
             bool IsMessageStart = false;
             string NextStreamAt = string.Empty;
+            _is_ts_start = true;
+            _count_previous = 2;
 
             try
             {
@@ -69,6 +76,12 @@ namespace NicoNamaRokuga.Message
                     _msc = new MessageServer(uri, null, MessageDataAsync, this);
 
                 MessageStatus = 0;
+                if (_bci.IsTimeShift())
+                {
+                    var when = _ndb.GetDbFromWhen();
+                    _msc.SetNextStreamAt(when.ToString());
+                }
+
                 while (MessageStatus == 0)
                 {
                     _form.AddLog("メッセージサーバーに接続します:" + _msc.GetNextStreamAt(), 1);
@@ -114,26 +127,41 @@ namespace NicoNamaRokuga.Message
                 //解析処理
                 //_form.AddLog("Enrty: " + entry.ToString(), 9);
                 //_form.AddLog("EnrtyCase: " + entry.EntryCase.ToString(), 9);
-                if (MessageStatus != 0)
+                if (MessageStatus != 0 || _is_ts_start == false)
                     return;
                 switch (entry.EntryCase)
                 {
                     case ChunkedEntry.EntryOneofCase.Previous:
-                        //_form.AddLog("Previous: " + entry.Previous.Uri.ToString(), 9);
-                        //await ConnectSegment(entry.Previous.Uri, "Previous");
+                        _form.AddLog("Previous: " + entry.Previous.Uri.ToString(), 9);
+                        if (!_bci.IsTimeShift() && _count_previous > 0)
+                        {
+                            --_count_previous;
+                            ConnectSegment(entry.Previous.Uri, "Previous");
+                        }
                         break;
                     case ChunkedEntry.EntryOneofCase.Backward:
                         _form.AddLog("Backward: " + entry.Backward.Segment.Uri.ToString(), 9);
+                        if (_bci.IsTimeShift() && _is_ts_start)
+                        {
+                            _is_ts_start = false;
+                            ConnectPacked(entry.Backward.Segment.Uri.ToString());
+                        }
                         break;
                     case ChunkedEntry.EntryOneofCase.Segment:
                         _form.AddLog("Segment: " + entry.Segment.Uri.ToString(), 9);
-                        ConnectSegment(entry.Segment.Uri, "Segment");
+                        if (!_bci.IsTimeShift())
+                        {
+                            ConnectSegment(entry.Segment.Uri, "Segment");
+                        }
                         break;
                     case ChunkedEntry.EntryOneofCase.Next:
                         _form.AddLog("NextAt: " + entry.Next.At.ToString(), 9);
-                        if (_msc.GetNextStreamAt().ToLower() != "now")
-                            _msc.SetBeforeNextStreamAt(_msc.GetNextStreamAt());
-                        _msc.SetNextStreamAt(entry.Next.At.ToString());
+                        if (!_bci.IsTimeShift())
+                        {
+                            if (_msc.GetNextStreamAt().ToLower() != "now")
+                                _msc.SetBeforeNextStreamAt(_msc.GetNextStreamAt());
+                            _msc.SetNextStreamAt(entry.Next.At.ToString());
+                        }
                         break;
                     case ChunkedEntry.EntryOneofCase.None:
                         break;
@@ -178,10 +206,6 @@ namespace NicoNamaRokuga.Message
                     if (!string.IsNullOrEmpty(status))
                     {
                         _form.AddLog("ConnectSegmentAsync() Error: " + status, 1);
-                    }
-                    else
-                    {
-                        _form.AddLog("ConnectSegmentAsync() Wait 100ms", 9);
                         await Task.Delay(100);
                     }
                 }
@@ -235,26 +259,24 @@ namespace NicoNamaRokuga.Message
 
         public async void ConnectPacked(string uri)
         {
-            PackedServer _psc = null;
-
             try
             {
                 if (_psc == null)
                     _psc = new PackedServer(uri, null, PackedDataAsync, this);
 
                 _form.AddLog("Packedサーバーに接続します", 1);
-                if (_psc != null)
+                while (MessageStatus == 0)
                 {
-                    var status = await _psc.ConnectAsync();
-                    if (!string.IsNullOrEmpty(status))
+                    if (_psc != null)
                     {
-                        _form.AddLog("ConnectPackedAsync() Error: " + status, 1);
+                        var status = await _psc.ConnectAsync();
+                        if (!string.IsNullOrEmpty(status))
+                        {
+                            _form.AddLog("ConnectPackedAsync() Error: " + status, 1);
+                            await Task.Delay(100);
+                        }
                     }
-                    else
-                    {
-                        _form.AddLog("ConnectPackedAsync() Wait 100ms", 9);
-                        await Task.Delay(100);
-                    }
+
                 }
                 _form.AddLog("Packedサーバーから切断されました", 1);
                 _psc = null;
@@ -269,34 +291,47 @@ namespace NicoNamaRokuga.Message
         //Packedサーバーからのデーター処理
         public async Task PackedDataAsync(PackedSegment segment)
         {
+            var cnt = segment.Messages.Count();
             try
             {
                 //解析処理
                 //_form.AddLog("Segment: " + segment.ToString(), 9);
-                //_form.AddLog("MessagePayloadCase: " + message.PayloadCase.ToString(), 9);
                 if (MessageStatus != 0)
                     return;
-                switch (segment.Messages)
+                foreach (ChunkedMessage message in segment.Messages)
                 {
-                    case ChunkedMessage.PayloadOneofCase.Signal:
-                        //_form.AddLog("Signal:" + message.ToString(), 9);
-                        break;
-                    case ChunkedMessage.PayloadOneofCase.State:
-                        //_form.AddLog("State:" + message.ToString(), 9);
-                        CommentHandler("chat", message);
-                        break;
-                    case ChunkedMessage.PayloadOneofCase.Message:
-                        //_form.AddLog("Mes:" + message.ToString(), 9);
-                        CommentHandler("chat", message);
-                        break;
-                    case ChunkedMessage.PayloadOneofCase.None:
-                        break;
-                    default:
-                        _form.AddLog("Unknown message: " + message.ToString(), 9);
-                        break;
+                    CommentHandler("chat", message);
+                    if (MessageStatus != 0)
+                        return;
                 }
-                await Task.Delay(100);
+                _form.AddLog("コメントを" + cnt.ToString() + "取得しました", 1);
+                _psc.ClearBuffer();
+                if (MessageStatus == 0)
+                {
+                    if (segment.Next != null && segment.Next.Uri != null)
+                    {
+                        var nexturi = segment.Next.Uri;
+                        //_form.AddLog("nexturi: " + nexturi, 9);
+                        if (_psc.GetNextUri() != nexturi)
+                        {
+                            _psc.SetNextUri(nexturi);
+                            await Task.Delay(100);
+                        }
+                        else
+                        {
+                            _form.AddLog("Comment done.", 1);
+                            MessageStatus = 1;
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        _form.AddLog("Comment done.", 1);
+                        MessageStatus = 1;
+                        return;
+                    }
 
+                }
             }
             catch (Exception Ex)
             {
@@ -378,25 +413,23 @@ namespace NicoNamaRokuga.Message
 
             try
             {
+                var index = timestamp.LastIndexOf(".");
+                if (index > -1)
+                {
+                    // マイクロ秒部分を抽出
+                    var msec = timestamp.Substring(index + 1, timestamp.Length - index - 2);
+                    msec += microseconds;
+                    microseconds = msec.Substring(0, 6);
+                    timestamp = timestamp.Substring(0, index) + "Z";
+                }
+
                 if (DateTime.TryParseExact(
                         timestamp,
-                        "yyyy-MM-dd'T'HH:mm:ss.ffffff'Z'",
+                        "yyyy-MM-dd'T'HH:mm:ss'Z'",
                         CultureInfo.InvariantCulture,
                         DateTimeStyles.AdjustToUniversal,
                         out utcTime))
                 {
-                    // マイクロ秒部分を抽出
-                    int dotIndex = timestamp.IndexOf('.');
-                    if (dotIndex > 0)
-                    {
-                        int zIndex = timestamp.IndexOf('Z');
-                        if (zIndex > dotIndex)
-                        {
-                            string fractional = timestamp.Substring(dotIndex + 1, zIndex - dotIndex - 1);
-                            microseconds = fractional.PadRight(6, '0'); // 6桁補正
-                        }
-                    }
-
                     // UNIXエポック (1970-01-01T00:00:00Z)
                     DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -535,6 +568,8 @@ namespace NicoNamaRokuga.Message
                             jsonStr = message.State.Marquee.Display.ToString();
                         break;
                     case "Enquete":
+                        if (message.State.Enquete != null)
+                            return;
                         jsonStr = message.State.Enquete.ToString();
                         break;
                     case "Statistics":
@@ -547,7 +582,7 @@ namespace NicoNamaRokuga.Message
                         //jsonStr = message.State.ProgramStatus.ToString();
                         return;
                     case "MoveOrder":
-                        _form.AddLog($"MoveOrder: {message.ToString()}", 9);
+                        //_form.AddLog($"MoveOrder: {message.ToString()}", 9);
                         jsonStr = message.State.MoveOrder.ToString();
                         break;
                     default:
@@ -791,20 +826,17 @@ namespace NicoNamaRokuga.Message
                         {
                             content = "/vote stop";
                         }
-                        else
+                        else if (message.State.Enquete.Choices != null)
                         {
-                            if (message.State.Enquete.Choices != null)
+                            if (message.State.Enquete.Choices.FirstOrDefault().HasPerMille)
                             {
-                                if (message.State.Enquete.Choices.FirstOrDefault().HasPerMille)
-                                {
-                                    content = "/vote showresult per ";
-                                    content += string.Join(" ", message.State.Enquete.Choices.Select(x => x.PerMille.ToString()).ToArray());
-                                }
-                                else
-                                {
-                                    content = "/vote start \"" + message.State.Enquete.Question.ToString() + "\" ";
-                                    content += string.Join(" ", message.State.Enquete.Choices.Select(x => "\"" + x.Description + "\"").ToArray());
-                                }
+                                content = "/vote showresult per ";
+                                content += string.Join(" ", message.State.Enquete.Choices.Select(x => x.PerMille.ToString()).ToArray());
+                            }
+                            else
+                            {
+                                content = "/vote start \"" + message.State.Enquete.Question.ToString() + "\" ";
+                                content += string.Join(" ", message.State.Enquete.Choices.Select(x => "\"" + x.Description + "\"").ToArray());
                             }
                         }
                         break;
