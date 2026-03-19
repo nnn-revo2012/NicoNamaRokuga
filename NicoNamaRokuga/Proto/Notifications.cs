@@ -25,15 +25,16 @@ namespace Dwango.Nicolive.Chat.Data.Atoms {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CjNkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL25vdGlmaWNhdGlv",
-            "bnMucHJvdG8SH2R3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMi0QIK",
+            "bnMucHJvdG8SH2R3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMi4gIK",
             "FFNpbXBsZU5vdGlmaWNhdGlvblYyElQKBHR5cGUYASABKA4yRi5kd2FuZ28u",
             "bmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNpbXBsZU5vdGlmaWNhdGlvblYy",
             "Lk5vdGlmaWNhdGlvblR5cGUSDwoHbWVzc2FnZRgCIAEoCRIVCg1zaG93X2lu",
-            "X3RlbG9wGAMgASgIEhQKDHNob3dfaW5fbGlzdBgEIAEoCCKkAQoQTm90aWZp",
+            "X3RlbG9wGAMgASgIEhQKDHNob3dfaW5fbGlzdBgEIAEoCCK1AQoQTm90aWZp",
             "Y2F0aW9uVHlwZRILCgdVTktOT1dOEAASCgoGSUNISUJBEAESCwoHRU1PVElP",
             "ThACEgoKBkNSVUlTRRADEhQKEFBST0dSQU1fRVhURU5ERUQQBBIOCgpSQU5L",
             "SU5HX0lOEAUSCwoHVklTSVRFRBAGEhgKFFNVUFBPUlRFUl9SRUdJU1RFUkVE",
-            "EAcSEQoNVVNFUl9MRVZFTF9VUBAIYgZwcm90bzM="));
+            "EAcSEQoNVVNFUl9MRVZFTF9VUBAIEg8KC1VTRVJfRk9MTE9XEAliBnByb3Rv",
+            "Mw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -366,6 +367,7 @@ namespace Dwango.Nicolive.Chat.Data.Atoms {
         [pbr::OriginalName("VISITED")] Visited = 6,
         [pbr::OriginalName("SUPPORTER_REGISTERED")] SupporterRegistered = 7,
         [pbr::OriginalName("USER_LEVEL_UP")] UserLevelUp = 8,
+        [pbr::OriginalName("USER_FOLLOW")] UserFollow = 9,
       }
 
     }

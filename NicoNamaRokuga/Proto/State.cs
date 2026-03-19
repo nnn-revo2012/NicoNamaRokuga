@@ -27,28 +27,39 @@ namespace Dwango.Nicolive.Chat.Data {
             "CiVkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL3N0YXRlLnByb3RvEhlkd2Fu",
             "Z28ubmljb2xpdmUuY2hhdC5kYXRhGiVkd2FuZ28vbmljb2xpdmUvY2hhdC9k",
             "YXRhL2F0b21zLnByb3RvGi9kd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0",
-            "b21zL21vZGVyYXRvci5wcm90byKGBgoNTmljb2xpdmVTdGF0ZRI+CgpzdGF0",
-            "aXN0aWNzGAEgASgLMiUuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5TdGF0",
-            "aXN0aWNzSACIAQESOAoHZW5xdWV0ZRgCIAEoCzIiLmR3YW5nby5uaWNvbGl2",
-            "ZS5jaGF0LmRhdGEuRW5xdWV0ZUgBiAEBEj0KCm1vdmVfb3JkZXIYAyABKAsy",
-            "JC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLk1vdmVPcmRlckgCiAEBEjgK",
-            "B21hcnF1ZWUYBCABKAsyIi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLk1h",
-            "cnF1ZWVIA4gBARJBCgxjb21tZW50X2xvY2sYBSABKAsyJi5kd2FuZ28ubmlj",
-            "b2xpdmUuY2hhdC5kYXRhLkNvbW1lbnRMb2NrSASIAQESQQoMY29tbWVudF9t",
-            "b2RlGAYgASgLMiYuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50",
-            "TW9kZUgFiAEBEj8KC3RyaWFsX3BhbmVsGAcgASgLMiUuZHdhbmdvLm5pY29s",
-            "aXZlLmNoYXQuZGF0YS5UcmlhbFBhbmVsSAaIAQESRQoOcHJvZ3JhbV9zdGF0",
-            "dXMYCSABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlByb2dyYW1T",
-            "dGF0dXNIB4gBARJdChdtb2RlcmF0aW9uX2Fubm91bmNlbWVudBgKIAEoCzI3",
-            "LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuTW9kZXJhdGlvbkFu",
-            "bm91bmNlbWVudEgIiAEBQg0KC19zdGF0aXN0aWNzQgoKCF9lbnF1ZXRlQg0K",
-            "C19tb3ZlX29yZGVyQgoKCF9tYXJxdWVlQg8KDV9jb21tZW50X2xvY2tCDwoN",
-            "X2NvbW1lbnRfbW9kZUIOCgxfdHJpYWxfcGFuZWxCEQoPX3Byb2dyYW1fc3Rh",
-            "dHVzQhoKGF9tb2RlcmF0aW9uX2Fubm91bmNlbWVudGIGcHJvdG8z"));
+            "b21zL21vZGVyYXRvci5wcm90bxotZHdhbmdvL25pY29saXZlL2NoYXQvZGF0",
+            "YS9hdG9tcy9ha2FzaGljLnByb3RvGjRkd2FuZ28vbmljb2xpdmUvY2hhdC9k",
+            "YXRhL2F0b21zL2ljaGliYWxhdW5jaGVyLnByb3RvGjFkd2FuZ28vbmljb2xp",
+            "dmUvY2hhdC9kYXRhL2F0b21zL3N0cmVhbXN0YXRlLnByb3RvIsIICg1OaWNv",
+            "bGl2ZVN0YXRlEj4KCnN0YXRpc3RpY3MYASABKAsyJS5kd2FuZ28ubmljb2xp",
+            "dmUuY2hhdC5kYXRhLlN0YXRpc3RpY3NIAIgBARI4CgdlbnF1ZXRlGAIgASgL",
+            "MiIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5FbnF1ZXRlSAGIAQESPQoK",
+            "bW92ZV9vcmRlchgDIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEu",
+            "TW92ZU9yZGVySAKIAQESOAoHbWFycXVlZRgEIAEoCzIiLmR3YW5nby5uaWNv",
+            "bGl2ZS5jaGF0LmRhdGEuTWFycXVlZUgDiAEBEkEKDGNvbW1lbnRfbG9jaxgF",
+            "IAEoCzImLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ29tbWVudExvY2tI",
+            "BIgBARJBCgxjb21tZW50X21vZGUYBiABKAsyJi5kd2FuZ28ubmljb2xpdmUu",
+            "Y2hhdC5kYXRhLkNvbW1lbnRNb2RlSAWIAQESPwoLdHJpYWxfcGFuZWwYByAB",
+            "KAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWxIBogB",
+            "ARJFCg5wcm9ncmFtX3N0YXR1cxgJIAEoCzIoLmR3YW5nby5uaWNvbGl2ZS5j",
+            "aGF0LmRhdGEuUHJvZ3JhbVN0YXR1c0gHiAEBEl0KF21vZGVyYXRpb25fYW5u",
+            "b3VuY2VtZW50GAogASgLMjcuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5h",
+            "dG9tcy5Nb2RlcmF0aW9uQW5ub3VuY2VtZW50SAiIAQESVAoPaWNoaWJhX2xh",
+            "dW5jaGVyGAsgASgLMjYuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9t",
+            "cy5JY2hpYmFMYXVuY2hlckl0ZW1TZXRICYgBARJUChNzdHJlYW1fc3RhdGVf",
+            "Y2hhbmdlGAwgASgLMjIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9t",
+            "cy5TdHJlYW1TdGF0ZUNoYW5nZUgKiAEBElAKDWFrYXNoaWNfc3RhdGUYDSAB",
+            "KAsyNC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLkFrYXNoaWNT",
+            "dGF0ZVJvdXRpbmdIC4gBAUINCgtfc3RhdGlzdGljc0IKCghfZW5xdWV0ZUIN",
+            "CgtfbW92ZV9vcmRlckIKCghfbWFycXVlZUIPCg1fY29tbWVudF9sb2NrQg8K",
+            "DV9jb21tZW50X21vZGVCDgoMX3RyaWFsX3BhbmVsQhEKD19wcm9ncmFtX3N0",
+            "YXR1c0IaChhfbW9kZXJhdGlvbl9hbm5vdW5jZW1lbnRCEgoQX2ljaGliYV9s",
+            "YXVuY2hlckIWChRfc3RyZWFtX3N0YXRlX2NoYW5nZUIQCg5fYWthc2hpY19z",
+            "dGF0ZWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::Dwango.Nicolive.Chat.Data.AtomsReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.ModeratorReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::Dwango.Nicolive.Chat.Data.AtomsReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.ModeratorReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.AkashicReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.IchibalauncherReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.StreamstateReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.NicoliveState), global::Dwango.Nicolive.Chat.Data.NicoliveState.Parser, new[]{ "Statistics", "Enquete", "MoveOrder", "Marquee", "CommentLock", "CommentMode", "TrialPanel", "ProgramStatus", "ModerationAnnouncement" }, new[]{ "Statistics", "Enquete", "MoveOrder", "Marquee", "CommentLock", "CommentMode", "TrialPanel", "ProgramStatus", "ModerationAnnouncement" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.NicoliveState), global::Dwango.Nicolive.Chat.Data.NicoliveState.Parser, new[]{ "Statistics", "Enquete", "MoveOrder", "Marquee", "CommentLock", "CommentMode", "TrialPanel", "ProgramStatus", "ModerationAnnouncement", "IchibaLauncher", "StreamStateChange", "AkashicState" }, new[]{ "Statistics", "Enquete", "MoveOrder", "Marquee", "CommentLock", "CommentMode", "TrialPanel", "ProgramStatus", "ModerationAnnouncement", "IchibaLauncher", "StreamStateChange", "AkashicState" }, null, null, null)
           }));
     }
     #endregion
@@ -99,6 +110,9 @@ namespace Dwango.Nicolive.Chat.Data {
       trialPanel_ = other.trialPanel_ != null ? other.trialPanel_.Clone() : null;
       programStatus_ = other.programStatus_ != null ? other.programStatus_.Clone() : null;
       moderationAnnouncement_ = other.moderationAnnouncement_ != null ? other.moderationAnnouncement_.Clone() : null;
+      ichibaLauncher_ = other.ichibaLauncher_ != null ? other.ichibaLauncher_.Clone() : null;
+      streamStateChange_ = other.streamStateChange_ != null ? other.streamStateChange_.Clone() : null;
+      akashicState_ = other.akashicState_ != null ? other.akashicState_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -216,6 +230,42 @@ namespace Dwango.Nicolive.Chat.Data {
       }
     }
 
+    /// <summary>Field number for the "ichiba_launcher" field.</summary>
+    public const int IchibaLauncherFieldNumber = 11;
+    private global::Dwango.Nicolive.Chat.Data.Atoms.IchibaLauncherItemSet ichibaLauncher_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Dwango.Nicolive.Chat.Data.Atoms.IchibaLauncherItemSet IchibaLauncher {
+      get { return ichibaLauncher_; }
+      set {
+        ichibaLauncher_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "stream_state_change" field.</summary>
+    public const int StreamStateChangeFieldNumber = 12;
+    private global::Dwango.Nicolive.Chat.Data.Atoms.StreamStateChange streamStateChange_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Dwango.Nicolive.Chat.Data.Atoms.StreamStateChange StreamStateChange {
+      get { return streamStateChange_; }
+      set {
+        streamStateChange_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "akashic_state" field.</summary>
+    public const int AkashicStateFieldNumber = 13;
+    private global::Dwango.Nicolive.Chat.Data.Atoms.AkashicStateRouting akashicState_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Dwango.Nicolive.Chat.Data.Atoms.AkashicStateRouting AkashicState {
+      get { return akashicState_; }
+      set {
+        akashicState_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -240,6 +290,9 @@ namespace Dwango.Nicolive.Chat.Data {
       if (!object.Equals(TrialPanel, other.TrialPanel)) return false;
       if (!object.Equals(ProgramStatus, other.ProgramStatus)) return false;
       if (!object.Equals(ModerationAnnouncement, other.ModerationAnnouncement)) return false;
+      if (!object.Equals(IchibaLauncher, other.IchibaLauncher)) return false;
+      if (!object.Equals(StreamStateChange, other.StreamStateChange)) return false;
+      if (!object.Equals(AkashicState, other.AkashicState)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -256,6 +309,9 @@ namespace Dwango.Nicolive.Chat.Data {
       if (trialPanel_ != null) hash ^= TrialPanel.GetHashCode();
       if (programStatus_ != null) hash ^= ProgramStatus.GetHashCode();
       if (moderationAnnouncement_ != null) hash ^= ModerationAnnouncement.GetHashCode();
+      if (ichibaLauncher_ != null) hash ^= IchibaLauncher.GetHashCode();
+      if (streamStateChange_ != null) hash ^= StreamStateChange.GetHashCode();
+      if (akashicState_ != null) hash ^= AkashicState.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -310,6 +366,18 @@ namespace Dwango.Nicolive.Chat.Data {
         output.WriteRawTag(82);
         output.WriteMessage(ModerationAnnouncement);
       }
+      if (ichibaLauncher_ != null) {
+        output.WriteRawTag(90);
+        output.WriteMessage(IchibaLauncher);
+      }
+      if (streamStateChange_ != null) {
+        output.WriteRawTag(98);
+        output.WriteMessage(StreamStateChange);
+      }
+      if (akashicState_ != null) {
+        output.WriteRawTag(106);
+        output.WriteMessage(AkashicState);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -356,6 +424,18 @@ namespace Dwango.Nicolive.Chat.Data {
         output.WriteRawTag(82);
         output.WriteMessage(ModerationAnnouncement);
       }
+      if (ichibaLauncher_ != null) {
+        output.WriteRawTag(90);
+        output.WriteMessage(IchibaLauncher);
+      }
+      if (streamStateChange_ != null) {
+        output.WriteRawTag(98);
+        output.WriteMessage(StreamStateChange);
+      }
+      if (akashicState_ != null) {
+        output.WriteRawTag(106);
+        output.WriteMessage(AkashicState);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -392,6 +472,15 @@ namespace Dwango.Nicolive.Chat.Data {
       }
       if (moderationAnnouncement_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(ModerationAnnouncement);
+      }
+      if (ichibaLauncher_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(IchibaLauncher);
+      }
+      if (streamStateChange_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(StreamStateChange);
+      }
+      if (akashicState_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(AkashicState);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -458,6 +547,24 @@ namespace Dwango.Nicolive.Chat.Data {
           ModerationAnnouncement = new global::Dwango.Nicolive.Chat.Data.Atoms.ModerationAnnouncement();
         }
         ModerationAnnouncement.MergeFrom(other.ModerationAnnouncement);
+      }
+      if (other.ichibaLauncher_ != null) {
+        if (ichibaLauncher_ == null) {
+          IchibaLauncher = new global::Dwango.Nicolive.Chat.Data.Atoms.IchibaLauncherItemSet();
+        }
+        IchibaLauncher.MergeFrom(other.IchibaLauncher);
+      }
+      if (other.streamStateChange_ != null) {
+        if (streamStateChange_ == null) {
+          StreamStateChange = new global::Dwango.Nicolive.Chat.Data.Atoms.StreamStateChange();
+        }
+        StreamStateChange.MergeFrom(other.StreamStateChange);
+      }
+      if (other.akashicState_ != null) {
+        if (akashicState_ == null) {
+          AkashicState = new global::Dwango.Nicolive.Chat.Data.Atoms.AkashicStateRouting();
+        }
+        AkashicState.MergeFrom(other.AkashicState);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -541,6 +648,27 @@ namespace Dwango.Nicolive.Chat.Data {
             input.ReadMessage(ModerationAnnouncement);
             break;
           }
+          case 90: {
+            if (ichibaLauncher_ == null) {
+              IchibaLauncher = new global::Dwango.Nicolive.Chat.Data.Atoms.IchibaLauncherItemSet();
+            }
+            input.ReadMessage(IchibaLauncher);
+            break;
+          }
+          case 98: {
+            if (streamStateChange_ == null) {
+              StreamStateChange = new global::Dwango.Nicolive.Chat.Data.Atoms.StreamStateChange();
+            }
+            input.ReadMessage(StreamStateChange);
+            break;
+          }
+          case 106: {
+            if (akashicState_ == null) {
+              AkashicState = new global::Dwango.Nicolive.Chat.Data.Atoms.AkashicStateRouting();
+            }
+            input.ReadMessage(AkashicState);
+            break;
+          }
         }
       }
     #endif
@@ -621,6 +749,27 @@ namespace Dwango.Nicolive.Chat.Data {
               ModerationAnnouncement = new global::Dwango.Nicolive.Chat.Data.Atoms.ModerationAnnouncement();
             }
             input.ReadMessage(ModerationAnnouncement);
+            break;
+          }
+          case 90: {
+            if (ichibaLauncher_ == null) {
+              IchibaLauncher = new global::Dwango.Nicolive.Chat.Data.Atoms.IchibaLauncherItemSet();
+            }
+            input.ReadMessage(IchibaLauncher);
+            break;
+          }
+          case 98: {
+            if (streamStateChange_ == null) {
+              StreamStateChange = new global::Dwango.Nicolive.Chat.Data.Atoms.StreamStateChange();
+            }
+            input.ReadMessage(StreamStateChange);
+            break;
+          }
+          case 106: {
+            if (akashicState_ == null) {
+              AkashicState = new global::Dwango.Nicolive.Chat.Data.Atoms.AkashicStateRouting();
+            }
+            input.ReadMessage(AkashicState);
             break;
           }
         }

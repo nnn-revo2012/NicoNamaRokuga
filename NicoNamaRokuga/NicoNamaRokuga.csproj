@@ -217,8 +217,10 @@
     </Compile>
     <Compile Include="Net\NicoLiveNet.cs" />
     <Compile Include="Net\NicoNetStream.cs" />
+    <Compile Include="Proto\Akashic.cs" />
     <Compile Include="Proto\Atoms.cs" />
     <Compile Include="Proto\Forwarded.cs" />
+    <Compile Include="Proto\Ichibalauncher.cs" />
     <Compile Include="Proto\Message.cs" />
     <Compile Include="Proto\Moderator.cs" />
     <Compile Include="Proto\Notifications.cs" />
@@ -226,6 +228,7 @@
     <Compile Include="Proto\Payload.cs" />
     <Compile Include="Proto\Sensitive.cs" />
     <Compile Include="Proto\State.cs" />
+    <Compile Include="Proto\Streamstate.cs" />
     <Compile Include="Record\NicoDb.cs" />
     <Compile Include="Record\RecHtml.cs" />
     <Compile Include="Program.cs" />
