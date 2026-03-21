@@ -1,13 +1,13 @@
 ﻿===============================================================================
 【タイトル】 NicoNamaRokuga
 【ファイル】 NicoNamaRokuga.exe
-【作成月日】 2023/04/19
+【作成月日】 2026/03/21
 【著 作 者】 nnn-revo2012
-【開発環境】 Microsoft Windows 10
+【開発環境】 Microsoft Windows 11
              Microsoft Visual Studio 2019
-【動作環境】 Microsoft Windows 10 / Windows 8.1 / Windows 7
+【動作環境】 Microsoft Windows 10/11
              .NET Framework 4.8
-【推奨環境】 Microsoft Windows 10
+【推奨環境】 Microsoft Windows 11
 【配布形態】 フリーウェア
 【Web Site】 https://github.com/nnn-revo2012/NicoNamaRokuga
 【 連絡先 】 要望やバグ報告等はgithubまで
@@ -15,13 +15,10 @@
 ===============================================================================
 
 ■説明
-・ニコニコ生放送リアルタイム・タイムシフト放送を録画します。
+・ニコニコ生放送の生放送・タイムシフトの**コメントのみ**を保存するツールです。
 ・GUI(Windows Forms)使用。
-・タイムシフトはプレアカ2倍速・一般アカ1.25倍速で録画します。
 ・リアルタイム時の追っかけ録画には対応していません。
 ・録画されたファイルはlivedlの録画ファイルと互換性があります。
-・ffmpegなどの外部プログラムを使って録画することもできます。
-・2020/4/4現在 公式生放送のみrtmpで録画可能です(ＴＳは全て不可)。
 
 ■インストール方法
 適当なフォルダにzipファイルの中のファイルを全て解凍してください。解凍したらその中のNicoNamaRokuga.exe を実行してください。
@@ -41,10 +38,10 @@
 6.録画したファイルはツールバーのファイル(F)→録画フォルダーを開くでフォルダーが開きます。
 　録画ファイルはlivedlと同じくDB(sqlite3)ファイルになっていて、そのままでは再生することはできません（重要）。
 7.録画ファイルをNicoNamaRokuga.exeの画面にドラッグアンドドロップしてください。
-8.映像ファイル(*.ts)とコメントファイル(*.xml)が作成されます。
+8.コメントファイル(*.xml)が作成されます。
 
 ■動作環境
-.Net Framework 4.8が必要です。Windows 10では標準でインストールされているので新たにインストールする必要はありません。
+.Net Framework 4.8が必要です。Windows 10/11では標準でインストールされているので新たにインストールする必要はありません。
 https://dotnet.microsoft.com/ja-jp/download/dotnet-framework/thank-you/net48-web-installer
 ■免責事項
 本ソフトウェアを利用して発生した如何なる損害について著作者は一切の責任を負いません。
@@ -53,16 +50,21 @@ https://dotnet.microsoft.com/ja-jp/download/dotnet-framework/thank-you/net48-web
 ■ライセンス関係
 ・NicoNamaRokuga
 https://github.com/nnn-revo2012/NicoNamaRokuga
-Copyright (c) 2019 nnn-revo2012
-Released under the GNU General Public License v3.0
+Copyright (c) 2026 nnn-revo2012
+Released under the MIT License
 
 ・SnkLib.App.CookieGetter
 https://github.com/namoshika/SnkLib.App.CookieGetter
 Copyright (c) 2014 namoshika.
 Released under the GNU Lesser GPL
-本ソフトウェアでは上記にGoogleChrome80対応の修正を行ったものを使用しております。
-https://github.com/guest-nico/SnkLib.App.CookieGetter
-Copyright (c) 2019 guest-nico
+本ソフトウェアでは上記にGoogleChrome80対応の修正他を行ったものを使用しております。  
+https://github.com/guest-nico/SnkLib.App.CookieGetter  
+Copyright (c) 2019 guest-nico  
+Released under the GNU Lesser GPL  
+本ソフトウェアでは上記に更に追加修正を行ったものを使用しております。  
+https://github.com/nnn-revo2012/SnkLib.App.CookieGetter
+Copyright (c) 2019 nnn-rev02012
+Released under the GNU Lesser GPL  
 
 ・WebSocket4Net
 https://github.com/kerryjiang/WebSocket4Net
@@ -90,5 +92,57 @@ Released under the MIT License
 ※ファイル形式やフォーマットを使用しております。
 
 ■更新履歴
-2020/07/06　Version 0.1.1.02
+2026/03/20　Ver 0.1.2.01
+・LICENSEをMIT LICENSEに変更
+・新サーバーのコメント読み込み機能作成
+
+2025/06/09　Ver 0.1.1.30(2025/06/09)
+・websocket(comment)を削除
+・CommentInfo()、CommentControl()を削除
+・NicoStartMessage()を新規作成
+・NicoStartMessage.csにコメント関連の一部メソッドを移動
+・Form1.csやコメント関連の不要なロジック整理(リファクター)
+・NicoLiveNetの各メソッドをSirreneのNicoVideoNetと同じようにリファクター
+・websocketのstartWatching/changeStreamコマンドにaccessRightMethodを追加
+・cookieContainerにchangeStreamのcookieを追加する処理追加
+・websocketのroomレス廃止、messageServerレス追加
+
+2024/03/26　Ver 0.1.1.29
+・SnkLib.App.CookieGetter、SnkLib.App.CookieGetter.Forms 修正
+・ブラウザ一覧表示時のネットアクセスにUAを追加(ニコニコ側仕様変更)
+・ブラウザ一覧表示時にChromium系ブラウザのcookieファイルを開けない場合の表示追加
+
+2024/03/13　Ver 0.1.1.28
+・ニコ生のwebsocketがセキュリティ強化された(2024/02/14メンテ後)ので修正
+
+2023/06/24　Ver 0.1.1.27
+・CookieGetter、CookieGetter.Forms をアップデート
+
+commit 14987ae10668d8c795446c4e67d9bd5a0e0becd2
+Author: nnn-revo2012 <nnn_revo2012@yahoo.co.jp>
+Date:   Wed Apr 19 18:53:40 2023 +0900
+
+2023/04/19　Ver 0.1.1.26
+・Update README.txt README.md
+・BouncyCastle 1.8.9 にアップデート(アップデートしないと実行時エラーになる)
+・.NET Framework 4.8 にアップデート
+・Newtonsoft.Json 13.0.3 にアップデート
+
+2022/06/24　Ver 0.1.1.25
+・CookieGetter、CookieGetter.Forms をアップデート
+・Newtonsoft.Json を 13.0.1 にアップデート
+・ID/PASSログインのロジック修正、アカウントのpremium/normalが取得できなかったのを修正
+
+2022/05/13　Ver 0.1.0.23
+・CookieGetterのバージョンアップ
+
+2022/04/14　Ver 0.1.1.22
+・ID/PASSログイン時のURLを変更
+
+2021/12/22　Ver 0.1.1.21
+・2020/07/06以降のニコ生のサーバー側仕様変更に対応
+・プログラムのリファクタリング
+・バグ修正
+
+2020/07/06　Ver 0.1.1.02
 リリース
