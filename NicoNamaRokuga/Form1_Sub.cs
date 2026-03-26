@@ -113,7 +113,10 @@ namespace NicoNamaRokuga
             {
                 label2.Text = bci.Title;
                 label3.Text = Props.GetProviderType(bci.Provider_Type);
-                label4.Text = bci.Community_Title + "(" + bci.Community_Id + ")";
+                if (bci.Provider_Type == "channel" || bci.Provider_Type == "official")
+                {
+                    label4.Text = bci.Community_Title + "(" + bci.Community_Id + ")";
+                }
                 label5.Text = bci.Provider_Name + "(" + bci.Provider_Id + ")";
                 label6.Text = Props.GetUnixToDateTime(bci.Begin_Time).ToString() + " 開始";
                 label8.Text = "生放送";
@@ -131,7 +134,10 @@ namespace NicoNamaRokuga
         {
             this.Invoke(new Action(() =>
             {
-                label9.Text = Props.Quality[Props.ParseQTypes(s)];
+                if (Props.ParseQTypes(s, Props.Quality) > 0)
+                    label9.Text = Props.Quality[Props.ParseQTypes(s, Props.Quality)];
+                else
+                    label9.Text = Props.Quality2[Props.ParseQTypes(s, Props.Quality2)];
             }));
         }
 

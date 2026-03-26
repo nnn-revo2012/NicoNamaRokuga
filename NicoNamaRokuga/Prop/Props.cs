@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 
 using SunokoLibrary.Application;
 
@@ -10,7 +11,7 @@ namespace NicoNamaRokuga.Prop
 {
 
     public enum IsLogin { always, none, };
-    public enum LoginMethod { login, cookie, };
+    public enum LoginMethod { login, cookie, session, };
     public enum Protocol { hls, rtmp, };
     public enum UseExternal { native, ext1, ext2, ext3, };
 
@@ -57,6 +58,9 @@ namespace NicoNamaRokuga.Prop
 
         public static readonly string[] Quality =
             { "8Mbps (8Mbps1080p60fps)", "6Mbps (6Mbps1080p30fps)", "4Mbps (4Mbps720p60fps)", "3Mbps (suoer_high)", "2Mbps (high)", "1Mbps (normal)", "384Kbps (low)", "192Kbps (super_low)", "audio_high (audio_high)" };
+
+        public static readonly string[] Quality2 =
+            { "8Mbps (8Mbps1080p60fps)", "6Mbps (6Mbps1080p30fps)", "4Mbps (4Mbps720p60fps)", "3Mbps (suoer_high)", "1.5Mbps (1.5Mbps480p30fps)", "480Kbps (480kbps288p30fps)", "audio_high (audio_high)" };
 
         public static readonly string Commnet_SeetNo = "/hb ifseetno";
 
@@ -124,10 +128,14 @@ namespace NicoNamaRokuga.Prop
         public string Password { get; set; }
         public CookieSourceInfo SelectedCookie { get; set; }
         public bool IsAllCookie { get; set; }
+        public bool IsCookieFile { get; set; }
+        public string CookieFile { get; set; }
+        public string UserSession { get; set; }
         public string SaveDir { get; set; }
         public string SaveFolder { get; set; }
         public string SaveFile { get; set; }
         public string QuarityType { get; set; }
+        public string QuarityType2 { get; set; }
         public Protocol Protocol { get; set; }
         public UseExternal UseExternal { get; set; }
         public string[] ExecFile { get; set; }
@@ -142,7 +150,6 @@ namespace NicoNamaRokuga.Prop
         public bool IsComment { get; set; }
         public bool IsSeetNo { get; set; }
         public bool IsVideo { get; set; }
-
 
         public Props()
         {
@@ -177,13 +184,13 @@ namespace NicoNamaRokuga.Prop
                 return Enum.IsDefined(typeof(UseExternal), str);
         }
 
-        public static int ParseQTypes(string str)
+        public static int ParseQTypes(string str, IEnumerable<string> q)
         {
             var result = -1;
             var str2 = "(" + str + ")";
-            for (var i = 0; i <= Quality.Length - 1; i++)
+            for (var i = 0; i <= q.ToArray().Length - 1; i++)
             {
-                if (Quality[i].IndexOf(str2) > -1)
+                if (q.ToArray()[i].IndexOf(str2) > -1)
                 {
                     result = i;
                     break;
@@ -192,20 +199,20 @@ namespace NicoNamaRokuga.Prop
             return result;
         }
 
-        private static Regex RgxQType = new Regex(" \\(([\\w]+)\\)", RegexOptions.Compiled);
-        public static string EnumQTypes(int idx)
+        private static Regex RgxQType = new Regex(" \\(([^\\)]+)\\)", RegexOptions.Compiled);
+        public static string EnumQTypes(int idx, IEnumerable<string> q)
         {
-            if (idx < 0 || idx >= Quality.Length)
+            if (idx < 0 || idx >= q.ToArray().Length)
                 return "";
-            return RgxQType.Match(Quality[idx]).Groups[1].Value;
+            return RgxQType.Match(q.ToArray()[idx]).Groups[1].Value;
         }
 
-        public static bool IsQTypes(string str)
+        public static bool IsQTypes(string str, IEnumerable<string> q)
         {
             if (string.IsNullOrEmpty(str))
                 return false;
             else
-                return ParseQTypes(str) > -1 ? true : false; 
+                return ParseQTypes(str, q) > -1 ? true : false; 
         }
 
         public bool LoadData(string accountdbfile)
@@ -226,10 +233,14 @@ namespace NicoNamaRokuga.Prop
                     (LoginMethod)Enum.Parse(typeof(LoginMethod), Properties.Settings.Default.LoginMethod);
                 this.SelectedCookie = Properties.Settings.Default.SelectedCookie;
                 this.IsAllCookie = Properties.Settings.Default.IsAllCookie;
+                this.IsCookieFile = Properties.Settings.Default.IsCookieFile;
+                this.CookieFile = Properties.Settings.Default.CookieFile;
+                this.UserSession = Properties.Settings.Default.UserSession;
                 this.SaveDir = Properties.Settings.Default.SaveDir;
                 this.SaveFolder = Properties.Settings.Default.SaveFolder;
                 this.SaveFile = Properties.Settings.Default.SaveFile;
                 this.QuarityType = Properties.Settings.Default.QualityType;
+                this.QuarityType2 = Properties.Settings.Default.QualityType2;
                 this.Protocol =
                     (Protocol)Enum.Parse(typeof(Protocol), Properties.Settings.Default.Protocol);
                 this.UseExternal =
@@ -263,10 +274,14 @@ namespace NicoNamaRokuga.Prop
                 Properties.Settings.Default.LoginMethod = this.LoginMethod.ToString().ToLower();
                 Properties.Settings.Default.SelectedCookie = this.SelectedCookie;
                 Properties.Settings.Default.IsAllCookie = this.IsAllCookie;
+                Properties.Settings.Default.IsCookieFile = this.IsCookieFile;
+                Properties.Settings.Default.CookieFile = this.CookieFile;
+                Properties.Settings.Default.UserSession = this.UserSession;
                 Properties.Settings.Default.SaveDir = this.SaveDir;
                 Properties.Settings.Default.SaveFolder = this.SaveFolder;
                 Properties.Settings.Default.SaveFile = this.SaveFile;
                 Properties.Settings.Default.QualityType = this.QuarityType;
+                Properties.Settings.Default.QualityType2 = this.QuarityType2;
                 Properties.Settings.Default.Protocol = this.Protocol.ToString().ToLower();
                 Properties.Settings.Default.UseExternal = this.UseExternal.ToString().ToLower();
                 Properties.Settings.Default.ExecFile = String.Join(";", this.ExecFile);
@@ -385,10 +400,10 @@ namespace NicoNamaRokuga.Prop
             switch (type)
             {
                 case "community":
-                    result = "コミュニティ";
+                    result = "ユーザー生";
                     break;
                 case "user":
-                    result = "コミュニティ";
+                    result = "ユーザー生";
                     break;
                 case "channel":
                     result = "チャンネル";

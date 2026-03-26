@@ -138,7 +138,7 @@
             // オプションOToolStripMenuItem
             // 
             this.オプションOToolStripMenuItem.Name = "オプションOToolStripMenuItem";
-            this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            this.オプションOToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.オプションOToolStripMenuItem.Text = "オプション(&O)...";
             this.オプションOToolStripMenuItem.Click += new System.EventHandler(this.オプションOToolStripMenuItem_Click);
             // 
@@ -186,9 +186,9 @@
             this.label9.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label9.BackColor = System.Drawing.SystemColors.Control;
             this.label9.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label9.Location = new System.Drawing.Point(302, 147);
+            this.label9.Location = new System.Drawing.Point(289, 147);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(105, 23);
+            this.label9.Size = new System.Drawing.Size(117, 37);
             this.label9.TabIndex = 0;
             this.label9.Text = "回線速度";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -210,7 +210,7 @@
             this.label8.BackColor = System.Drawing.SystemColors.Control;
             this.label8.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label8.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.label8.Location = new System.Drawing.Point(343, 124);
+            this.label8.Location = new System.Drawing.Point(332, 124);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(43, 13);
             this.label8.TabIndex = 0;

@@ -31,6 +31,11 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.rB_session = new System.Windows.Forms.RadioButton();
+            this.button9 = new System.Windows.Forms.Button();
+            this.checkBox8 = new System.Windows.Forms.CheckBox();
+            this.textBox6 = new System.Windows.Forms.TextBox();
             this.nicoSessionComboBox1 = new SunokoLibrary.Windows.Forms.NicoSessionComboBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button5 = new System.Windows.Forms.Button();
@@ -54,8 +59,7 @@
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.rB_rtmp = new System.Windows.Forms.RadioButton();
-            this.rB_hls = new System.Windows.Forms.RadioButton();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
@@ -110,6 +114,11 @@
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.textBox7);
+            this.groupBox2.Controls.Add(this.rB_session);
+            this.groupBox2.Controls.Add(this.button9);
+            this.groupBox2.Controls.Add(this.checkBox8);
+            this.groupBox2.Controls.Add(this.textBox6);
             this.groupBox2.Controls.Add(this.nicoSessionComboBox1);
             this.groupBox2.Controls.Add(this.checkBox1);
             this.groupBox2.Controls.Add(this.button5);
@@ -122,10 +131,63 @@
             this.groupBox2.Controls.Add(this.rB_login);
             this.groupBox2.Location = new System.Drawing.Point(9, 81);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(394, 242);
+            this.groupBox2.Size = new System.Drawing.Size(394, 298);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "アカウント設定";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.textBox7.Location = new System.Drawing.Point(17, 259);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(284, 19);
+            this.textBox7.TabIndex = 15;
+            // 
+            // rB_session
+            // 
+            this.rB_session.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.rB_session.AutoSize = true;
+            this.rB_session.Location = new System.Drawing.Point(6, 237);
+            this.rB_session.Name = "rB_session";
+            this.rB_session.Size = new System.Drawing.Size(121, 16);
+            this.rB_session.TabIndex = 14;
+            this.rB_session.TabStop = true;
+            this.rB_session.Text = "user_sessionを指定";
+            this.rB_session.UseVisualStyleBackColor = true;
+            // 
+            // button9
+            // 
+            this.button9.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.button9.Enabled = false;
+            this.button9.Location = new System.Drawing.Point(316, 112);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(60, 23);
+            this.button9.TabIndex = 13;
+            this.button9.Text = "選択";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
+            // checkBox8
+            // 
+            this.checkBox8.AutoSize = true;
+            this.checkBox8.Location = new System.Drawing.Point(17, 92);
+            this.checkBox8.Name = "checkBox8";
+            this.checkBox8.Size = new System.Drawing.Size(150, 16);
+            this.checkBox8.TabIndex = 12;
+            this.checkBox8.Text = "クッキーファイルを直接指定";
+            this.checkBox8.UseVisualStyleBackColor = true;
+            this.checkBox8.Click += new System.EventHandler(this.checkBox8_Click);
+            // 
+            // textBox6
+            // 
+            this.textBox6.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.textBox6.Enabled = false;
+            this.textBox6.Location = new System.Drawing.Point(17, 114);
+            this.textBox6.Name = "textBox6";
+            this.textBox6.Size = new System.Drawing.Size(284, 19);
+            this.textBox6.TabIndex = 11;
+            this.textBox6.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox6_KeyDown);
             // 
             // nicoSessionComboBox1
             // 
@@ -150,7 +212,7 @@
             // button5
             // 
             this.button5.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button5.Location = new System.Drawing.Point(322, 64);
+            this.button5.Location = new System.Drawing.Point(316, 64);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(60, 23);
             this.button5.TabIndex = 6;
@@ -161,7 +223,7 @@
             // button4
             // 
             this.button4.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button4.Location = new System.Drawing.Point(322, 188);
+            this.button4.Location = new System.Drawing.Point(316, 201);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(60, 23);
             this.button4.TabIndex = 10;
@@ -173,7 +235,7 @@
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 193);
+            this.label2.Location = new System.Drawing.Point(15, 206);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(52, 12);
             this.label2.TabIndex = 6;
@@ -183,7 +245,7 @@
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 161);
+            this.label1.Location = new System.Drawing.Point(15, 179);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 12);
             this.label1.TabIndex = 5;
@@ -203,7 +265,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(90, 190);
+            this.textBox2.Location = new System.Drawing.Point(90, 203);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(211, 19);
             this.textBox2.TabIndex = 9;
@@ -211,7 +273,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(90, 158);
+            this.textBox1.Location = new System.Drawing.Point(90, 176);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(286, 19);
             this.textBox1.TabIndex = 8;
@@ -220,7 +282,7 @@
             // 
             this.rB_login.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.rB_login.AutoSize = true;
-            this.rB_login.Location = new System.Drawing.Point(6, 136);
+            this.rB_login.Location = new System.Drawing.Point(6, 151);
             this.rB_login.Name = "rB_login";
             this.rB_login.Size = new System.Drawing.Size(135, 16);
             this.rB_login.TabIndex = 7;
@@ -371,34 +433,21 @@
             // groupBox5
             // 
             this.groupBox5.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.groupBox5.Controls.Add(this.rB_rtmp);
-            this.groupBox5.Controls.Add(this.rB_hls);
-            this.groupBox5.Location = new System.Drawing.Point(191, 141);
+            this.groupBox5.Controls.Add(this.comboBox1);
+            this.groupBox5.Location = new System.Drawing.Point(214, 141);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(219, 47);
+            this.groupBox5.Size = new System.Drawing.Size(196, 47);
             this.groupBox5.TabIndex = 1;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "プロトコル";
+            this.groupBox5.Text = "画質(ユーザー)";
             // 
-            // rB_rtmp
+            // comboBox1
             // 
-            this.rB_rtmp.AutoSize = true;
-            this.rB_rtmp.Location = new System.Drawing.Point(56, 19);
-            this.rB_rtmp.Name = "rB_rtmp";
-            this.rB_rtmp.Size = new System.Drawing.Size(143, 16);
-            this.rB_rtmp.TabIndex = 9;
-            this.rB_rtmp.Text = "RTMP(公式生放送のみ)";
-            this.rB_rtmp.UseVisualStyleBackColor = true;
-            // 
-            // rB_hls
-            // 
-            this.rB_hls.AutoSize = true;
-            this.rB_hls.Location = new System.Drawing.Point(6, 19);
-            this.rB_hls.Name = "rB_hls";
-            this.rB_hls.Size = new System.Drawing.Size(44, 16);
-            this.rB_hls.TabIndex = 8;
-            this.rB_hls.Text = "HLS";
-            this.rB_hls.UseVisualStyleBackColor = true;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(6, 15);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(186, 20);
+            this.comboBox1.TabIndex = 8;
             // 
             // groupBox4
             // 
@@ -406,17 +455,17 @@
             this.groupBox4.Controls.Add(this.comboBox2);
             this.groupBox4.Location = new System.Drawing.Point(8, 141);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(177, 47);
+            this.groupBox4.Size = new System.Drawing.Size(200, 47);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "画質";
+            this.groupBox4.Text = "画質（公式・チャンネル)";
             // 
             // comboBox2
             // 
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(8, 15);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(159, 20);
+            this.comboBox2.Size = new System.Drawing.Size(186, 20);
             this.comboBox2.TabIndex = 7;
             // 
             // checkBox2
@@ -590,7 +639,6 @@
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
@@ -619,9 +667,7 @@
         private System.Windows.Forms.RadioButton rB_always;
         private System.Windows.Forms.RadioButton rB_none;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.RadioButton rB_rtmp;
         private System.Windows.Forms.RadioButton rB_native;
-        private System.Windows.Forms.RadioButton rB_hls;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox textBox3;
@@ -644,5 +690,11 @@
         private System.Windows.Forms.TextBox textBox5;
         private SunokoLibrary.Windows.Forms.NicoSessionComboBox nicoSessionComboBox1;
         private System.Windows.Forms.CheckBox checkBox7;
+        private System.Windows.Forms.TextBox textBox7;
+        private System.Windows.Forms.RadioButton rB_session;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.CheckBox checkBox8;
+        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

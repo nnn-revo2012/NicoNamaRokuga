@@ -285,5 +285,53 @@ namespace NicoNamaRokuga.Properties {
                 this["IsVideo"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1.5Mbps480p30fps")]
+        public string QualityType2 {
+            get {
+                return ((string)(this["QualityType2"]));
+            }
+            set {
+                this["QualityType2"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsCookieFile {
+            get {
+                return ((bool)(this["IsCookieFile"]));
+            }
+            set {
+                this["IsCookieFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CookieFile {
+            get {
+                return ((string)(this["CookieFile"]));
+            }
+            set {
+                this["CookieFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UserSession {
+            get {
+                return ((string)(this["UserSession"]));
+            }
+            set {
+                this["UserSession"] = value;
+            }
+        }
     }
 }

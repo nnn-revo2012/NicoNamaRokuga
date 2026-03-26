@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SunokoLibrary.Application;
+using SunokoLibrary.Windows.ViewModels;
 
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Net;
@@ -92,6 +93,9 @@ namespace NicoNamaRokuga
                 checkBox1.Checked = _props.IsAllCookie;
                 nicoSessionComboBox1.Selector.IsAllBrowserMode = checkBox1.Checked;
                 var tsk = nicoSessionComboBox1.Selector.SetInfoAsync(_props.SelectedCookie);
+                checkBox8.Checked = _props.IsCookieFile;
+                textBox6.Text = _props.CookieFile;
+                textBox7.Text = _props.UserSession;
 
                 textBox3.Text = _props.SaveDir;
                 textBox4.Text = _props.SaveFile;
@@ -100,7 +104,12 @@ namespace NicoNamaRokuga
                 comboBox2.Items.Clear();
                 foreach (var qu in Props.Quality.ToArray())
                     comboBox2.Items.Add(qu);
-                comboBox2.SelectedIndex = Props.ParseQTypes(_props.QuarityType);
+                comboBox2.SelectedIndex = Props.ParseQTypes(_props.QuarityType, Props.Quality);
+
+                comboBox1.Items.Clear();
+                foreach (var qu in Props.Quality2.ToArray())
+                    comboBox1.Items.Add(qu);
+                comboBox1.SelectedIndex = Props.ParseQTypes(_props.QuarityType2, Props.Quality2);
 
                 checkBox2.Checked = _props.IsLogging;
                 checkBox3.Checked = _props.IsComment;
@@ -162,12 +171,19 @@ namespace NicoNamaRokuga
                 _props.Password = textBox2.Text;
 
                 _props.IsAllCookie = checkBox1.Checked;
+                _props.IsCookieFile = checkBox8.Checked;
+                _props.CookieFile = textBox6.Text;
+                _props.UserSession = textBox7.Text;
+
                 _props.SaveDir = textBox3.Text;
                 _props.SaveFile = textBox4.Text;
                 _props.SaveFolder = textBox5.Text;
 
                 _props.QuarityType =
-                    Props.EnumQTypes(comboBox2.SelectedIndex);
+                    Props.EnumQTypes(comboBox2.SelectedIndex, Props.Quality);
+
+                _props.QuarityType2 =
+                    Props.EnumQTypes(comboBox1.SelectedIndex, Props.Quality2);
 
                 _props.IsLogging = checkBox2.Checked;
                 _props.IsComment = checkBox3.Checked;
@@ -268,5 +284,55 @@ namespace NicoNamaRokuga
         {
             //振り分けフォルダー
         }
+
+        private void checkBox8_Click(object sender, EventArgs e)
+        {
+            if (checkBox8.Checked)
+            {
+                textBox6.Enabled = true;
+                //textBox1.Text = null;
+                button9.Enabled = true;
+            }
+            else
+            {
+                textBox6.Enabled = false;
+                textBox1.Text = null;
+                button9.Enabled = false;
+            }
+        }
+
+        private async void button9_Click(object sender, EventArgs e)
+        {
+            //Cookieファイル直接指定
+            await nicoSessionComboBox1.ShowCookieDialogAsync();
+            var currentGetter = nicoSessionComboBox1.Selector.SelectedImporter;
+            if (currentGetter != null)
+            {
+                textBox6.Text = currentGetter.SourceInfo.CookiePath;
+            }
+        }
+
+        //指定されたcookieファイルを取得する
+        public async Task GetCookieFileAsync(string cookiefile)
+        {
+            var currentImporter = nicoSessionComboBox1.Selector.SelectedImporter;
+            var currentCookiePath = currentImporter.SourceInfo.CookiePath;
+            CookieSourceInfo newInfo = null;
+            if (!string.IsNullOrEmpty(cookiefile) &&
+                System.IO.File.Exists(cookiefile))
+            {
+                currentCookiePath = cookiefile;
+                newInfo = currentImporter.SourceInfo.GenerateCopy(cookiePath: currentCookiePath);
+            }
+            await nicoSessionComboBox1.Selector.SetInfoAsync(newInfo);
+        }
+
+        //Cookieファイル直接指定(TextBox)
+        private async void textBox6_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(textBox6.Text))
+                await GetCookieFileAsync(textBox6.Text);
+        }
+
     }
 }

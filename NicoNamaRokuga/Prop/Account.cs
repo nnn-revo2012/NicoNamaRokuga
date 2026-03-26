@@ -141,6 +141,7 @@ namespace NicoNamaRokuga.Prop
 
         public bool ReadDbUser(string alias, out string user, out string pass)
         {
+            long result = -1;
             user = pass = "";
             string aesiv = ""; string aeskey = "";
             string data = null;
@@ -150,6 +151,16 @@ namespace NicoNamaRokuga.Prop
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
+                    command.CommandText = "SELECT COUNT(name) FROM sqlite_master WHERE type = 'table' AND name = 'niconico'\n";
+                    //Debug.WriteLine(command.CommandText);
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                            result = reader.GetInt64(0);
+                    }
+                    if (result <= 0)
+                        return false;
+
                     command.CommandText = "SELECT user, pass, aesiv, aeskey FROM niconico \n";
                     command.CommandText += "WHERE alias=\"" + alias + "\" \n";
                     Debug.WriteLine(command.CommandText);

@@ -243,7 +243,12 @@ namespace NicoNamaRokuga.Net
                             _form.AddLog("availableQualities: [" + string.Join(" ", qts) + "]", 9);
                             _wsStatus = 3;
                             //画質一覧から画質を選ぶ
-                            var selqu = SelectQuality(Form1.props.QuarityType.ToString(), qts);
+                            
+                            string selqu = "";
+                            if (!string.Join(" ", qts).Contains("super_low"))
+                                selqu = SelectQuality(Form1.props.QuarityType2.ToString(), qts, Props.Quality2);
+                            else
+                                selqu = SelectQuality(Form1.props.QuarityType.ToString(), qts, Props.Quality);
                             if (string.IsNullOrEmpty(selqu))
                                 selqu = (string)data["quality"];
                             _form.AddLog("Select: " + selqu, 9);
@@ -390,14 +395,14 @@ namespace NicoNamaRokuga.Net
 
         }
 */
-        private string SelectQuality(string quality, JArray qtypes)
+        private string SelectQuality(string quality, JArray qtypes, IEnumerable<string> qlist)
         {
             string result = null;
             if (string.IsNullOrEmpty(quality) || qtypes.Count() <= 0) return result;
 
             for (var i = qtypes.Count() - 1; i >= 0; i--)
             {
-                if (Props.IsQTypes(qtypes[i].ToString()))
+                if (Props.IsQTypes(qtypes[i].ToString(), qlist))
                 {
                     result = qtypes[i].ToString();
                     if (result == quality) break;
@@ -409,7 +414,7 @@ namespace NicoNamaRokuga.Net
         public string SendStartWatching(string protocol)
         {
             //StartWatching
-            var s = @"{""type"":""startWatching"",""data"":{ ""stream"":{ ""quality"":""normal"","
+            var s = @"{""type"":""startWatching"",""data"":{ ""stream"":{ ""quality"":""abr"","
                     + @"""protocol"":""%%proto%%"",""latency"":""high"",""accessRightMethod"":""single_cookie"","
                     + @"""chasePlay"":false},"
                     + @"""room"":{ ""protocol"":""webSocket"",""commentable"":true},""reconnect"":false} }";

@@ -82,6 +82,21 @@ namespace NicoNamaRokuga.Net
             return result.ToList();
         }
 
+        public CookieContainer SetCookie(string user_session)
+        {
+            var c = new Cookie();
+            var cc = new CookieContainer();
+            if (!string.IsNullOrEmpty(user_session))
+            {
+                c.Name = "user_session";
+                c.Value = user_session;
+                c.Domain = ".nicovideo.jp";
+                c.Path = "/";
+                cc.Add(c);
+            }
+            return cc;
+        }
+
         private CookieContainer GetCookieContainer(WebClientEx wc)
         {
             return wc.cookieContainer;

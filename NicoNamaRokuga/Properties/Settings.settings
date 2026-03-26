@@ -68,5 +68,17 @@
     <Setting Name="IsVideo" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="QualityType2" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1.5Mbps480p30fps</Value>
+    </Setting>
+    <Setting Name="IsCookieFile" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CookieFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UserSession" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
