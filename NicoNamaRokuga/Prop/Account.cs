@@ -123,8 +123,7 @@ namespace NicoNamaRokuga.Prop
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "UPDATE niconico SET \n";
-                    command.CommandText += "session=\"" + session + "\", \n";
-                    command.CommandText += "secure=\"" + secure + "\" \n";
+                    command.CommandText += "session=\"" + session + "\" \n";
                     command.CommandText += "WHERE alias=\"" + alias + "\" \n";
                     Debug.WriteLine(command.CommandText);
                     command.ExecuteNonQuery();
@@ -195,19 +194,22 @@ namespace NicoNamaRokuga.Prop
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
-                    command.CommandText = "SELECT session, secure FROM niconico \n";
+                    command.CommandText = "SELECT session FROM niconico \n";
                     command.CommandText += "WHERE alias=\"" + alias + "\" \n";
                     Debug.WriteLine(command.CommandText);
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            session = (string )reader["session"];
-                            secure =  (string )reader["secure"];
+                            if (!reader.IsDBNull(0))
+                                session = reader.GetString(0);
                         }
                     }
                 }
-                return true;
+                if (!string.IsNullOrEmpty(session))
+                    return true;
+                else
+                    return false;
             }
             catch (Exception Ex)
             {
@@ -226,11 +228,10 @@ namespace NicoNamaRokuga.Prop
             {
                 if (!ReadDbSession(alias, out session, out secure))
                     return false;
-                if (string.IsNullOrEmpty(session) || string.IsNullOrEmpty(secure))
+                if (string.IsNullOrEmpty(session))
                     return false;
 
                 cc.Add(new Cookie("user_session", session, "/", ".nicovideo.jp"));
-                cc.Add(new Cookie("user_session_secure", secure, "/", ".nicovideo.jp"));
                 return true;
             }
             catch (Exception Ex)
@@ -252,10 +253,8 @@ namespace NicoNamaRokuga.Prop
                 {
                     if (ck.Name == "user_session")
                         session = (string)ck.Value;
-                    else if (ck.Name == "user_session_secure")
-                        secure = (string)ck.Value;
                 }
-                if (!string.IsNullOrEmpty(session) && !string.IsNullOrEmpty(secure))
+                if (!string.IsNullOrEmpty(session))
                     if (WriteDbSession(alias, session, secure))
                         return true;
                     else

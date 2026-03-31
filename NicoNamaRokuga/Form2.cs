@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Net;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SunokoLibrary.Application;
 using SunokoLibrary.Windows.ViewModels;
 
@@ -47,6 +40,7 @@ namespace NicoNamaRokuga
             _user = _props.UserID;
             _pass = _props.Password;
             SetForm();
+            this.checkBox8_Click(this, EventArgs.Empty);
         }
 
         //変数→フォーム
@@ -228,9 +222,23 @@ namespace NicoNamaRokuga
 
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private async void button4_Click(object sender, EventArgs e)
         {
             //ログインする
+            var flag = false;
+            var err = string.Empty;
+            int neterr = 0;
+            var _nln = new NicoLiveNet();
+
+            (flag, err, neterr) = await _nln.LoginNicoTest(this._accountdbfile, textBox1.Text, textBox2.Text, _nln);
+            if (!string.IsNullOrEmpty(err))
+            {
+                MessageBox.Show(err);
+            }
+            else
+            {
+                MessageBox.Show("err is null");
+            }
         }
 
         private void checkBox1_Click(object sender, EventArgs e)
@@ -238,7 +246,6 @@ namespace NicoNamaRokuga
             //クッキー一覧を更新
             nicoSessionComboBox1.Selector.IsAllBrowserMode = checkBox1.Checked;
             var tsk = nicoSessionComboBox1.Selector.UpdateAsync();
-
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -290,13 +297,13 @@ namespace NicoNamaRokuga
             if (checkBox8.Checked)
             {
                 textBox6.Enabled = true;
-                //textBox1.Text = null;
+                //textBox6.Text = null;
                 button9.Enabled = true;
             }
             else
             {
                 textBox6.Enabled = false;
-                textBox1.Text = null;
+                //textBox6.Text = null;
                 button9.Enabled = false;
             }
         }

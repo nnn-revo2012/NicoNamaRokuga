@@ -380,32 +380,68 @@ namespace NicoNamaRokuga.Net
             return (bci, err, neterr);
         }
 
-        //ＴＳコメント取得用のwaybackkeyを取得
-/*
-        public async Task<string> GetWayBackKeyAsync(string thread_id)
+        public async Task<(bool flag, string err, int neterr)> LoginNicoTest(string accountdbfile, string user, string pass, NicoLiveNet nln)
         {
-            var result = string.Empty;
-            if (string.IsNullOrEmpty(thread_id)) return result;
+            bool flag = false;
+            string err = null;
+            int neterr = 0;
+            var cookiecontainer = new CookieContainer();
+
             try
             {
-                var stmp = Props.NicoWayBackKey + "?thread=" + thread_id;
-                result = await _wc.DownloadStringTaskAsync(stmp).Timeout(_wc.timeout);
-                result = result.Split('=')[1];
+                //ニコニコにログイン
+                using (var db = new Prop.Account(accountdbfile))
+                {
+                    var alias = "nico_01";
+                    //string user = null; string pass = null;
+
+                    //ログイン処理
+                    //AddLog("ログイン開始", 1);
+                    if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
+                    {
+                        //AddLog("Login Failed: can't read user or pass", 1);
+                        err = "Login Failed: can't read user or pass";
+                        return (flag, err, neterr);
+                    }
+                    (flag, _, _) = await nln.LoginNico(cookiecontainer, user, pass);
+                    if (!flag)
+                    {
+                        //AddLog("Login Failed: login error", 1);
+                        //return;
+                        err = "Login Failed: login error";
+                        return (flag, err, neterr);
+                    }
+                    else
+                    {
+                        //AddLog("Login OK", 1);
+                        err = "Login OK";
+                        flag = true;
+                    }
+                }
             }
             catch (WebException Ex)
             {
-                DebugWrite.WriteWebln(nameof(GetWayBackKeyAsync), Ex);
-                return result;
+                DebugWrite.WriteWebln(nameof(LoginNicoTest), Ex);
+                if (Ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    HttpWebResponse errres = (HttpWebResponse)Ex.Response;
+                    neterr = (int)errres.StatusCode;
+                    err = neterr.ToString() + " " + errres.StatusDescription;
+                }
+                else
+                    err = Ex.Message;
             }
             catch (Exception Ex) //その他のエラー
             {
-                DebugWrite.Writeln(nameof(GetWayBackKeyAsync), Ex);
-                return result;
+                DebugWrite.Writeln(nameof(LoginNicoTest), Ex);
+                err = Ex.Message;
             }
+            finally
+            {
+            }
+            return (flag, err, neterr);
 
-            return result;
         }
-*/
 
         //*************** Cookie用 *******************
         // 指定Cookie情報のブラウザーのニコニコのCookieを取得してセット
