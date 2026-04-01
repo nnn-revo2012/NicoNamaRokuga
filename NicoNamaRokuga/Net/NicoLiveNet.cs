@@ -63,12 +63,14 @@ namespace NicoNamaRokuga.Net
         public bool IsDebug { get; set; }
 
         public bool IsLoginStatus { get; private set; }
+        public bool ForceLogin { get; private set; }
 
         public NicoLiveNet()
         {
             IsDebug = false;
 
             IsLoginStatus = false;
+            ForceLogin = false;
         }
 
         private IList<KeyValuePair<string, string>> GetCookieList(WebClientEx wc)
@@ -81,6 +83,24 @@ namespace NicoNamaRokuga.Net
 
             return result.ToList();
         }
+
+        private bool IsExistCookie(WebClientEx wc, string key)
+        {
+            var result = false;
+            var cc = wc.cookieContainer;
+
+            foreach (Cookie ck in cc.GetCookies(new Uri(Props.NicoDomain)))
+            {
+                if (ck.Name == key)
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        }
+
 
         public CookieContainer SetCookie(string user_session)
         {
@@ -141,6 +161,8 @@ namespace NicoNamaRokuga.Net
                 _wc.Proxy = null;
                 _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
                 _wc.timeout = 30000;
+                _wc.Headers.Add("Origin", Props.NicoMFAUrl);
+                _wc.Headers.Add("Referer", Props.NicoMFAUrl + "/login");
                 _wc.Headers.Add(HttpRequestHeader.ContentType, "application/x-www-form-urlencoded");
                 SetCookieContainer(_wc, cookie);
 
@@ -151,8 +173,68 @@ namespace NicoNamaRokuga.Net
 
                 byte[] resArray = await _wc.UploadValuesTaskAsync(Props.NicoLoginUrl, ps).Timeout(_wc.timeout);
                 var data = System.Text.Encoding.UTF8.GetString(resArray);
-                flag = Regex.IsMatch(data, "user\\.login_status += +\\'login\\'", RegexOptions.Compiled) ? true : false;
-                IsLoginStatus = flag;
+
+                //Cookieの中に"mfa_session="があれば２段階認証処理を行う
+                var otp_code = string.Empty;
+                var is_mfa = IsExistCookie(_wc, "mfa_session");
+                if (is_mfa)
+                {
+                    //var otp = new NameValueCollection();
+                    var ma = Regex.Match(data, "form action=\"([^\"]+)\"", RegexOptions.Compiled);
+                    var mfa_uri = Props.NicoMFAUrl + ma.Groups[1].Value.ToString();
+                    //２段階認証文字入力
+                    int i = 3;
+                    using (var inputText = new InputText())
+                    {
+                        while (i > 0)
+                        {
+                            var inputResult = inputText.ShowDialog();
+                            if (inputResult == DialogResult.OK)
+                            {
+                                otp_code = inputText.GetInputText();
+                                if (!Regex.IsMatch(otp_code, "^\\d{6}", RegexOptions.Compiled))
+                                {
+                                    MessageBox.Show("文字列は6文字の数字のみです",
+                                        "エラー",
+                                        MessageBoxButtons.OK,
+                                        MessageBoxIcon.Error);
+                                    otp_code = "";
+                                }
+                                else
+                                {
+                                    i = 0;
+                                }
+                            }
+                            i--;
+                        }
+                    }
+                    if (string.IsNullOrEmpty(otp_code))
+                    {
+                        err = "MFA input canceled or error";
+                    }
+                    else
+                    {
+                        //２段階認証文字をサーバーに送付
+                        _wc.Encoding = Encoding.UTF8;
+                        _wc.Proxy = null;
+                        _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
+                        _wc.timeout = 30000;
+                        _wc.Headers.Add("Origin", Props.NicoMFAUrl);
+                        _wc.Headers.Add("Referer", mfa_uri);
+                        _wc.Headers.Add(HttpRequestHeader.ContentType, "application/x-www-form-urlencoded");
+                        SetCookieContainer(_wc, cookie);
+
+                        var otp = new NameValueCollection();
+                        otp.Add("otp", otp_code);
+                        resArray = await _wc.UploadValuesTaskAsync(mfa_uri, otp).Timeout(_wc.timeout);
+                        data = System.Text.Encoding.UTF8.GetString(resArray);
+                    }
+                }
+                if (!is_mfa || !string.IsNullOrEmpty(otp_code))
+                {
+                    flag = Regex.IsMatch(data, "user\\.login_status += +\\'login\\'", RegexOptions.Compiled) ? true : false;
+                    IsLoginStatus = flag;
+                }
                 /*
                 user.login_status = 'login';
                 user.member_status = 'premium';
@@ -171,7 +253,7 @@ namespace NicoNamaRokuga.Net
             }
             catch (WebException Ex)
             {
-                DebugWrite.WriteWebln(nameof(LoginNico), Ex);
+                DebugWrite.WriteWebln("WebEx:"+nameof(LoginNico), Ex);
                 if (Ex.Status == WebExceptionStatus.ProtocolError)
                 {
                     HttpWebResponse errres = (HttpWebResponse)Ex.Response;
@@ -183,12 +265,13 @@ namespace NicoNamaRokuga.Net
             }
             catch (Exception Ex) //その他のエラー
             {
-                DebugWrite.Writeln(nameof(LoginNico), Ex);
+                DebugWrite.Writeln("Ex:"+nameof(LoginNico), Ex);
                 err = Ex.Message;
             }
             finally
             {
-                cookie = GetCookieContainer(_wc);
+                if (flag)
+                    cookie = GetCookieContainer(_wc);
                 _wc?.Dispose();
             }
 
@@ -392,7 +475,7 @@ namespace NicoNamaRokuga.Net
                 //ニコニコにログイン
                 using (var db = new Prop.Account(accountdbfile))
                 {
-                    var alias = "nico_01";
+                    //var alias = "nico_01";
                     //string user = null; string pass = null;
 
                     //ログイン処理
@@ -403,7 +486,7 @@ namespace NicoNamaRokuga.Net
                         err = "Login Failed: can't read user or pass";
                         return (flag, err, neterr);
                     }
-                    (flag, _, _) = await nln.LoginNico(cookiecontainer, user, pass);
+                    (flag, err, neterr) = await nln.LoginNico(cookiecontainer, user, pass);
                     if (!flag)
                     {
                         //AddLog("Login Failed: login error", 1);

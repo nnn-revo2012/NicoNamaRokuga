@@ -30,6 +30,7 @@ namespace NicoNamaRokuga.Prop
 
         //public static readonly string NicoLoginUrl = "https://secure.nicovideo.jp/secure/login?site=niconico";
         public static readonly string NicoLoginUrl = "https://account.nicovideo.jp/login/redirector?show_button_twitter=1&site=niconico&show_button_facebook=1&next_url=%2F";
+        public static readonly string NicoMFAUrl = "https://account.nicovideo.jp";
         public static readonly string NicoGetPlayerStatus = "https://ow.live.nicovideo.jp/api/getplayerstatus?v=";
         public static readonly string NicoWayBackKey = "https://live.nicovideo.jp/api/getwaybackkey";
         //public static readonly string NicoCasApi = "https://api.cas.nicovideo.jp/v1/services/live/programs/";

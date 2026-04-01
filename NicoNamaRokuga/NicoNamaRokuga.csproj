@@ -188,6 +188,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InputText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InputText.Designer.cs">
+      <DependentUpon>InputText.cs</DependentUpon>
+    </Compile>
     <Compile Include="Message\BinaryStream.cs" />
     <Compile Include="Message\MessageServer.cs" />
     <Compile Include="Message\NicoMessage.cs" />
@@ -241,6 +247,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InputText.resx">
+      <DependentUpon>InputText.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

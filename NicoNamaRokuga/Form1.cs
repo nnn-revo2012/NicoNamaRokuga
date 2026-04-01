@@ -201,9 +201,9 @@ namespace NicoNamaRokuga
                             {
                                 var alias = "nico_01";
                                 string user = null; string pass = null;
-                                if (!_nln.IsLoginStatus)
+                                if (!_nln.IsLoginStatus || _nln.ForceLogin)
                                 {
-                                    if (db.GetSession(alias, cookiecontainer))
+                                    if (db.GetSession(alias, cookiecontainer) && !_nln.ForceLogin)
                                     {
                                         //ニコニコにアクセスする
                                         (flag, _, _) = await _nln.IsLoginNicoAsync(cookiecontainer);
@@ -254,6 +254,25 @@ namespace NicoNamaRokuga
                             if (!flag)
                             {
                                 AddLog("ブラウザでログインし直してください", 1);
+                                return;
+                            }
+                            break;
+                        case "session":
+                            //user_session読み込み処理
+                            if (!string.IsNullOrEmpty(props.UserSession))
+                            {
+                                cookiecontainer = _nln.SetCookie(props.UserSession);
+                                AddLog("user_sessionを読み込みました", 1);
+                                (flag, _, _) = await _nln.IsLoginNicoAsync(cookiecontainer);
+                                if (!flag)
+                                {
+                                    AddLog("user_sessionが無効です", 1);
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                AddLog("user_sessionが設定されていません", 1);
                                 return;
                             }
                             break;
