@@ -15,6 +15,7 @@ using WebSocket4Net;
 
 using NicoNamaRokuga.Prop;
 using NicoNamaRokuga.Proc;
+using NicoNamaRokuga.Net;
 using NicoNamaRokuga.Rec;
 using NicoNamaRokuga.Message;
 
@@ -262,6 +263,7 @@ namespace NicoNamaRokuga.Net
                             _form.AddLog("Quarity: " + ttt, 9);
                             _form.DispQuality(ttt);
                             //cookieを追加する
+                            string us = string.Empty;
                             if (_cookieContainer != null)
                             {
                                 foreach (var ck in (JArray)data["cookies"])
@@ -279,6 +281,14 @@ namespace NicoNamaRokuga.Net
                                     }
                                 }
                             }
+                            foreach (Cookie ck in _cookieContainer.GetCookies(new Uri(Props.NicoDomain)))
+                            {
+                                if (ck.Name == "user_session")
+                                {
+                                    us = ck.Value;
+                                    break;
+                                }
+                            }
                             //ffmpegを実行する
                             ttt = (string)data["uri"];
                             _form.AddLog("Masterm3u8: " + ttt, 9);
@@ -286,7 +296,7 @@ namespace NicoNamaRokuga.Net
                                 _epi.SaveFile = ExecPsInfo.GetSaveFileNum(_epi);
                             if (Form1.props.IsComment)
                                 _epi.SaveCommentFile = _epi.SaveFile + _epi.Xml;
-                            var argument = ExecPsInfo.SetOption(_epi, ttt, _bci.StartTs_Time);
+                            var argument = ExecPsInfo.SetOption(_epi, ttt, NicoLiveNet.GetNicoPageUrl(_bci.LiveId), us, _bci.StartTs_Time, Form1.props.IsLogging);
                             if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
                                 _rHtml.ExecPs(ttt, _epi.SaveFile);
                             else

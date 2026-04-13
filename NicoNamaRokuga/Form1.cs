@@ -318,7 +318,7 @@ namespace NicoNamaRokuga
                 epi.Seq = 0;
                 ExecPsInfo.MakeRecDir(epi);
 
-                if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
+                if (props.Protocol == Protocol.hls)
                 {
                     var file = ExecPsInfo.GetSaveFileSqlite3(epi);
                     if (bci.IsTimeShift()) file += Props.TIMESHIFT;

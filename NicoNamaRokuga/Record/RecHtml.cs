@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -37,22 +38,28 @@ namespace NicoNamaRokuga.Rec
         public int ErrNo { set; get; }
         public string MasterUrl { set; get; }
         public string BaseUrl { set; get; }
+        public string Media { set; get; }
         public ICollection<PlayerInfo> Player { private set; get; }
         public long SeqNo { set; get; }
         public long LastSeqNo { set; get; }
         public bool EndList { set; get; }
         public double Position { set; get; }
+        public string AesKey { set; get; }
+        public string IV { set; get; }
 
         public PlayListInfo()
         {
             this.Status = "";
             this.Error = "";
             this.ErrNo = 0;
+            this.Media = "";
             this.Player = new List<PlayerInfo>();
             this.SeqNo = -1;
             this.LastSeqNo = -1;
             this.EndList = false;
             this.Position = 0.0;
+            this.AesKey = null;
+            this.IV = null;
         }
     }
 
@@ -96,7 +103,9 @@ namespace NicoNamaRokuga.Rec
 
         private bool disposedValue = false; // 重複する呼び出しを検知するには
 
-        private WebClientEx _wc = null;
+        //private WebClientEx _wc = null;
+        private CookieContainer _cc = null;
+        private int _timeout = 30;
 
         private class WebClientEx : WebClient
         {
@@ -134,6 +143,9 @@ namespace NicoNamaRokuga.Rec
 
             var timeout = Form1.props.Timeout1;
             if (_bci.IsTimeShift()) timeout = Form1.props.Timeout2;
+            this._timeout = timeout;
+            this._cc = cc;
+/*
             var wc = new WebClientEx();
             _wc = wc;
 
@@ -150,6 +162,7 @@ namespace NicoNamaRokuga.Rec
                 for (int i = 0; i < _wc.Headers.Count; i++)
                     Debug.WriteLine(_wc.Headers.GetKey(i).ToString() + ": " + _wc.Headers.Get(i));
             }
+*/
         }
 
         ~RecHtml()
@@ -195,8 +208,13 @@ namespace NicoNamaRokuga.Rec
 
         private async Task HtmlRecord(string masterfile, string outfile)
         {
-            long waittime = 1300;
-            int delaytime = 800;
+            //long waittime = 1300;
+            //int delaytime = 800;
+            long waittime = 2500;
+            int delaytime = 1500;
+            bool result = false;
+            string err = string.Empty;
+            int neterr = 0;
 
             try
             {
@@ -221,29 +239,43 @@ namespace NicoNamaRokuga.Rec
                 // masterファイルをGet
                 var sw = new Stopwatch();
                 sw.Start();
-                var pli = await GetMasterM3u8Async(masterfile + stime);
+                var (pliv, plia) = await GetMasterM3u8Async(masterfile);
                 sw.Stop();
-                if (pli.Status != "Ok" || pli.Player.Count() <= 0)
+                if (pliv.Status != "Ok" || pliv.Player.Count() <= 0)
                 {
-                    _form.AddExecLog("GetMasterM3u8 Error: " + pli.Error + "\r\n");
+                    _form.AddExecLog("GetMasterM3u8 Error(VIDEO): " + pliv.Error + "\r\n");
+                    EndPs(2); //Retry
+                }
+                if (plia.Status != "Ok" || plia.Player.Count() <= 0)
+                {
+                    _form.AddExecLog("GetMasterM3u8 Error(AUDIO): " + plia.Error + "\r\n");
                     EndPs(2); //Retry
                 }
                 var seqno = _ndb.GetDbMediaLastSeqNo();
                 if (seqno > 0)
                 {
-                    pli.SeqNo = seqno;
-                    pli.Position = _ndb.GetDbMediaLastPos();
+                    pliv.SeqNo = seqno;
+                    pliv.Position = _ndb.GetDbMediaLastPos();
                 }
+                //var seqno = _ndb.GetDbMediaLastSeqNo();
+                //if (seqno > 0)
+                //{
+                //    plia.SeqNo = seqno;
+                //    plia.Position = _ndb.GetDbMediaLastPos();
+                //}
                 await Task.Delay(100);
 
                 //速度 X2.0 & 待ち時間を変更
+                /*
                 if (_bci.IsTimeShift())
                 {
-                    waittime = 4500;
-                    delaytime = 4000;
+                    //waittime = 4500;
+                    //delaytime = 4000;
+                    waittime = 5500;
+                    delaytime = 3000;
                     if (_bci.AccountType == "premium")
                     {
-                        if (await SetPlayControlAsync("2", pli))
+                        if (await SetPlayControlAsync("2", pliv))
                         {
                             waittime = 2300;
                             delaytime = 2000;
@@ -251,7 +283,7 @@ namespace NicoNamaRokuga.Rec
                     }
                     else
                     {
-                        if (await SetPlayControlAsync("1.25", pli))
+                        if (await SetPlayControlAsync("1.25", pliv))
                         {
                             waittime = 4000;
                             delaytime = 3500;
@@ -259,44 +291,58 @@ namespace NicoNamaRokuga.Rec
                     }
                     await Task.Delay(100);
                 }
+                */
 
                 while (PsStatus == 0)
                 {
-                    if (pli.EndList)
+                    //if (plia.EndList && plia.EndList)
+                    if (pliv.EndList)
                     {
-                         EndPs(1);
-                         break;
+                        EndPs(1);
+                        break;
                     }
                     // playerファイルをGet
-                    var sgi = await GetPlayerM3u8Async(pli.Player.FirstOrDefault().pUrl);
-                    if (sgi.Status != "Ok" || sgi.Seg.Count() <= 0)
+                    var sgiv = await GetPlayerM3u8Async(pliv.Player.FirstOrDefault().pUrl, pliv);
+                    if (sgiv.Status != "Ok" || sgiv.Seg.Count() <= 0)
                     {
-                        _form.AddExecLog("GetPlayerM3u8 Error: " + sgi.Error + "\r\n");
+                        _form.AddExecLog("GetPlayerM3u8 Error(VIDEO): " + sgiv.Error + "\r\n");
                         EndPs(2); //Retry
                         break;
                     }
-                    if (pli.SeqNo < 0)
+                    var sgia = await GetPlayerM3u8Async(plia.Player.FirstOrDefault().pUrl, plia);
+                    if (sgia.Status != "Ok" || sgia.Seg.Count() <= 0)
                     {
-                        pli.SeqNo = sgi.SeqNo;
-                        pli.Position = sgi.Position;
+                        _form.AddExecLog("GetPlayerM3u8 Error(AUDIO): " + sgia.Error + "\r\n");
+                        EndPs(2); //Retry
+                        break;
+                    }
+
+                    EndPs(1);
+                    return;
+
+                    if (pliv.SeqNo < 0)
+                    {
+                        pliv.SeqNo = sgiv.SeqNo;
+                        pliv.Position = sgiv.Position;
                     }
                     await Task.Delay(100);
 
                     // 指定秒ごとにSegmentファイルを取得
                     var sc = 0;
-                    foreach (var item in sgi.Seg)
+                    foreach (var item in sgiv.Seg)
                     {
                         if (PsStatus > 0) break;
-                        if (sgi.SeqNo >= pli.SeqNo)
+                        if (sgiv.SeqNo >= pliv.SeqNo)
                         {
                             sw.Restart();
-                            if (!await GetSegmentAsync(item, pli, sgi))
+                            (result, err, neterr) = await GetSegmentAsync(item, pliv, sgiv);
+                            if (result == false && neterr != 404)
                                 EndPs(2); //Retry
                             sw.Stop();
-                            _form.AddExecLog("SeqNo=" + sgi.SeqNo.ToString() + " " + sw.ElapsedMilliseconds.ToString() + "mSec\r\n");
-                            sgi.SeqNo++;
+                            _form.AddExecLog("SeqNo=" + sgiv.SeqNo.ToString() + " " + sw.ElapsedMilliseconds.ToString() + "mSec\r\n");
+                            sgiv.SeqNo++;
                             sc++;
-                            sgi.Position += item.ExtInfo;
+                            sgiv.Position += item.ExtInfo;
                             if (PsStatus > 0) break;
                             if (sw.ElapsedMilliseconds > waittime)
                             {
@@ -310,8 +356,8 @@ namespace NicoNamaRokuga.Rec
                         else
                         {
                             if (PsStatus > 0) break;
-                            sgi.SeqNo++;
-                            sgi.Position += item.ExtInfo;
+                            sgiv.SeqNo++;
+                            sgiv.Position += item.ExtInfo;
                         }
                     }
                     if (PsStatus > 0) break;
@@ -320,11 +366,11 @@ namespace NicoNamaRokuga.Rec
                         _form.AddExecLog("Wait " + delaytime.ToString() + "mSec\r\n");
                         await Task.Delay(delaytime);
                     }
-                    pli.SeqNo = sgi.SeqNo;
-                    pli.Position = sgi.Position;
-                    if (sgi.EndList)
+                    pliv.SeqNo = sgiv.SeqNo;
+                    pliv.Position = sgiv.Position;
+                    if (sgiv.EndList)
                     {
-                        pli.EndList = true;
+                        pliv.EndList = true;
                         EndPs(1);
                     }
                 }
@@ -362,81 +408,129 @@ namespace NicoNamaRokuga.Rec
         }
 
         //master.m3u8からplayer.m3u8のURLを取得
-        public async Task<PlayListInfo> GetMasterM3u8Async(string url)
+        public async Task<(PlayListInfo, PlayListInfo)> GetMasterM3u8Async(string url)
         {
             _form.AddExecLog("GetMasterFile\r\n");
-            var pli = new PlayListInfo();
-            pli.Status = "Error";
-            pli.Error = "PARAMERROR";
-            if (string.IsNullOrEmpty(url)) return pli;
+            var pliv = new PlayListInfo();
+            var plia = new PlayListInfo();
+            pliv.Status = "Error";
+            pliv.Error = "PARAMERROR";
+            plia.Status = "Error";
+            plia.Error = "PARAMERROR";
+            if (string.IsNullOrEmpty(url)) return (pliv, plia);
 
+            var _wc = new WebClientEx();
             try
             {
-                pli.MasterUrl = url;
-                var idx = url.IndexOf("master.m3u8");
-                if (idx >= 0) pli.BaseUrl = url.Substring(0, idx);
+                _wc.Encoding = Encoding.UTF8;
+                _wc.Proxy = null;
+                _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
+                _wc.Headers.Add(HttpRequestHeader.Referer, Props.GetLiveUrl(_bci.LiveId));
+                _wc.cookieContainer = this._cc;
+                _wc.timeout = this._timeout;
+
+                pliv.MasterUrl = url;
+                plia.MasterUrl = url;
+                //var idx = url.IndexOf("master.m3u8");
+                //if (idx >= 0) pliv.BaseUrl = url.Substring(0, idx);
+                //if (idx >= 0) plia.BaseUrl = url.Substring(0, idx);
                 var str = await _wc.DownloadStringTaskAsync(url).Timeout(_wc.timeout);
                 using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(str), false))
                 using (var sr = new StreamReader(stream, Encoding.UTF8))
                 {
                     string line;
                     int bw;
+                    string agroup = string.Empty;
+                    var piv = new PlayerInfo();
+                    var pia = new PlayerInfo();
+                    var alist = new Dictionary<string, string>();
                     while ((line = sr.ReadLine()) != null) // 1行ずつ読み出し。
                     {
                         _form.AddExecLog(line + "\r\n");
                         if (line.Contains("#EXT-X-STREAM-INF"))
                         {
-                            var pi = new PlayerInfo();
-                            if (int.TryParse(Regex.Match(line, @"[:,]BANDWIDTH=(\d+)").Groups[1].Value, out bw))
-                                pi.Bandwidth = bw;
+                            var m = Regex.Match(line, @":BANDWIDTH=(\d+).*,AUDIO=""([^""]+)""", RegexOptions.Compiled);
+                            if (int.TryParse(m.Groups[1].Value, out bw))
+                                piv.Bandwidth = bw;
+                            if (!string.IsNullOrEmpty(m.Groups[2].Value))
+                                agroup = m.Groups[2].Value;
                             line = sr.ReadLine();
                             _form.AddExecLog(line + "\r\n");
                             if (!string.IsNullOrEmpty(line))
                             {
-                                pi.pUrl = pli.BaseUrl + line;
-                                pli.Player.Add(pi);
+                                piv.pUrl = line;
+                                pliv.Player.Add(piv);
                             }
+                            pliv.Media = "VIDEO";
                         }
+                        else if (line.Contains("#EXT-X-MEDIA"))
+                        {
+                            var m = Regex.Match(line, @"TYPE=([^,]+),GROUP-ID=""([^""]+)"".*,URI=""([^""]+)""", RegexOptions.Compiled);
+                            if (!string.IsNullOrEmpty(m.Groups[1].Value) && !string.IsNullOrEmpty(m.Groups[2].Value) && !string.IsNullOrEmpty(m.Groups[3].Value))
+                                alist.Add(m.Groups[2].Value, m.Groups[3].Value);
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(agroup))
+                    {
+                        pia.pUrl = alist[agroup];
+                        plia.Player.Add(pia);
+                        plia.Media = "AUDIO";
                     }
                 }
             }
             catch (WebException Ex)
             {
                 DebugWrite.WriteWebln(nameof(GetMasterM3u8Async), Ex);
-                pli.Error = Ex.Status.ToString();
+                pliv.Error = Ex.Status.ToString();
                 if (Ex.Status == WebExceptionStatus.ProtocolError)
                 {
                     var errres = (HttpWebResponse)Ex.Response;
                     if (errres != null)
-                        pli.Error = ((int)errres.StatusCode).ToString();
+                        pliv.Error = ((int)errres.StatusCode).ToString();
                 }
-                return pli;
+                _wc?.Dispose();
+                return (pliv, plia);
             }
             catch (Exception Ex) //その他のエラー
             {
                 //HttpRequestException
                 DebugWrite.Writeln(nameof(GetMasterM3u8Async), Ex);
-                pli.Error = Ex.ToString();
-                return pli;
+                pliv.Error = Ex.ToString();
+                _wc?.Dispose();
+                return (pliv, plia);
             }
-            pli.Status = "Ok";
-            pli.Error = "";
-            return pli;
+            finally
+            {
+                _wc?.Dispose();
+            }
+            pliv.Status = "Ok";
+            pliv.Error = "";
+            plia.Status = "Ok";
+            plia.Error = "";
+            return (pliv, plia);
         }
 
         //player.m3u8からsegment情報を取得
-        public async Task<SegmentInfo> GetPlayerM3u8Async(string url)
+        public async Task<SegmentInfo> GetPlayerM3u8Async(string url, PlayListInfo pli)
         {
-            _form.AddExecLog("GetPlayerFile\r\n");
+            _form.AddExecLog("GetPlayerFile("+pli.Media+")\r\n");
             var sgi = new SegmentInfo();
             sgi.Status = "Error";
             sgi.Error = "PARAMERROR";
             if (string.IsNullOrEmpty(url)) return sgi;
 
+            var _wc = new WebClientEx();
             try
             {
-                var idx = url.IndexOf("playlist.m3u8");
-                if (idx >= 0) sgi.BaseUrl = url.Substring(0, idx);
+                _wc.Encoding = Encoding.UTF8;
+                _wc.Proxy = null;
+                _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
+                _wc.Headers.Add(HttpRequestHeader.Referer, Props.GetLiveUrl(_bci.LiveId));
+                _wc.cookieContainer = this._cc;
+                _wc.timeout = this._timeout;
+
+                var aes_key = string.Empty;
+                var iv = string.Empty;
                 var str = await _wc.DownloadStringTaskAsync(url).Timeout(_wc.timeout);
                 using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(str), false))
                 using (var sr = new StreamReader(stream, Encoding.UTF8))
@@ -444,12 +538,25 @@ namespace NicoNamaRokuga.Rec
                     int sn;
                     double ei;
                     string line;
+                    string aesuri = string.Empty;
                     while ((line = sr.ReadLine()) != null) // 1行ずつ読み出し。
                     {
                         _form.AddExecLog(line + "\r\n");
                         var ttt = line.Split(':');
                         switch (ttt[0])
                         {
+                            case "#EXT-X-KEY":
+                                //AES-128KeyがnullならURIから取得
+                                if (pli.AesKey == null && line.Contains("METHOD=AES-128"))
+                                {
+                                    var m = Regex.Match(line, @",URI=""([^""]+)"",IV=(.+)$", RegexOptions.Compiled);
+                                    if (!string.IsNullOrEmpty(m.Groups[1].Value))
+                                        aesuri = m.Groups[1].Value;
+                                    if (!string.IsNullOrEmpty(m.Groups[2].Value))
+                                        pli.IV = m.Groups[2].Value;
+                                    _form.AddExecLog("IV: " + pli.IV + "\r\n");
+                                }
+                                break;
                             case "#EXT-X-MEDIA-SEQUENCE":
                                 if (int.TryParse(ttt[1], out sn))
                                     sgi.SeqNo = sn;
@@ -482,26 +589,39 @@ namespace NicoNamaRokuga.Rec
                                 break;
                         }
                     }
+                    if (!string.IsNullOrEmpty(aesuri))
+                    {
+                        //(pli.AesKey, _, _) = await GetAesKeyAsync(aesuri);
+                        //_form.AddExecLog("AES-Key: " + pli.AesKey + "\r\n");
+
+                    }
                 }
             }
             catch (WebException Ex)
             {
                 DebugWrite.WriteWebln(nameof(GetPlayerM3u8Async), Ex);
-                sgi.Error = Ex.Status.ToString();
                 if (Ex.Status == WebExceptionStatus.ProtocolError)
                 {
-                    var errres = (HttpWebResponse)Ex.Response;
-                    if (errres != null)
-                        sgi.Error = ((int)errres.StatusCode).ToString();
+                    HttpWebResponse errres = (HttpWebResponse)Ex.Response;
+                    sgi.ErrNo = (int)errres.StatusCode;
+                    sgi.Error = sgi.ErrNo.ToString() + " " + errres.StatusDescription;
                 }
+                else
+                   sgi.Error = Ex.Message;
+                _wc?.Dispose();
                 return sgi;
             }
             catch (Exception Ex) //その他のエラー
             {
                 //HttpRequestException
                 DebugWrite.Writeln(nameof(GetPlayerM3u8Async), Ex);
-                sgi.Error = Ex.ToString();
+                sgi.Error = Ex.Message;
+                _wc?.Dispose();
                 return sgi;
+            }
+            finally
+            {
+                _wc?.Dispose();
             }
             sgi.Status = "Ok";
             sgi.Error = "";
@@ -509,15 +629,25 @@ namespace NicoNamaRokuga.Rec
         }
 
         //segmentファイルを取得
-        public async Task<bool> GetSegmentAsync(Segment seg, PlayListInfo pli, SegmentInfo sgi)
+        public async Task<(bool, string, int)> GetSegmentAsync(Segment seg, PlayListInfo pli, SegmentInfo sgi)
         {
             //_form.AddExecLog("GetSegmentFile\r\n");
             byte[] data = null;
             int ll;
-            if (string.IsNullOrEmpty(seg.sUrl)) return false;
+            string err = string.Empty;
+            int neterr = 0;
+            if (string.IsNullOrEmpty(seg.sUrl)) return (false, "No segment uri", neterr);
 
+            var _wc = new WebClientEx();
             try
             {
+                _wc.Encoding = Encoding.UTF8;
+                _wc.Proxy = null;
+                _wc.Headers.Add(HttpRequestHeader.UserAgent, Props.UserAgent);
+                _wc.Headers.Add(HttpRequestHeader.Referer, Props.GetLiveUrl(_bci.LiveId));
+                _wc.cookieContainer = this._cc;
+                _wc.timeout = this._timeout;
+
                 data = await _wc.DownloadDataTaskAsync(seg.sUrl).Timeout(_wc.timeout);
                 if (int.TryParse(_wc.ResponseHeaders.Get("Content-Length"), out ll))
                 {
@@ -530,28 +660,30 @@ namespace NicoNamaRokuga.Rec
 
                 //データーをSqlite3に書き込み
                 _ndb.WriteDbMedia(seg, pli, sgi, data, ll, 0);
-
             }
             catch (WebException Ex)
             {
                 DebugWrite.WriteWebln(nameof(GetSegmentAsync), Ex);
-                int errno = 0;
                 if (Ex.Status == WebExceptionStatus.ProtocolError)
                 {
-                    var errres = (HttpWebResponse)Ex.Response;
-                    if (errres != null)
-                        errno = (int)errres.StatusCode;
+                    HttpWebResponse errres = (HttpWebResponse)Ex.Response;
+                    neterr = (int)errres.StatusCode;
+                    err = neterr.ToString() + " " + errres.StatusDescription;
                 }
-                _form.AddExecLog("GetSegment Error: " + Ex.Status.ToString() + " (" + errno + ")\r\n");
-                return false;
+                else
+                    err = Ex.Message;
             }
             catch (Exception Ex) //その他のエラー
             {
                 //HttpRequestException
                 DebugWrite.Writeln(nameof(GetSegmentAsync), Ex);
-                return false;
+                err = Ex.Message;
             }
-            return true;
+            finally
+            {
+                _wc?.Dispose();
+            }
+            return (true, err, neterr);
         }
 
         //速度変更
@@ -560,6 +692,7 @@ namespace NicoNamaRokuga.Rec
             var result = false;
             _form.AddExecLog("SetPlayControlAsync\r\n");
 
+            var _wc = new WebClientEx();
             try
             {
                 var ttt = pli.MasterUrl.Split('?')[1].Split('&').FirstOrDefault(s => s.StartsWith("ht2_nicolive="));
@@ -583,13 +716,19 @@ namespace NicoNamaRokuga.Rec
                         errno = (int)errres.StatusCode;
                 }
                 _form.AddExecLog("SetPlayControlAsync Error: " + Ex.Status.ToString() + " (" + errno + ")\r\n");
+                _wc?.Dispose();
                 return result;
             }
             catch (Exception Ex) //その他のエラー
             {
                 //HttpRequestException
                 DebugWrite.Writeln(nameof(SetPlayControlAsync), Ex);
+                _wc?.Dispose();
                 return result;
+            }
+            finally
+            {
+                _wc?.Dispose();
             }
             return result;
         }
@@ -602,7 +741,7 @@ namespace NicoNamaRokuga.Rec
                 if (disposing)
                 {
                     // TODO: マネージ状態を破棄します (マネージ オブジェクト)。
-                    _wc?.Dispose();
+                    //_wc?.Dispose();
                 }
 
                 // TODO: アンマネージ リソース (アンマネージ オブジェクト) を解放し、下のファイナライザーをオーバーライドします。

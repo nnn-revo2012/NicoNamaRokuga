@@ -33,10 +33,11 @@
       <Value Profile="(Default)">native</Value>
     </Setting>
     <Setting Name="ExecFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ffmpeg.exe;ffmpeg.exe</Value>
+      <Value Profile="(Default)">streamlink.exe;stramlink.exe</Value>
     </Setting>
     <Setting Name="ExecCommand" Type="System.String" Scope="User">
-      <Value Profile="(Default)">%HEADERS% -i "%PARA%" -c copy "%FILE%";%HEADERS% -i "%PARA%" -c copy "%FILE%"</Value>
+      <Value Profile="(Default)">%HEADERS% "%URL%" %DEBUG% --niconico-purge-credentials --niconico-user-session %US% --default-stream best --stream-timeout 60.0 -o "%FILE%";%HEADERS% "%URL%" %DEBUG% --niconico-purge-credentials --niconico-user-session %US% --default-stream best --stream-timeout 60.0 -o "%FILE%"
+</Value>
     </Setting>
     <Setting Name="BreakCommand" Type="System.String" Scope="User">
       <Value Profile="(Default)">;</Value>

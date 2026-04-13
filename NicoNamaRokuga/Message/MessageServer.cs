@@ -147,10 +147,13 @@ namespace NicoNamaRokuga.Message
                 try
                 {
                     // Google.Protobuf generated class
-                    var entry = ChunkedEntry.Parser.ParseFrom(item);
-                    if (!string.IsNullOrEmpty(entry.ToString()) && !isDisconnect)
+                    if (item.Length > 0)
                     {
-                        await processData(entry);
+                        var entry = ChunkedEntry.Parser.ParseFrom(item);
+                        if (!string.IsNullOrEmpty(entry.ToString()) && !isDisconnect)
+                        {
+                            await processData(entry);
+                        }
                     }
                 }
                 catch (Exception ex)

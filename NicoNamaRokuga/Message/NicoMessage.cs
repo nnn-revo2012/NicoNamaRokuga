@@ -550,6 +550,10 @@ namespace NicoNamaRokuga.Message
                     case "Nicoad":
                         jsonStr = message.Message.Nicoad.ToString();
                         break;
+                    case "GameUpdate":
+                        return;
+                    case "TagUpdated":
+                        return;
                     case "ModeratorUpdated":
                         jsonStr = message.Message.ModeratorUpdated.ToString();
                         break;
@@ -657,7 +661,8 @@ namespace NicoNamaRokuga.Message
 
                         if (translucent)
                         {
-                            if (Convert.ToInt32(attrMap["premium"]) == 1)
+                            if (attrMap.ContainsKey("premium") &&
+                                Convert.ToInt32(attrMap["premium"]) == 1)
                                 attrMap["premium"] = 25;
                             else
                                 attrMap["premium"] = 24;

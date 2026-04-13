@@ -41,7 +41,7 @@ namespace NicoNamaRokuga.Proc
         }
 
         //実行ファイル用の引数(argumentを設定)
-        public static string SetOption(ExecPsInfo epi, string para, int starttstime)
+        public static string SetOption(ExecPsInfo epi, string para, string url, string us, int starttstime, bool isdebug)
         {
             var result = epi.Arg;
             var ff = epi.SaveFile + epi.Ext;
@@ -49,8 +49,17 @@ namespace NicoNamaRokuga.Proc
             var para2 = starttstime > 0 ? para + "&start=" + starttstime.ToString() : para + "&start=0.0";
 
             result = result.Replace("%HEADERS%", headers);
-            result = result.Replace("%PARA%", para2);
+            //result = result.Replace("%PARA%", para2);
+            result = result.Replace("%URL%", url);
             result = result.Replace("%FILE%", ff);
+            //result = result.Replace("%COKKIE%", cookie);
+            result = result.Replace("%US%", us);
+            result = result.Replace("%M3U8%", para);
+            if (isdebug)
+                result = result.Replace("%DEBUG%", "--loglevel trace");
+            else
+                result = result.Replace("%DEBUG%", "");
+
 
             return result;
         }

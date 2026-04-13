@@ -144,7 +144,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ffmpeg.exe;ffmpeg.exe")]
+        [global::System.Configuration.DefaultSettingValueAttribute("streamlink.exe;stramlink.exe")]
         public string ExecFile {
             get {
                 return ((string)(this["ExecFile"]));
@@ -156,7 +156,8 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%HEADERS% -i \"%PARA%\" -c copy \"%FILE%\";%HEADERS% -i \"%PARA%\" -c copy \"%FILE%\"")]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"%HEADERS% ""%URL%"" %DEBUG% --niconico-purge-credentials --niconico-user-session %US% --default-stream best --stream-timeout 60.0 -o ""%FILE%"";%HEADERS% ""%URL%"" %DEBUG% --niconico-purge-credentials --niconico-user-session %US% --default-stream best --stream-timeout 60.0 -o ""%FILE%""
+")]
         public string ExecCommand {
             get {
                 return ((string)(this["ExecCommand"]));
