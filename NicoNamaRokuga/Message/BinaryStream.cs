@@ -37,23 +37,17 @@ namespace NicoNamaRokuga.Message
             while (true)
             {
                 if (o <= t)
-                {
                     return null;
-                }
 
                 byte b = buf.buffer[t];
                 bool r = (b & 0x80) != 0;
                 a |= (b & 0x7F) << i;
 
+                t++;
                 if (r)
-                {
-                    t++;
                     i += 7;
-                }
                 else
-                {
                     break;
-                }
             }
 
             return new VarintResult { Value = a, Offset = t };
@@ -67,19 +61,15 @@ namespace NicoNamaRokuga.Message
             {
                 var e = DecodeVarint(buf, currentOffset);
                 if (e == null)
-                {
                     yield break;
-                }
 
                 int value = e.Value;
                 int newOffset = e.Offset;
-                int start = newOffset + 1;
+                int start = newOffset;
                 int rEnd = start + value;
 
                 if (buf.buffer.Count < rEnd)
-                {
                     yield break;
-                }
 
                 currentOffset = rEnd;
                 buf.offset = rEnd;
