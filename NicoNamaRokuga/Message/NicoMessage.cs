@@ -545,6 +545,8 @@ namespace NicoNamaRokuga.Message
                         jsonStr = message.Message.SimpleNotificationV2.ToString();
                         break;
                     case "Gift":
+                        if (message.Message.Gift.GiftBarUpdate != null)
+                            return;
                         jsonStr = message.Message.Gift.ToString();
                         break;
                     case "Nicoad":
@@ -554,6 +556,9 @@ namespace NicoNamaRokuga.Message
                         return;
                     case "TagUpdated":
                         return;
+                    case "CruiseRecentContents":
+                        jsonStr = message.Message.CruiseRecentContents.ToString();
+                        break;
                     case "ModeratorUpdated":
                         jsonStr = message.Message.ModeratorUpdated.ToString();
                         break;
@@ -562,6 +567,8 @@ namespace NicoNamaRokuga.Message
                         break;
                     case "OverflowedChat":
                         _form.AddLog("commentHandler: Recieved OverflowedChat", 1);
+                        return;
+                    case "FeaturesUpdated":
                         return;
                     //ここからstate
                     case "Marquee":
@@ -808,6 +815,9 @@ namespace NicoNamaRokuga.Message
                             content = "/nicoad " + jsonStr;
                             _form.AddLog($"[FIXME]: {content}", 9);
                         }
+                        break;
+                    case "CruiseRecentContents":
+                        _form.AddLog($"CruiseRecentContents: {message.ToString()}", 1);
                         break;
                     case "Marquee":
                         attrMap["premium"] = 3;

@@ -225,6 +225,8 @@
     <Compile Include="Net\NicoNetStream.cs" />
     <Compile Include="Proto\Akashic.cs" />
     <Compile Include="Proto\Atoms.cs" />
+    <Compile Include="Proto\Cruise.cs" />
+    <Compile Include="Proto\Features.cs" />
     <Compile Include="Proto\Forwarded.cs" />
     <Compile Include="Proto\Ichibalauncher.cs" />
     <Compile Include="Proto\Message.cs" />

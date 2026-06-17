@@ -66,65 +66,70 @@ namespace Dwango.Nicolive.Chat.Data {
             "EhQKCnJhbmtpbmdfaW4YBiABKAlIABIZCg9yYW5raW5nX3VwZGF0ZWQYCCAB",
             "KAlIABIRCgd2aXNpdGVkGAcgASgJSAASHgoUc3VwcG9ydGVyX3JlZ2lzdGVy",
             "ZWQYCSABKAlIABIXCg11c2VyX2xldmVsX3VwGAogASgJSABCCQoHbWVzc2Fn",
-            "ZSLRAQoER2lmdBIPCgdpdGVtX2lkGAEgASgJEh8KEmFkdmVydGlzZXJfdXNl",
+            "ZSLNAwoER2lmdBIPCgdpdGVtX2lkGAEgASgJEh8KEmFkdmVydGlzZXJfdXNl",
             "cl9pZBgCIAEoA0gAiAEBEhcKD2FkdmVydGlzZXJfbmFtZRgDIAEoCRINCgVw",
             "b2ludBgEIAEoAxIPCgdtZXNzYWdlGAUgASgJEhEKCWl0ZW1fbmFtZRgGIAEo",
-            "CRIeChFjb250cmlidXRpb25fcmFuaxgHIAEoBUgBiAEBQhUKE19hZHZlcnRp",
-            "c2VyX3VzZXJfaWRCFAoSX2NvbnRyaWJ1dGlvbl9yYW5rIocECgZOaWNvYWQS",
-            "MgoCdjAYASABKAsyJC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLk5pY29h",
-            "ZC5WMEgAEjIKAnYxGAIgASgLMiQuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0",
-            "YS5OaWNvYWQuVjFIABrZAgoCVjASOwoGbGF0ZXN0GAEgASgLMisuZHdhbmdv",
-            "Lm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjAuTGF0ZXN0Ej0KB3Jhbmtp",
-            "bmcYAiADKAsyLC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLk5pY29hZC5W",
-            "MC5SYW5raW5nEhMKC3RvdGFsX3BvaW50GAMgASgFGk0KBkxhdGVzdBISCgph",
-            "ZHZlcnRpc2VyGAEgASgJEg0KBXBvaW50GAIgASgFEhQKB21lc3NhZ2UYAyAB",
-            "KAlIAIgBAUIKCghfbWVzc2FnZRpzCgdSYW5raW5nEhIKCmFkdmVydGlzZXIY",
-            "ASABKAkSDAoEcmFuaxgCIAEoBRIUCgdtZXNzYWdlGAMgASgJSACIAQESFgoJ",
-            "dXNlcl9yYW5rGAQgASgFSAGIAQFCCgoIX21lc3NhZ2VCDAoKX3VzZXJfcmFu",
-            "axotCgJWMRIWCg50b3RhbF9hZF9wb2ludBgBIAEoBRIPCgdtZXNzYWdlGAIg",
-            "ASgJQgoKCHZlcnNpb25zIscCCgtDb21tZW50TG9jaxI9CgZzdGF0dXMYASAB",
-            "KA4yLS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNvbW1lbnRMb2NrLlN0",
-            "YXR1cxJZChJmb2xsb3dfcmVzdHJpY3Rpb24YAiABKAsyOC5kd2FuZ28ubmlj",
-            "b2xpdmUuY2hhdC5kYXRhLkNvbW1lbnRMb2NrLkZvbGxvd1Jlc3RyaWN0aW9u",
-            "SACIAQEaTwoRRm9sbG93UmVzdHJpY3Rpb24SOgoXbWluaW11bV9mb2xsb3df",
-            "ZHVyYXRpb24YASABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24iNgoG",
-            "U3RhdHVzEhAKDFVucmVzdHJpY3RlZBAAEgoKBkxvY2tlZBABEg4KClJlc3Ry",
-            "aWN0ZWQQAkIVChNfZm9sbG93X3Jlc3RyaWN0aW9uIoABCgtDb21tZW50TW9k",
-            "ZRI9CgZsYXlvdXQYASABKA4yLS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRh",
-            "LkNvbW1lbnRNb2RlLkxheW91dCIyCgZMYXlvdXQSCgoGTm9ybWFsEAASDAoI",
-            "U3BsaXRUb3AQARIOCgpCYWNrZ3JvdW5kEAIiDAoKR2FtZVVwZGF0ZSLkAQoK",
-            "VHJpYWxQYW5lbBI6CgVwYW5lbBgBIAEoDjIrLmR3YW5nby5uaWNvbGl2ZS5j",
-            "aGF0LmRhdGEuVHJpYWxQYW5lbC5QYW5lbBJEChB1bnF1YWxpZmllZF91c2Vy",
-            "GAIgASgOMiouZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5UcmlhbFBhbmVs",
-            "Lk1vZGUiIAoFUGFuZWwSCgoGSGlkZGVuEAASCwoHRGlzcGxheRABIjIKBE1v",
-            "ZGUSCwoHQWxsb3dlZBAAEg4KClJlc3RyaWN0ZWQQARINCglGb3JiaWRkZW4Q",
-            "AiJvCg1Qcm9ncmFtU3RhdHVzEj0KBXN0YXRlGAEgASgOMi4uZHdhbmdvLm5p",
-            "Y29saXZlLmNoYXQuZGF0YS5Qcm9ncmFtU3RhdHVzLlN0YXRlIh8KBVN0YXRl",
-            "EgsKB1Vua25vd24QABIJCgVFbmRlZBABIsABCgpUYWdVcGRhdGVkEjcKBHRh",
-            "Z3MYASADKAsyKS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRhZ1VwZGF0",
-            "ZWQuVGFnEhQKDG93bmVyX2xvY2tlZBgCIAEoCBpjCgNUYWcSDAoEdGV4dBgB",
-            "IAEoCRIOCgZsb2NrZWQYAiABKAgSEAoIcmVzZXJ2ZWQYAyABKAgSGgoNbmlj",
-            "b3BlZGlhX3VyaRgEIAEoCUgAiAEBQhAKDl9uaWNvcGVkaWFfdXJpIugBCgpT",
-            "dGF0aXN0aWNzEhQKB3ZpZXdlcnMYASABKANIAIgBARIVCghjb21tZW50cxgC",
-            "IAEoA0gBiAEBEhYKCWFkX3BvaW50cxgDIAEoA0gCiAEBEhgKC2dpZnRfcG9p",
-            "bnRzGAQgASgDSAOIAQESIwoWdGltZXNoaWZ0X3Jlc2VydmF0aW9ucxgGIAEo",
-            "A0gEiAEBQgoKCF92aWV3ZXJzQgsKCV9jb21tZW50c0IMCgpfYWRfcG9pbnRz",
-            "Qg4KDF9naWZ0X3BvaW50c0IZChdfdGltZXNoaWZ0X3Jlc2VydmF0aW9uc0oE",
-            "CAUQBiLoAQoHTWFycXVlZRJACgdkaXNwbGF5GAEgASgLMiouZHdhbmdvLm5p",
-            "Y29saXZlLmNoYXQuZGF0YS5NYXJxdWVlLkRpc3BsYXlIAIgBARqOAQoHRGlz",
-            "cGxheRJEChBvcGVyYXRvcl9jb21tZW50GAEgASgLMiouZHdhbmdvLm5pY29s",
-            "aXZlLmNoYXQuZGF0YS5PcGVyYXRvckNvbW1lbnQSMAoIZHVyYXRpb24YAyAB",
-            "KAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb25IAIgBAUILCglfZHVyYXRp",
-            "b25CCgoIX2Rpc3BsYXkigwIKB0VucXVldGUSEAoIcXVlc3Rpb24YASABKAkS",
-            "OgoHY2hvaWNlcxgCIAMoCzIpLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEu",
-            "RW5xdWV0ZS5DaG9pY2USOQoGc3RhdHVzGAMgASgOMikuZHdhbmdvLm5pY29s",
-            "aXZlLmNoYXQuZGF0YS5FbnF1ZXRlLlN0YXR1cxpDCgZDaG9pY2USEwoLZGVz",
-            "Y3JpcHRpb24YASABKAkSFgoJcGVyX21pbGxlGAMgASgFSACIAQFCDAoKX3Bl",
-            "cl9taWxsZSIqCgZTdGF0dXMSCgoGQ2xvc2VkEAASCAoEUG9sbBABEgoKBlJl",
-            "c3VsdBACInsKCU1vdmVPcmRlchIvCgRqdW1wGAEgASgLMh8uZHdhbmdvLm5p",
-            "Y29saXZlLmNoYXQuZGF0YS5KdW1wSAASNwoIcmVkaXJlY3QYAiABKAsyIy5k",
-            "d2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlJlZGlyZWN0SABCBAoCdG9iBnBy",
-            "b3RvMw=="));
+            "CRIeChFjb250cmlidXRpb25fcmFuaxgHIAEoBUgBiAEBEksKD2dpZnRfYmFy",
+            "X3VwZGF0ZRgIIAEoCzItLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuR2lm",
+            "dC5HaWZ0QmFyVXBkYXRlSAKIAQEamAEKDUdpZnRCYXJVcGRhdGUSFQoNY3Vy",
+            "cmVudF9sZXZlbBgBIAEoBRIfChduZXh0X2xldmVsX3Jld2FyZF9jb3VudBgC",
+            "IAEoBRInCh9yZW1haW5pbmdfcG9pbnRzX2Zvcl9uZXh0X2xldmVsGAMgASgF",
+            "EiYKHnJlcXVpcmVkX3BvaW50c19mb3JfbmV4dF9sZXZlbBgEIAEoBUIVChNf",
+            "YWR2ZXJ0aXNlcl91c2VyX2lkQhQKEl9jb250cmlidXRpb25fcmFua0ISChBf",
+            "Z2lmdF9iYXJfdXBkYXRlIocECgZOaWNvYWQSMgoCdjAYASABKAsyJC5kd2Fu",
+            "Z28ubmljb2xpdmUuY2hhdC5kYXRhLk5pY29hZC5WMEgAEjIKAnYxGAIgASgL",
+            "MiQuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjFIABrZAgoC",
+            "VjASOwoGbGF0ZXN0GAEgASgLMisuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0",
+            "YS5OaWNvYWQuVjAuTGF0ZXN0Ej0KB3JhbmtpbmcYAiADKAsyLC5kd2FuZ28u",
+            "bmljb2xpdmUuY2hhdC5kYXRhLk5pY29hZC5WMC5SYW5raW5nEhMKC3RvdGFs",
+            "X3BvaW50GAMgASgFGk0KBkxhdGVzdBISCgphZHZlcnRpc2VyGAEgASgJEg0K",
+            "BXBvaW50GAIgASgFEhQKB21lc3NhZ2UYAyABKAlIAIgBAUIKCghfbWVzc2Fn",
+            "ZRpzCgdSYW5raW5nEhIKCmFkdmVydGlzZXIYASABKAkSDAoEcmFuaxgCIAEo",
+            "BRIUCgdtZXNzYWdlGAMgASgJSACIAQESFgoJdXNlcl9yYW5rGAQgASgFSAGI",
+            "AQFCCgoIX21lc3NhZ2VCDAoKX3VzZXJfcmFuaxotCgJWMRIWCg50b3RhbF9h",
+            "ZF9wb2ludBgBIAEoBRIPCgdtZXNzYWdlGAIgASgJQgoKCHZlcnNpb25zIscC",
+            "CgtDb21tZW50TG9jaxI9CgZzdGF0dXMYASABKA4yLS5kd2FuZ28ubmljb2xp",
+            "dmUuY2hhdC5kYXRhLkNvbW1lbnRMb2NrLlN0YXR1cxJZChJmb2xsb3dfcmVz",
+            "dHJpY3Rpb24YAiABKAsyOC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNv",
+            "bW1lbnRMb2NrLkZvbGxvd1Jlc3RyaWN0aW9uSACIAQEaTwoRRm9sbG93UmVz",
+            "dHJpY3Rpb24SOgoXbWluaW11bV9mb2xsb3dfZHVyYXRpb24YASABKAsyGS5n",
+            "b29nbGUucHJvdG9idWYuRHVyYXRpb24iNgoGU3RhdHVzEhAKDFVucmVzdHJp",
+            "Y3RlZBAAEgoKBkxvY2tlZBABEg4KClJlc3RyaWN0ZWQQAkIVChNfZm9sbG93",
+            "X3Jlc3RyaWN0aW9uIoABCgtDb21tZW50TW9kZRI9CgZsYXlvdXQYASABKA4y",
+            "LS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNvbW1lbnRNb2RlLkxheW91",
+            "dCIyCgZMYXlvdXQSCgoGTm9ybWFsEAASDAoIU3BsaXRUb3AQARIOCgpCYWNr",
+            "Z3JvdW5kEAIiDAoKR2FtZVVwZGF0ZSLkAQoKVHJpYWxQYW5lbBI6CgVwYW5l",
+            "bBgBIAEoDjIrLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVHJpYWxQYW5l",
+            "bC5QYW5lbBJEChB1bnF1YWxpZmllZF91c2VyGAIgASgOMiouZHdhbmdvLm5p",
+            "Y29saXZlLmNoYXQuZGF0YS5UcmlhbFBhbmVsLk1vZGUiIAoFUGFuZWwSCgoG",
+            "SGlkZGVuEAASCwoHRGlzcGxheRABIjIKBE1vZGUSCwoHQWxsb3dlZBAAEg4K",
+            "ClJlc3RyaWN0ZWQQARINCglGb3JiaWRkZW4QAiJvCg1Qcm9ncmFtU3RhdHVz",
+            "Ej0KBXN0YXRlGAEgASgOMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Q",
+            "cm9ncmFtU3RhdHVzLlN0YXRlIh8KBVN0YXRlEgsKB1Vua25vd24QABIJCgVF",
+            "bmRlZBABIsABCgpUYWdVcGRhdGVkEjcKBHRhZ3MYASADKAsyKS5kd2FuZ28u",
+            "bmljb2xpdmUuY2hhdC5kYXRhLlRhZ1VwZGF0ZWQuVGFnEhQKDG93bmVyX2xv",
+            "Y2tlZBgCIAEoCBpjCgNUYWcSDAoEdGV4dBgBIAEoCRIOCgZsb2NrZWQYAiAB",
+            "KAgSEAoIcmVzZXJ2ZWQYAyABKAgSGgoNbmljb3BlZGlhX3VyaRgEIAEoCUgA",
+            "iAEBQhAKDl9uaWNvcGVkaWFfdXJpIugBCgpTdGF0aXN0aWNzEhQKB3ZpZXdl",
+            "cnMYASABKANIAIgBARIVCghjb21tZW50cxgCIAEoA0gBiAEBEhYKCWFkX3Bv",
+            "aW50cxgDIAEoA0gCiAEBEhgKC2dpZnRfcG9pbnRzGAQgASgDSAOIAQESIwoW",
+            "dGltZXNoaWZ0X3Jlc2VydmF0aW9ucxgGIAEoA0gEiAEBQgoKCF92aWV3ZXJz",
+            "QgsKCV9jb21tZW50c0IMCgpfYWRfcG9pbnRzQg4KDF9naWZ0X3BvaW50c0IZ",
+            "ChdfdGltZXNoaWZ0X3Jlc2VydmF0aW9uc0oECAUQBiLoAQoHTWFycXVlZRJA",
+            "CgdkaXNwbGF5GAEgASgLMiouZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5N",
+            "YXJxdWVlLkRpc3BsYXlIAIgBARqOAQoHRGlzcGxheRJEChBvcGVyYXRvcl9j",
+            "b21tZW50GAEgASgLMiouZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5PcGVy",
+            "YXRvckNvbW1lbnQSMAoIZHVyYXRpb24YAyABKAsyGS5nb29nbGUucHJvdG9i",
+            "dWYuRHVyYXRpb25IAIgBAUILCglfZHVyYXRpb25CCgoIX2Rpc3BsYXkigwIK",
+            "B0VucXVldGUSEAoIcXVlc3Rpb24YASABKAkSOgoHY2hvaWNlcxgCIAMoCzIp",
+            "LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuRW5xdWV0ZS5DaG9pY2USOQoG",
+            "c3RhdHVzGAMgASgOMikuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5FbnF1",
+            "ZXRlLlN0YXR1cxpDCgZDaG9pY2USEwoLZGVzY3JpcHRpb24YASABKAkSFgoJ",
+            "cGVyX21pbGxlGAMgASgFSACIAQFCDAoKX3Blcl9taWxsZSIqCgZTdGF0dXMS",
+            "CgoGQ2xvc2VkEAASCAoEUG9sbBABEgoKBlJlc3VsdBACInsKCU1vdmVPcmRl",
+            "chIvCgRqdW1wGAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5K",
+            "dW1wSAASNwoIcmVkaXJlY3QYAiABKAsyIy5kd2FuZ28ubmljb2xpdmUuY2hh",
+            "dC5kYXRhLlJlZGlyZWN0SABCBAoCdG9iBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.DurationReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -133,7 +138,7 @@ namespace Dwango.Nicolive.Chat.Data {
             new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Jump), global::Dwango.Nicolive.Chat.Data.Jump.Parser, new[]{ "Content", "Message", "Wait" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Redirect), global::Dwango.Nicolive.Chat.Data.Redirect.Parser, new[]{ "Uri", "Message", "Wait" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.SimpleNotification), global::Dwango.Nicolive.Chat.Data.SimpleNotification.Parser, new[]{ "Ichiba", "Quote", "Emotion", "Cruise", "ProgramExtended", "RankingIn", "RankingUpdated", "Visited", "SupporterRegistered", "UserLevelUp" }, new[]{ "Message" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Gift), global::Dwango.Nicolive.Chat.Data.Gift.Parser, new[]{ "ItemId", "AdvertiserUserId", "AdvertiserName", "Point", "Message", "ItemName", "ContributionRank" }, new[]{ "AdvertiserUserId", "ContributionRank" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Gift), global::Dwango.Nicolive.Chat.Data.Gift.Parser, new[]{ "ItemId", "AdvertiserUserId", "AdvertiserName", "Point", "Message", "ItemName", "ContributionRank", "GiftBarUpdate" }, new[]{ "AdvertiserUserId", "ContributionRank", "GiftBarUpdate" }, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Gift.Types.GiftBarUpdate), global::Dwango.Nicolive.Chat.Data.Gift.Types.GiftBarUpdate.Parser, new[]{ "CurrentLevel", "NextLevelRewardCount", "RemainingPointsForNextLevel", "RequiredPointsForNextLevel" }, null, null, null, null)}),
             new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Nicoad), global::Dwango.Nicolive.Chat.Data.Nicoad.Parser, new[]{ "V0", "V1" }, new[]{ "Versions" }, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Nicoad.Types.V0), global::Dwango.Nicolive.Chat.Data.Nicoad.Types.V0.Parser, new[]{ "Latest", "Ranking", "TotalPoint" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Nicoad.Types.V0.Types.Latest), global::Dwango.Nicolive.Chat.Data.Nicoad.Types.V0.Types.Latest.Parser, new[]{ "Advertiser", "Point", "Message" }, new[]{ "Message" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Nicoad.Types.V0.Types.Ranking), global::Dwango.Nicolive.Chat.Data.Nicoad.Types.V0.Types.Ranking.Parser, new[]{ "Advertiser", "Rank", "Message", "UserRank" }, new[]{ "Message", "UserRank" }, null, null, null)}),
             new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.Nicoad.Types.V1), global::Dwango.Nicolive.Chat.Data.Nicoad.Types.V1.Parser, new[]{ "TotalAdPoint", "Message" }, null, null, null, null)}),
@@ -3128,6 +3133,7 @@ namespace Dwango.Nicolive.Chat.Data {
       message_ = other.message_;
       itemName_ = other.itemName_;
       contributionRank_ = other.contributionRank_;
+      giftBarUpdate_ = other.giftBarUpdate_ != null ? other.giftBarUpdate_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -3251,6 +3257,18 @@ namespace Dwango.Nicolive.Chat.Data {
       _hasBits0 &= ~2;
     }
 
+    /// <summary>Field number for the "gift_bar_update" field.</summary>
+    public const int GiftBarUpdateFieldNumber = 8;
+    private global::Dwango.Nicolive.Chat.Data.Gift.Types.GiftBarUpdate giftBarUpdate_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Dwango.Nicolive.Chat.Data.Gift.Types.GiftBarUpdate GiftBarUpdate {
+      get { return giftBarUpdate_; }
+      set {
+        giftBarUpdate_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -3273,6 +3291,7 @@ namespace Dwango.Nicolive.Chat.Data {
       if (Message != other.Message) return false;
       if (ItemName != other.ItemName) return false;
       if (ContributionRank != other.ContributionRank) return false;
+      if (!object.Equals(GiftBarUpdate, other.GiftBarUpdate)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3287,6 +3306,7 @@ namespace Dwango.Nicolive.Chat.Data {
       if (Message.Length != 0) hash ^= Message.GetHashCode();
       if (ItemName.Length != 0) hash ^= ItemName.GetHashCode();
       if (HasContributionRank) hash ^= ContributionRank.GetHashCode();
+      if (giftBarUpdate_ != null) hash ^= GiftBarUpdate.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -3333,6 +3353,10 @@ namespace Dwango.Nicolive.Chat.Data {
         output.WriteRawTag(56);
         output.WriteInt32(ContributionRank);
       }
+      if (giftBarUpdate_ != null) {
+        output.WriteRawTag(66);
+        output.WriteMessage(GiftBarUpdate);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -3371,6 +3395,10 @@ namespace Dwango.Nicolive.Chat.Data {
         output.WriteRawTag(56);
         output.WriteInt32(ContributionRank);
       }
+      if (giftBarUpdate_ != null) {
+        output.WriteRawTag(66);
+        output.WriteMessage(GiftBarUpdate);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -3401,6 +3429,9 @@ namespace Dwango.Nicolive.Chat.Data {
       }
       if (HasContributionRank) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ContributionRank);
+      }
+      if (giftBarUpdate_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(GiftBarUpdate);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -3434,6 +3465,12 @@ namespace Dwango.Nicolive.Chat.Data {
       }
       if (other.HasContributionRank) {
         ContributionRank = other.ContributionRank;
+      }
+      if (other.giftBarUpdate_ != null) {
+        if (giftBarUpdate_ == null) {
+          GiftBarUpdate = new global::Dwango.Nicolive.Chat.Data.Gift.Types.GiftBarUpdate();
+        }
+        GiftBarUpdate.MergeFrom(other.GiftBarUpdate);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -3480,6 +3517,13 @@ namespace Dwango.Nicolive.Chat.Data {
           }
           case 56: {
             ContributionRank = input.ReadInt32();
+            break;
+          }
+          case 66: {
+            if (giftBarUpdate_ == null) {
+              GiftBarUpdate = new global::Dwango.Nicolive.Chat.Data.Gift.Types.GiftBarUpdate();
+            }
+            input.ReadMessage(GiftBarUpdate);
             break;
           }
         }
@@ -3529,10 +3573,334 @@ namespace Dwango.Nicolive.Chat.Data {
             ContributionRank = input.ReadInt32();
             break;
           }
+          case 66: {
+            if (giftBarUpdate_ == null) {
+              GiftBarUpdate = new global::Dwango.Nicolive.Chat.Data.Gift.Types.GiftBarUpdate();
+            }
+            input.ReadMessage(GiftBarUpdate);
+            break;
+          }
         }
       }
     }
     #endif
+
+    #region Nested types
+    /// <summary>Container for nested types declared in the Gift message type.</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static partial class Types {
+      [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+      public sealed partial class GiftBarUpdate : pb::IMessage<GiftBarUpdate>
+      #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+          , pb::IBufferMessage
+      #endif
+      {
+        private static readonly pb::MessageParser<GiftBarUpdate> _parser = new pb::MessageParser<GiftBarUpdate>(() => new GiftBarUpdate());
+        private pb::UnknownFieldSet _unknownFields;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public static pb::MessageParser<GiftBarUpdate> Parser { get { return _parser; } }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public static pbr::MessageDescriptor Descriptor {
+          get { return global::Dwango.Nicolive.Chat.Data.Gift.Descriptor.NestedTypes[0]; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        pbr::MessageDescriptor pb::IMessage.Descriptor {
+          get { return Descriptor; }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public GiftBarUpdate() {
+          OnConstruction();
+        }
+
+        partial void OnConstruction();
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public GiftBarUpdate(GiftBarUpdate other) : this() {
+          currentLevel_ = other.currentLevel_;
+          nextLevelRewardCount_ = other.nextLevelRewardCount_;
+          remainingPointsForNextLevel_ = other.remainingPointsForNextLevel_;
+          requiredPointsForNextLevel_ = other.requiredPointsForNextLevel_;
+          _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public GiftBarUpdate Clone() {
+          return new GiftBarUpdate(this);
+        }
+
+        /// <summary>Field number for the "current_level" field.</summary>
+        public const int CurrentLevelFieldNumber = 1;
+        private int currentLevel_;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public int CurrentLevel {
+          get { return currentLevel_; }
+          set {
+            currentLevel_ = value;
+          }
+        }
+
+        /// <summary>Field number for the "next_level_reward_count" field.</summary>
+        public const int NextLevelRewardCountFieldNumber = 2;
+        private int nextLevelRewardCount_;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public int NextLevelRewardCount {
+          get { return nextLevelRewardCount_; }
+          set {
+            nextLevelRewardCount_ = value;
+          }
+        }
+
+        /// <summary>Field number for the "remaining_points_for_next_level" field.</summary>
+        public const int RemainingPointsForNextLevelFieldNumber = 3;
+        private int remainingPointsForNextLevel_;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public int RemainingPointsForNextLevel {
+          get { return remainingPointsForNextLevel_; }
+          set {
+            remainingPointsForNextLevel_ = value;
+          }
+        }
+
+        /// <summary>Field number for the "required_points_for_next_level" field.</summary>
+        public const int RequiredPointsForNextLevelFieldNumber = 4;
+        private int requiredPointsForNextLevel_;
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public int RequiredPointsForNextLevel {
+          get { return requiredPointsForNextLevel_; }
+          set {
+            requiredPointsForNextLevel_ = value;
+          }
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public override bool Equals(object other) {
+          return Equals(other as GiftBarUpdate);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public bool Equals(GiftBarUpdate other) {
+          if (ReferenceEquals(other, null)) {
+            return false;
+          }
+          if (ReferenceEquals(other, this)) {
+            return true;
+          }
+          if (CurrentLevel != other.CurrentLevel) return false;
+          if (NextLevelRewardCount != other.NextLevelRewardCount) return false;
+          if (RemainingPointsForNextLevel != other.RemainingPointsForNextLevel) return false;
+          if (RequiredPointsForNextLevel != other.RequiredPointsForNextLevel) return false;
+          return Equals(_unknownFields, other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public override int GetHashCode() {
+          int hash = 1;
+          if (CurrentLevel != 0) hash ^= CurrentLevel.GetHashCode();
+          if (NextLevelRewardCount != 0) hash ^= NextLevelRewardCount.GetHashCode();
+          if (RemainingPointsForNextLevel != 0) hash ^= RemainingPointsForNextLevel.GetHashCode();
+          if (RequiredPointsForNextLevel != 0) hash ^= RequiredPointsForNextLevel.GetHashCode();
+          if (_unknownFields != null) {
+            hash ^= _unknownFields.GetHashCode();
+          }
+          return hash;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public override string ToString() {
+          return pb::JsonFormatter.ToDiagnosticString(this);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public void WriteTo(pb::CodedOutputStream output) {
+        #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+          output.WriteRawMessage(this);
+        #else
+          if (CurrentLevel != 0) {
+            output.WriteRawTag(8);
+            output.WriteInt32(CurrentLevel);
+          }
+          if (NextLevelRewardCount != 0) {
+            output.WriteRawTag(16);
+            output.WriteInt32(NextLevelRewardCount);
+          }
+          if (RemainingPointsForNextLevel != 0) {
+            output.WriteRawTag(24);
+            output.WriteInt32(RemainingPointsForNextLevel);
+          }
+          if (RequiredPointsForNextLevel != 0) {
+            output.WriteRawTag(32);
+            output.WriteInt32(RequiredPointsForNextLevel);
+          }
+          if (_unknownFields != null) {
+            _unknownFields.WriteTo(output);
+          }
+        #endif
+        }
+
+        #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+          if (CurrentLevel != 0) {
+            output.WriteRawTag(8);
+            output.WriteInt32(CurrentLevel);
+          }
+          if (NextLevelRewardCount != 0) {
+            output.WriteRawTag(16);
+            output.WriteInt32(NextLevelRewardCount);
+          }
+          if (RemainingPointsForNextLevel != 0) {
+            output.WriteRawTag(24);
+            output.WriteInt32(RemainingPointsForNextLevel);
+          }
+          if (RequiredPointsForNextLevel != 0) {
+            output.WriteRawTag(32);
+            output.WriteInt32(RequiredPointsForNextLevel);
+          }
+          if (_unknownFields != null) {
+            _unknownFields.WriteTo(ref output);
+          }
+        }
+        #endif
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public int CalculateSize() {
+          int size = 0;
+          if (CurrentLevel != 0) {
+            size += 1 + pb::CodedOutputStream.ComputeInt32Size(CurrentLevel);
+          }
+          if (NextLevelRewardCount != 0) {
+            size += 1 + pb::CodedOutputStream.ComputeInt32Size(NextLevelRewardCount);
+          }
+          if (RemainingPointsForNextLevel != 0) {
+            size += 1 + pb::CodedOutputStream.ComputeInt32Size(RemainingPointsForNextLevel);
+          }
+          if (RequiredPointsForNextLevel != 0) {
+            size += 1 + pb::CodedOutputStream.ComputeInt32Size(RequiredPointsForNextLevel);
+          }
+          if (_unknownFields != null) {
+            size += _unknownFields.CalculateSize();
+          }
+          return size;
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public void MergeFrom(GiftBarUpdate other) {
+          if (other == null) {
+            return;
+          }
+          if (other.CurrentLevel != 0) {
+            CurrentLevel = other.CurrentLevel;
+          }
+          if (other.NextLevelRewardCount != 0) {
+            NextLevelRewardCount = other.NextLevelRewardCount;
+          }
+          if (other.RemainingPointsForNextLevel != 0) {
+            RemainingPointsForNextLevel = other.RemainingPointsForNextLevel;
+          }
+          if (other.RequiredPointsForNextLevel != 0) {
+            RequiredPointsForNextLevel = other.RequiredPointsForNextLevel;
+          }
+          _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+        }
+
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        public void MergeFrom(pb::CodedInputStream input) {
+        #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+          input.ReadRawMessage(this);
+        #else
+          uint tag;
+          while ((tag = input.ReadTag()) != 0) {
+          if ((tag & 7) == 4) {
+            // Abort on any end group tag.
+            return;
+          }
+          switch(tag) {
+              default:
+                _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+                break;
+              case 8: {
+                CurrentLevel = input.ReadInt32();
+                break;
+              }
+              case 16: {
+                NextLevelRewardCount = input.ReadInt32();
+                break;
+              }
+              case 24: {
+                RemainingPointsForNextLevel = input.ReadInt32();
+                break;
+              }
+              case 32: {
+                RequiredPointsForNextLevel = input.ReadInt32();
+                break;
+              }
+            }
+          }
+        #endif
+        }
+
+        #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+        [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+        void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+          uint tag;
+          while ((tag = input.ReadTag()) != 0) {
+          if ((tag & 7) == 4) {
+            // Abort on any end group tag.
+            return;
+          }
+          switch(tag) {
+              default:
+                _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+                break;
+              case 8: {
+                CurrentLevel = input.ReadInt32();
+                break;
+              }
+              case 16: {
+                NextLevelRewardCount = input.ReadInt32();
+                break;
+              }
+              case 24: {
+                RemainingPointsForNextLevel = input.ReadInt32();
+                break;
+              }
+              case 32: {
+                RequiredPointsForNextLevel = input.ReadInt32();
+                break;
+              }
+            }
+          }
+        }
+        #endif
+
+      }
+
+    }
+    #endregion
 
   }
 

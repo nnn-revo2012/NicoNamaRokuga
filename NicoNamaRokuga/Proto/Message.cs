@@ -30,31 +30,36 @@ namespace Dwango.Nicolive.Chat.Data {
             "YXRvbXMvZm9yd2FyZGVkLnByb3RvGi9kd2FuZ28vbmljb2xpdmUvY2hhdC9k",
             "YXRhL2F0b21zL21vZGVyYXRvci5wcm90bxozZHdhbmdvL25pY29saXZlL2No",
             "YXQvZGF0YS9hdG9tcy9ub3RpZmljYXRpb25zLnByb3RvGi1kd2FuZ28vbmlj",
-            "b2xpdmUvY2hhdC9kYXRhL2F0b21zL2FrYXNoaWMucHJvdG8i2AYKD05pY29s",
-            "aXZlTWVzc2FnZRIvCgRjaGF0GAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNo",
-            "YXQuZGF0YS5DaGF0SAASTAoTc2ltcGxlX25vdGlmaWNhdGlvbhgHIAEoCzIt",
-            "LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuU2ltcGxlTm90aWZpY2F0aW9u",
-            "SAASLwoEZ2lmdBgIIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEu",
-            "R2lmdEgAEjMKBm5pY29hZBgJIAEoCzIhLmR3YW5nby5uaWNvbGl2ZS5jaGF0",
-            "LmRhdGEuTmljb2FkSAASPAoLZ2FtZV91cGRhdGUYDSABKAsyJS5kd2FuZ28u",
-            "bmljb2xpdmUuY2hhdC5kYXRhLkdhbWVVcGRhdGVIABI8Cgt0YWdfdXBkYXRl",
-            "ZBgRIAEoCzIlLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVGFnVXBkYXRl",
-            "ZEgAEk4KEW1vZGVyYXRvcl91cGRhdGVkGBIgASgLMjEuZHdhbmdvLm5pY29s",
-            "aXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0b3JVcGRhdGVkSAASRAoMc3Nu",
-            "Z191cGRhdGVkGBMgASgLMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5h",
-            "dG9tcy5TU05HVXBkYXRlZEgAEjoKD292ZXJmbG93ZWRfY2hhdBgUIAEoCzIf",
-            "LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdEgAEkgKDmZvcndhcmRl",
-            "ZF9jaGF0GBYgASgLMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9t",
-            "cy5Gb3J3YXJkZWRDaGF0SAASVwoWc2ltcGxlX25vdGlmaWNhdGlvbl92MhgX",
-            "IAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuU2ltcGxl",
-            "Tm90aWZpY2F0aW9uVjJIABJVChVha2FzaGljX21lc3NhZ2VfZXZlbnQYGCAB",
-            "KAsyNC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLkFrYXNoaWNN",
-            "ZXNzYWdlRXZlbnRIAEIGCgRkYXRhSgQIAhAHSgQIChANSgQIDhARYgZwcm90",
-            "bzM="));
+            "b2xpdmUvY2hhdC9kYXRhL2F0b21zL2FrYXNoaWMucHJvdG8aLmR3YW5nby9u",
+            "aWNvbGl2ZS9jaGF0L2RhdGEvYXRvbXMvZmVhdHVyZXMucHJvdG8aLGR3YW5n",
+            "by9uaWNvbGl2ZS9jaGF0L2RhdGEvYXRvbXMvY3J1aXNlLnByb3RvIv8HCg9O",
+            "aWNvbGl2ZU1lc3NhZ2USLwoEY2hhdBgBIAEoCzIfLmR3YW5nby5uaWNvbGl2",
+            "ZS5jaGF0LmRhdGEuQ2hhdEgAEkwKE3NpbXBsZV9ub3RpZmljYXRpb24YByAB",
+            "KAsyLS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlNpbXBsZU5vdGlmaWNh",
+            "dGlvbkgAEi8KBGdpZnQYCCABKAsyHy5kd2FuZ28ubmljb2xpdmUuY2hhdC5k",
+            "YXRhLkdpZnRIABIzCgZuaWNvYWQYCSABKAsyIS5kd2FuZ28ubmljb2xpdmUu",
+            "Y2hhdC5kYXRhLk5pY29hZEgAEjwKC2dhbWVfdXBkYXRlGA0gASgLMiUuZHdh",
+            "bmdvLm5pY29saXZlLmNoYXQuZGF0YS5HYW1lVXBkYXRlSAASPAoLdGFnX3Vw",
+            "ZGF0ZWQYESABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRhZ1Vw",
+            "ZGF0ZWRIABJOChFtb2RlcmF0b3JfdXBkYXRlZBgSIAEoCzIxLmR3YW5nby5u",
+            "aWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuTW9kZXJhdG9yVXBkYXRlZEgAEkQK",
+            "DHNzbmdfdXBkYXRlZBgTIAEoCzIsLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRh",
+            "dGEuYXRvbXMuU1NOR1VwZGF0ZWRIABI6Cg9vdmVyZmxvd2VkX2NoYXQYFCAB",
+            "KAsyHy5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXRIABJICg5mb3J3",
+            "YXJkZWRfY2hhdBgWIAEoCzIuLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEu",
+            "YXRvbXMuRm9yd2FyZGVkQ2hhdEgAElcKFnNpbXBsZV9ub3RpZmljYXRpb25f",
+            "djIYFyABKAsyNS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNp",
+            "bXBsZU5vdGlmaWNhdGlvblYySAASVQoVYWthc2hpY19tZXNzYWdlX2V2ZW50",
+            "GBggASgLMjQuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Ba2Fz",
+            "aGljTWVzc2FnZUV2ZW50SAASTAoQZmVhdHVyZXNfdXBkYXRlZBgZIAEoCzIw",
+            "LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuRmVhdHVyZXNVcGRh",
+            "dGVkSAASVwoWY3J1aXNlX3JlY2VudF9jb250ZW50cxgaIAEoCzI1LmR3YW5n",
+            "by5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuQ3J1aXNlUmVjZW50Q29udGVu",
+            "dHNIAEIGCgRkYXRhSgQIAhAHSgQIChANSgQIDhARYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::Dwango.Nicolive.Chat.Data.AtomsReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.ForwardedReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.ModeratorReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.NotificationsReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.AkashicReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::Dwango.Nicolive.Chat.Data.AtomsReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.ForwardedReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.ModeratorReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.NotificationsReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.AkashicReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.FeaturesReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.CruiseReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.NicoliveMessage), global::Dwango.Nicolive.Chat.Data.NicoliveMessage.Parser, new[]{ "Chat", "SimpleNotification", "Gift", "Nicoad", "GameUpdate", "TagUpdated", "ModeratorUpdated", "SsngUpdated", "OverflowedChat", "ForwardedChat", "SimpleNotificationV2", "AkashicMessageEvent" }, new[]{ "Data" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.NicoliveMessage), global::Dwango.Nicolive.Chat.Data.NicoliveMessage.Parser, new[]{ "Chat", "SimpleNotification", "Gift", "Nicoad", "GameUpdate", "TagUpdated", "ModeratorUpdated", "SsngUpdated", "OverflowedChat", "ForwardedChat", "SimpleNotificationV2", "AkashicMessageEvent", "FeaturesUpdated", "CruiseRecentContents" }, new[]{ "Data" }, null, null, null)
           }));
     }
     #endregion
@@ -132,6 +137,12 @@ namespace Dwango.Nicolive.Chat.Data {
           break;
         case DataOneofCase.AkashicMessageEvent:
           AkashicMessageEvent = other.AkashicMessageEvent.Clone();
+          break;
+        case DataOneofCase.FeaturesUpdated:
+          FeaturesUpdated = other.FeaturesUpdated.Clone();
+          break;
+        case DataOneofCase.CruiseRecentContents:
+          CruiseRecentContents = other.CruiseRecentContents.Clone();
           break;
       }
 
@@ -288,6 +299,30 @@ namespace Dwango.Nicolive.Chat.Data {
       }
     }
 
+    /// <summary>Field number for the "features_updated" field.</summary>
+    public const int FeaturesUpdatedFieldNumber = 25;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Dwango.Nicolive.Chat.Data.Atoms.FeaturesUpdated FeaturesUpdated {
+      get { return dataCase_ == DataOneofCase.FeaturesUpdated ? (global::Dwango.Nicolive.Chat.Data.Atoms.FeaturesUpdated) data_ : null; }
+      set {
+        data_ = value;
+        dataCase_ = value == null ? DataOneofCase.None : DataOneofCase.FeaturesUpdated;
+      }
+    }
+
+    /// <summary>Field number for the "cruise_recent_contents" field.</summary>
+    public const int CruiseRecentContentsFieldNumber = 26;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Dwango.Nicolive.Chat.Data.Atoms.CruiseRecentContents CruiseRecentContents {
+      get { return dataCase_ == DataOneofCase.CruiseRecentContents ? (global::Dwango.Nicolive.Chat.Data.Atoms.CruiseRecentContents) data_ : null; }
+      set {
+        data_ = value;
+        dataCase_ = value == null ? DataOneofCase.None : DataOneofCase.CruiseRecentContents;
+      }
+    }
+
     private object data_;
     /// <summary>Enum of possible cases for the "data" oneof.</summary>
     public enum DataOneofCase {
@@ -304,6 +339,8 @@ namespace Dwango.Nicolive.Chat.Data {
       ForwardedChat = 22,
       SimpleNotificationV2 = 23,
       AkashicMessageEvent = 24,
+      FeaturesUpdated = 25,
+      CruiseRecentContents = 26,
     }
     private DataOneofCase dataCase_ = DataOneofCase.None;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -346,6 +383,8 @@ namespace Dwango.Nicolive.Chat.Data {
       if (!object.Equals(ForwardedChat, other.ForwardedChat)) return false;
       if (!object.Equals(SimpleNotificationV2, other.SimpleNotificationV2)) return false;
       if (!object.Equals(AkashicMessageEvent, other.AkashicMessageEvent)) return false;
+      if (!object.Equals(FeaturesUpdated, other.FeaturesUpdated)) return false;
+      if (!object.Equals(CruiseRecentContents, other.CruiseRecentContents)) return false;
       if (DataCase != other.DataCase) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -366,6 +405,8 @@ namespace Dwango.Nicolive.Chat.Data {
       if (dataCase_ == DataOneofCase.ForwardedChat) hash ^= ForwardedChat.GetHashCode();
       if (dataCase_ == DataOneofCase.SimpleNotificationV2) hash ^= SimpleNotificationV2.GetHashCode();
       if (dataCase_ == DataOneofCase.AkashicMessageEvent) hash ^= AkashicMessageEvent.GetHashCode();
+      if (dataCase_ == DataOneofCase.FeaturesUpdated) hash ^= FeaturesUpdated.GetHashCode();
+      if (dataCase_ == DataOneofCase.CruiseRecentContents) hash ^= CruiseRecentContents.GetHashCode();
       hash ^= (int) dataCase_;
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -433,6 +474,14 @@ namespace Dwango.Nicolive.Chat.Data {
         output.WriteRawTag(194, 1);
         output.WriteMessage(AkashicMessageEvent);
       }
+      if (dataCase_ == DataOneofCase.FeaturesUpdated) {
+        output.WriteRawTag(202, 1);
+        output.WriteMessage(FeaturesUpdated);
+      }
+      if (dataCase_ == DataOneofCase.CruiseRecentContents) {
+        output.WriteRawTag(210, 1);
+        output.WriteMessage(CruiseRecentContents);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -491,6 +540,14 @@ namespace Dwango.Nicolive.Chat.Data {
         output.WriteRawTag(194, 1);
         output.WriteMessage(AkashicMessageEvent);
       }
+      if (dataCase_ == DataOneofCase.FeaturesUpdated) {
+        output.WriteRawTag(202, 1);
+        output.WriteMessage(FeaturesUpdated);
+      }
+      if (dataCase_ == DataOneofCase.CruiseRecentContents) {
+        output.WriteRawTag(210, 1);
+        output.WriteMessage(CruiseRecentContents);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -536,6 +593,12 @@ namespace Dwango.Nicolive.Chat.Data {
       }
       if (dataCase_ == DataOneofCase.AkashicMessageEvent) {
         size += 2 + pb::CodedOutputStream.ComputeMessageSize(AkashicMessageEvent);
+      }
+      if (dataCase_ == DataOneofCase.FeaturesUpdated) {
+        size += 2 + pb::CodedOutputStream.ComputeMessageSize(FeaturesUpdated);
+      }
+      if (dataCase_ == DataOneofCase.CruiseRecentContents) {
+        size += 2 + pb::CodedOutputStream.ComputeMessageSize(CruiseRecentContents);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -621,6 +684,18 @@ namespace Dwango.Nicolive.Chat.Data {
             AkashicMessageEvent = new global::Dwango.Nicolive.Chat.Data.Atoms.AkashicMessageEvent();
           }
           AkashicMessageEvent.MergeFrom(other.AkashicMessageEvent);
+          break;
+        case DataOneofCase.FeaturesUpdated:
+          if (FeaturesUpdated == null) {
+            FeaturesUpdated = new global::Dwango.Nicolive.Chat.Data.Atoms.FeaturesUpdated();
+          }
+          FeaturesUpdated.MergeFrom(other.FeaturesUpdated);
+          break;
+        case DataOneofCase.CruiseRecentContents:
+          if (CruiseRecentContents == null) {
+            CruiseRecentContents = new global::Dwango.Nicolive.Chat.Data.Atoms.CruiseRecentContents();
+          }
+          CruiseRecentContents.MergeFrom(other.CruiseRecentContents);
           break;
       }
 
@@ -751,6 +826,24 @@ namespace Dwango.Nicolive.Chat.Data {
             AkashicMessageEvent = subBuilder;
             break;
           }
+          case 202: {
+            global::Dwango.Nicolive.Chat.Data.Atoms.FeaturesUpdated subBuilder = new global::Dwango.Nicolive.Chat.Data.Atoms.FeaturesUpdated();
+            if (dataCase_ == DataOneofCase.FeaturesUpdated) {
+              subBuilder.MergeFrom(FeaturesUpdated);
+            }
+            input.ReadMessage(subBuilder);
+            FeaturesUpdated = subBuilder;
+            break;
+          }
+          case 210: {
+            global::Dwango.Nicolive.Chat.Data.Atoms.CruiseRecentContents subBuilder = new global::Dwango.Nicolive.Chat.Data.Atoms.CruiseRecentContents();
+            if (dataCase_ == DataOneofCase.CruiseRecentContents) {
+              subBuilder.MergeFrom(CruiseRecentContents);
+            }
+            input.ReadMessage(subBuilder);
+            CruiseRecentContents = subBuilder;
+            break;
+          }
         }
       }
     #endif
@@ -876,6 +969,24 @@ namespace Dwango.Nicolive.Chat.Data {
             }
             input.ReadMessage(subBuilder);
             AkashicMessageEvent = subBuilder;
+            break;
+          }
+          case 202: {
+            global::Dwango.Nicolive.Chat.Data.Atoms.FeaturesUpdated subBuilder = new global::Dwango.Nicolive.Chat.Data.Atoms.FeaturesUpdated();
+            if (dataCase_ == DataOneofCase.FeaturesUpdated) {
+              subBuilder.MergeFrom(FeaturesUpdated);
+            }
+            input.ReadMessage(subBuilder);
+            FeaturesUpdated = subBuilder;
+            break;
+          }
+          case 210: {
+            global::Dwango.Nicolive.Chat.Data.Atoms.CruiseRecentContents subBuilder = new global::Dwango.Nicolive.Chat.Data.Atoms.CruiseRecentContents();
+            if (dataCase_ == DataOneofCase.CruiseRecentContents) {
+              subBuilder.MergeFrom(CruiseRecentContents);
+            }
+            input.ReadMessage(subBuilder);
+            CruiseRecentContents = subBuilder;
             break;
           }
         }

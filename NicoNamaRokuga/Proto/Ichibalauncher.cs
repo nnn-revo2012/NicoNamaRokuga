@@ -25,10 +25,10 @@ namespace Dwango.Nicolive.Chat.Data.Atoms {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CjRkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL2ljaGliYWxhdW5j",
-            "aGVyLnByb3RvEh9kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zIo4E",
+            "aGVyLnByb3RvEh9kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zIo0E",
             "ChVJY2hpYmFMYXVuY2hlckl0ZW1TZXQSDQoFZXBvY2gYASABKAMSSgoFaXRl",
             "bXMYAiADKAsyOy5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLklj",
-            "aGliYUxhdW5jaGVySXRlbVNldC5JdGVtGpkDCgRJdGVtEgoKAmlkGAEgASgJ",
+            "aGliYUxhdW5jaGVySXRlbVNldC5JdGVtGpgDCgRJdGVtEgoKAmlkGAEgASgJ",
             "EhAKCGVudGl0eUlkGAIgASgJEhMKC3NlcnZpY2VOYW1lGAMgASgJEg0KBXRp",
             "dGxlGAQgASgJEmYKEGxhdW5jaERpYWxvZ1R5cGUYBSABKA4yTC5kd2FuZ28u",
             "bmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLkljaGliYUxhdW5jaGVySXRlbVNl",
@@ -36,8 +36,8 @@ namespace Dwango.Nicolive.Chat.Data.Atoms {
             "EhYKDnRodW1ibmFpbFdpZHRoGAcgASgFEhcKD3RodW1ibmFpbEhlaWdodBgI",
             "IAEoBRIRCglsYXVuY2hVcmwYCSABKAkSGAoLYWRkZWRVc2VySWQYCiABKAlI",
             "AIgBARIWCglyZXBvcnRVcmwYCyABKAlIAYgBARIPCgdydW5uaW5nGAwgASgI",
-            "IiwKEExhdW5jaERpYWxvZ1R5cGUSCQoFU01BTEwQABINCglSSUNISVZJRVcQ",
-            "AUIOCgxfYWRkZWRVc2VySWRCDAoKX3JlcG9ydFVybGIGcHJvdG8z"));
+            "IisKEExhdW5jaERpYWxvZ1R5cGUSCQoFU01BTEwQABIMCghSSUNIVklFVxAB",
+            "Qg4KDF9hZGRlZFVzZXJJZEIMCgpfcmVwb3J0VXJsYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -913,7 +913,7 @@ namespace Dwango.Nicolive.Chat.Data.Atoms {
         public static partial class Types {
           public enum LaunchDialogType {
             [pbr::OriginalName("SMALL")] Small = 0,
-            [pbr::OriginalName("RICHIVIEW")] Richiview = 1,
+            [pbr::OriginalName("RICHVIEW")] Richview = 1,
           }
 
         }
