@@ -109,6 +109,7 @@ namespace NicoNamaRokuga
                 checkBox3.Checked = _props.IsComment;
                 checkBox6.Checked = _props.IsSeetNo;
                 checkBox7.Checked = _props.IsVideo;
+                checkBox9.Checked = _props.AdjustVpos;
             }
             catch (Exception Ex)
             {
@@ -183,6 +184,7 @@ namespace NicoNamaRokuga
                 _props.IsComment = checkBox3.Checked;
                 _props.IsSeetNo = checkBox6.Checked;
                 _props.IsVideo = checkBox7.Checked;
+                _props.AdjustVpos = checkBox9.Checked;
 
                 _props.SelectedCookie = nicoSessionComboBox1.Selector.SelectedImporter.SourceInfo;
 

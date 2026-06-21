@@ -165,6 +165,9 @@ namespace NicoNamaRokuga
 
         private void StartExtract(string filename)
         {
+            long seqnoStart = 0;
+            long seqnoEnd = 0;
+
             if (filename.IndexOf(".sqlite3") < 0) return;
 
             try
@@ -178,22 +181,73 @@ namespace NicoNamaRokuga
                 epi.Arg = "-i - -c copy -y \"%FILE%\"";
                 epi.Ext2 = ".mp4";
 
-                //Kvsデーター読み込み
                 _ndb = new NicoDb(this, filename);
+                var revision = _ndb.GetDbCommentRevision();
+                AddLog("CommentRevision: " + revision, 1);
+                /*
+                if (revision < 2)
+                {
+                    AddLog("DBfile is old. Can't output comments this program.", 1);
+                    if (_ndb != null)
+                        _ndb.Dispose();
+                    return;
+                }
+                */
+                //Kvsデーター読み込み
                 var kvs = _ndb.ReadDbKvs();
-
                 bci = new BroadCastInfo(null, null, null, null);
                 bci.Provider_Type = kvs["providerType"];
                 bci.OnAirStatus = kvs["status"];
-                bci.Server_Time = Props.GetLongParse(kvs["serverTime"]);
+                if (kvs.ContainsKey("serverTime"))
+                    bci.Server_Time = Props.GetLongParse(kvs["serverTime"]);
+
+                //Syncデーター読み込み
+                long sync_seqno = 0, sync_date = 0;
+                if (revision > 1)
+                {
+                    var sync = _ndb.ReadDbSync();
+                    if (sync.Count > 0)
+                    {
+                        var data = sync[0].Split(',');
+                        long.TryParse(data[0], out sync_seqno);
+                        long.TryParse(data[1], out sync_date);
+                        AddLog("sync: " + sync_seqno + "=" + sync_date, 1);
+                    }
+                }
 
                 //コメント情報
                 bci.Open_Time = Props.GetLongParse(kvs["openTime"]);
                 bci.Begin_Time = Props.GetLongParse(kvs["beginTime"]);
                 bci.End_Time = Props.GetLongParse(kvs["endTime"]);
-                bci.VposBase_Time = Props.GetLongParse(kvs["vposBaseTime"]);
+                if (kvs.ContainsKey("vposBaseTime"))
+                    bci.VposBase_Time = Props.GetLongParse(kvs["vposBaseTime"]);
+                bci.Provider_Type = kvs["providerType"].ToString();
+                if (revision > 2)
+                    bci.StreamType = kvs["streamType"].ToString();
+
                 epi.Comment_Offset = 0L;
-                //_nms = new NicStartComment(this, bci, _nln, _ndb);
+                if (bci.OnAirStatus == "ENDED")
+                {
+                    if (bci.StreamType == "dlive")
+                        epi.Comment_Offset = seqnoStart * 600; //timeshift
+                    else
+                        epi.Comment_Offset = seqnoStart * 500; //timeshift
+                }
+                else
+                {
+                    if (bci.StreamType == "dlive")
+                        epi.Comment_Offset = (sync_date / 10) - (bci.Open_Time * 100) + (seqnoStart - sync_seqno) * 300; //on_air
+                    else
+                        epi.Comment_Offset = (sync_date / 10) - (bci.Open_Time * 100) + (seqnoStart - sync_seqno) * 150; //on_air
+                }
+
+                AddLog("OnAirStatus: " + bci.OnAirStatus, 1);
+                AddLog("AdjustVpos: " + props.AdjustVpos, 1);
+                AddLog("ProvideType: " + bci.Provider_Type, 1);
+                AddLog("OpenTime: " + bci.Open_Time, 1);
+                AddLog("VposBaseTime: " + bci.VposBase_Time, 1);
+                AddLog("Comment_Offset: " + epi.Comment_Offset, 1);
+                _nms = new NicoMessage(this, bci, _nln, _ndb);
 
                 //映像ファイル出力処理
                 if (_ndb.CountDbMedia() > 0)
@@ -212,7 +266,7 @@ namespace NicoNamaRokuga
                 }
                 if (_ndb.CountDbComment() > 0)
                 {
-                    if (_ndb.ReadDbComment(epi, bci, _nms))
+                    if (_ndb.ReadDbComment(epi, bci, _nms, revision, props.IsSeetNo, props.AdjustVpos))
                         AddLog("コメント出力終了しました。", 1);
                     else
                         AddLog("コメント出力失敗しました。", 1);

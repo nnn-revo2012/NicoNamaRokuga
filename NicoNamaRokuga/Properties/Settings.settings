@@ -30,14 +30,13 @@
       <Value Profile="(Default)">hls</Value>
     </Setting>
     <Setting Name="UseExternal" Type="System.String" Scope="User">
-      <Value Profile="(Default)">native</Value>
+      <Value Profile="(Default)">ext1</Value>
     </Setting>
     <Setting Name="ExecFile" Type="System.String" Scope="User">
-      <Value Profile="(Default)">streamlink.exe;stramlink.exe</Value>
+      <Value Profile="(Default)">ffmpeg.exe;ffmpeg.exe</Value>
     </Setting>
     <Setting Name="ExecCommand" Type="System.String" Scope="User">
-      <Value Profile="(Default)">%HEADERS% "%URL%" %DEBUG% --niconico-purge-credentials --niconico-user-session %US% --default-stream best --stream-timeout 60.0 -o "%FILE%";%HEADERS% "%URL%" %DEBUG% --niconico-purge-credentials --niconico-user-session %US% --default-stream best --stream-timeout 60.0 -o "%FILE%"
-</Value>
+      <Value Profile="(Default)">%HEADERS% -i "%PARA%" -c copy "%FILE%";%HEADERS% -i "%PARA%" -c copy "%FILE%"</Value>
     </Setting>
     <Setting Name="BreakCommand" Type="System.String" Scope="User">
       <Value Profile="(Default)">;</Value>
@@ -80,6 +79,9 @@
     </Setting>
     <Setting Name="UserSession" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AdjustVpos" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

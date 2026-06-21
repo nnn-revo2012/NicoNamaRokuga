@@ -378,24 +378,25 @@ namespace NicoNamaRokuga.Rec
             return true;
         }
 
-        public bool ReadDbComment(ExecPsInfo epi, BroadCastInfo bci, NicoMessage nsm)
+        public bool ReadDbComment(ExecPsInfo epi, BroadCastInfo bci, NicoMessage nsm, int revision, bool isseetno, bool isculcvpos)
         {
             var enc = new System.Text.UTF8Encoding(false);
             StreamWriter sw = null;
             var result = false;
             var data = new Dictionary<string, string>();
-            int rev = 0;
+            int ispremium = 0;
+            bool vpos_flg = true;
 
             try
             {
-                rev = GetDbCommentRevision();
+                //rev = GetDbCommentRevision();
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
                     command.CommandText = "SELECT thread,\n"
                                         + "IFNULL(no, -1) AS no,\n"
                                         + "vpos, date, date_usec,\n"
                                         + "IFNULL(mail, \"\") AS mail,\n";
-                    if (rev > 0)
+                    if (revision > 0)
                         command.CommandText += "IFNULL(name, \"\") AS name,\n";
                     command.CommandText += "user_id,\n"
                                         + "IFNULL(premium, 0) AS premium,\n"
@@ -416,7 +417,34 @@ namespace NicoNamaRokuga.Rec
                             {
                                 data[reader.GetName(i)] = reader.GetValue(i).ToString();
                             }
-                            data["vpos"] = nsm.CalcVpos(bci.Open_Time,epi.Comment_Offset, data["date"], data["vpos"], bci.Provider_Type);
+                            ispremium = 0;
+                            if (data.ContainsKey("premium"))
+                                int.TryParse(data["premium"].ToString(), out ispremium);
+                            // skip /hb
+                            if (ispremium > 1 && isseetno && data["content"].ToString().StartsWith("/hb "))
+                                continue;
+                            if (isculcvpos)
+                            {
+                                if (revision > 1)
+                                {
+                                    (data["vpos"], vpos_flg) = nsm.CalcVpos(bci.Open_Time, epi.Comment_Offset, data["date"], data["vpos"], bci.VposBase_Time, ispremium);
+                                }
+                                else
+                                {
+                                    (data["vpos"], vpos_flg) = nsm.CalcVpos(bci.Open_Time, epi.Comment_Offset, data["date"], data["vpos"], bci.Provider_Type);
+                                }
+                                // vposが-1000(-10秒)より小さい場合は出力しない
+                                if (!vpos_flg)
+                                    continue;
+                            }
+                            else
+                            {
+                                //premium=3のみvpos計算
+                                if (revision > 1 && ispremium == 3)
+                                {
+                                    (data["vpos"], vpos_flg) = nsm.CalcVpos(bci.Open_Time, 0, data["date"], "", bci.VposBase_Time, ispremium);
+                                }
+                            }
                             sw.Write(nsm.Table2Xml(data));
                         }
                         nsm.EndXmlDoc();
@@ -582,7 +610,7 @@ namespace NicoNamaRokuga.Rec
             }
         }
 
-        public IList<string> ReadDbSync()
+        public List<string> ReadDbSync()
         {
             var sync = new List<string>();
 

@@ -367,38 +367,48 @@ namespace NicoNamaRokuga.Message
         }
 
         //vpos計算
-        public string CalcVpos(long start, long offset, string date, string vpos, string provider_type)
+        public (string result, bool vpos_flg) CalcVpos(long start, long offset, string date, string vpos, string provider_type)
         {
+            long result = 0L;
+            bool vpos_flg = true;
             if (provider_type != "official")
             {
                 long ll = start * 100 + offset;
                 long.TryParse(date, out ll);
-                return ((ll - start) * 100L - offset).ToString();
+                result= (ll - start) * 100L - offset;
             }
             else
             {
                 long ll = offset;
                 long.TryParse(vpos, out ll);
-                return (ll - offset).ToString();
+                result = ll - offset;
             }
+            if (result <= -1000L)
+                vpos_flg = false;
+            return (result.ToString(), vpos_flg);
         }
 
         //2024/8/5以降のvpos計算（メッセージサーバーに変更後）
-        public string CalcVpos(long start, long offset, string date, string vpos, long vposbasetime, int premium)
+        public (string result, bool vpos_flg) CalcVpos(long start, long offset, string date, string vpos, long vposbasetime, int premium)
         {
             long ll = 0L;
+            long result = 0L;
+            bool vpos_flg = true;
             if (premium == 3)
             {
                 // ret = (date - opentime) * 100 - offset
                 long.TryParse(date, out ll);
-                return ((ll - start) * 100L - offset).ToString();
+                result = (ll - start) * 100L - offset;
             }
             else
             {
                 // ret = vpos + ((vposbasetime - opentime) * 100) - offset
                 long.TryParse(vpos, out ll);
-                return (ll + ((vposbasetime - start) * 100L) - offset).ToString();
+                result= ll + ((vposbasetime - start) * 100L) - offset;
             }
+            if (result <= -1000L)
+                vpos_flg = false;
+            return (result.ToString(), vpos_flg);
         }
 
         //ISO8601形式の日付と時刻からUnixtime秒とマイクロ秒に変換する

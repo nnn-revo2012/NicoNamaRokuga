@@ -151,6 +151,7 @@ namespace NicoNamaRokuga.Prop
         public bool IsComment { get; set; }
         public bool IsSeetNo { get; set; }
         public bool IsVideo { get; set; }
+        public bool AdjustVpos { get; set; }
 
         public Props()
         {
@@ -258,6 +259,7 @@ namespace NicoNamaRokuga.Prop
                 this.IsComment = Properties.Settings.Default.IsComment;
                 this.IsSeetNo = Properties.Settings.Default.IsSeetNo;
                 this.IsVideo = Properties.Settings.Default.IsVideo;
+                this.AdjustVpos = Properties.Settings.Default.AdjustVpos;
             }
             catch (Exception Ex)
             {
@@ -297,6 +299,7 @@ namespace NicoNamaRokuga.Prop
                 Properties.Settings.Default.IsComment = this.IsComment;
                 Properties.Settings.Default.IsSeetNo = this.IsSeetNo;
                 Properties.Settings.Default.IsVideo = this.IsVideo;
+                Properties.Settings.Default.AdjustVpos = this.AdjustVpos;
                 Properties.Settings.Default.Save();
                 if (acc_flg == true)
                 {

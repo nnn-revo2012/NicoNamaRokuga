@@ -76,6 +76,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.checkBox9 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -328,6 +329,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.checkBox9);
             this.tabPage2.Controls.Add(this.checkBox7);
             this.tabPage2.Controls.Add(this.groupBox6);
             this.tabPage2.Controls.Add(this.checkBox6);
@@ -349,7 +351,7 @@
             // checkBox7
             // 
             this.checkBox7.AutoSize = true;
-            this.checkBox7.Location = new System.Drawing.Point(12, 282);
+            this.checkBox7.Location = new System.Drawing.Point(12, 304);
             this.checkBox7.Name = "checkBox7";
             this.checkBox7.Size = new System.Drawing.Size(100, 16);
             this.checkBox7.TabIndex = 16;
@@ -575,7 +577,7 @@
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage3.Size = new System.Drawing.Size(416, 425);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "詳細設定";
+            this.tabPage3.Text = "外部プログラム設定";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // button1
@@ -612,6 +614,16 @@
             this.button3.Text = "初期値に戻す";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // checkBox9
+            // 
+            this.checkBox9.AutoSize = true;
+            this.checkBox9.Location = new System.Drawing.Point(12, 282);
+            this.checkBox9.Name = "checkBox9";
+            this.checkBox9.Size = new System.Drawing.Size(207, 16);
+            this.checkBox9.TabIndex = 18;
+            this.checkBox9.Text = "コメントのvposの値を補正して出力する";
+            this.checkBox9.UseVisualStyleBackColor = true;
             // 
             // Form2
             // 
@@ -696,5 +708,6 @@
         private System.Windows.Forms.CheckBox checkBox8;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.CheckBox checkBox9;
     }
 }
