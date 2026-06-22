@@ -1,7 +1,7 @@
 ﻿===============================================================================
 【タイトル】 NicoNamaRokuga
 【ファイル】 NicoNamaRokuga.exe
-【作成月日】 2026/04/07
+【作成月日】 2026/06/22
 【著 作 者】 nnn-revo2012
 【開発環境】 Microsoft Windows 11
              Microsoft Visual Studio 2019
@@ -92,6 +92,31 @@ Released under the MIT License
 ※ファイル形式やフォーマットを使用しております。
 
 ■更新履歴
+2026/06/22　Ver 0.1.2.04
+映像、コメント出力機能修正
+- 本ツール、livedl-nで保存されたsqlite3からコメントを出力するように修正
+- 過去に保存されたsqlite3から動画・コメントを出力するように修正
+- オプションに「vposの値を補正して出力」を追加
+- 外部プログラム起動をデフォルトに変更
+
+コメント機能修正
+- proto定義ファイルをv2026.0116.121242 に更新
+- システムメッセージの処理追加
+  - GiftBarUpdateの処理追加(return)
+  - CruiseRecentContents の処理追加(表示するだけ)
+  - FeaturesUpdated の処理追加(return)
+- コメントの多い配信でChunkをParseする際エラーが発生していたのを多少改善
+
+新動画サーバー対応　他
+- master.m3u8、video/audioのvariant.m3u8読み込み修正
+- 使わなくなったAPI(setspeed)などコメントアウト
+- 外部プログラム呼び出し時にurl、user_session、cookie、master.m3u8を指定できるように修正
+- 外部プログラム呼び出しの場合もsqlite3を作成するよう修正
+  (livedl-nと同仕様)
+- 公式&チャンネルで非会員コメントが保存されなかったのを修正
+- システムメッセージgame_update、tag_updatedの処理追加(return)
+- Segment/MessageでChunkをParseする前にサイズチェック(>0)するよう修正
+
 2026/04/07　Ver 0.1.2.03
 オプション追加、ログイン機能修正
 ・ログイン時２段階認証対応
