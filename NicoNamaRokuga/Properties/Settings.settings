@@ -63,7 +63,7 @@
       <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="ReConnectTime2" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">30</Value>
+      <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="IsVideo" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
@@ -82,6 +82,27 @@
     </Setting>
     <Setting Name="AdjustVpos" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ExtFile" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files\Streamlink\bin\streamlink.exe</Value>
+    </Setting>
+    <Setting Name="ExtCommand" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%HEADERS% %URL% %DEBUG% --niconico-purge-credentials %US% %RETRY% --default-stream "%QUALITY%" --stream-timeout 60.0 -o "%FILE%"</Value>
+    </Setting>
+    <Setting Name="ExtBreak" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ExtQuality" Type="System.String" Scope="User">
+      <Value Profile="(Default)">480p,854p,450p_alt,800p_alt,450p,800p,288p,512p,288p_alt,512p_alt</Value>
+    </Setting>
+    <Setting Name="ExtIsRetry" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="ExtRetry" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="ExtReConnect" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10</Value>
     </Setting>
   </Settings>
 </SettingsFile>

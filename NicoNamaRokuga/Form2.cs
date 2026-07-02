@@ -95,6 +95,14 @@ namespace NicoNamaRokuga
                 textBox4.Text = _props.SaveFile;
                 textBox5.Text = _props.SaveFolder;
 
+                textBox10.Text = _props.ExtFile;
+                textBox8.Text = _props.ExtQuality;
+                textBox9.Text = _props.ExtCommand;
+                textBox11.Text = _props.ExtBreak;
+                checkBox10.Checked = _props.ExtIsRetry;
+                numericUpDown1.Value = (decimal)_props.ExtRetry;
+                numericUpDown2.Value = (decimal)_props.ExtReConnect;
+
                 comboBox2.Items.Clear();
                 foreach (var qu in Props.Quality.ToArray())
                     comboBox2.Items.Add(qu);
@@ -173,6 +181,18 @@ namespace NicoNamaRokuga
                 _props.SaveDir = textBox3.Text;
                 _props.SaveFile = textBox4.Text;
                 _props.SaveFolder = textBox5.Text;
+
+                _props.ExtFile = textBox10.Text.Trim('"');
+                _props.ExtQuality = textBox8.Text.Trim('"');
+                _props.ExtCommand = textBox9.Text;
+                _props.ExtBreak = textBox11.Text;
+                _props.ExtIsRetry= checkBox10.Checked;
+                var n = (int)numericUpDown1.Value;
+                if (n < 1 || n > 10) n = 3;
+                _props.ExtRetry = n;
+                n = (int)numericUpDown2.Value;
+                if (n < 10) n = 10;
+                _props.ExtReConnect = n;
 
                 _props.QuarityType =
                     Props.EnumQTypes(comboBox2.SelectedIndex, Props.Quality);
@@ -343,5 +363,61 @@ namespace NicoNamaRokuga
                 await GetCookieFileAsync(textBox6.Text);
         }
 
+        private void button12_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var openFileDialog1 = new OpenFileDialog())
+                {
+                    openFileDialog1.Title = "実行ファイル（.exe）を指定してください。";
+                    openFileDialog1.Filter = "実行ファイル (*.exe)|*.exe|すべてのファイル (*.*)|*.*";
+                    openFileDialog1.FilterIndex = 1;
+                    openFileDialog1.CheckFileExists = true;
+                    openFileDialog1.CheckPathExists = true;
+                    openFileDialog1.Multiselect = false;
+
+                    if (string.IsNullOrEmpty(textBox10.Text))
+                    {
+                        // 空白の場合はC:\以下
+                        openFileDialog1.InitialDirectory = "C:\\";
+                        openFileDialog1.FileName = "streamlink.exe";
+                    }
+                    else
+                    {
+                        // 既にパスが入力されている場合
+                        if (File.Exists(textBox10.Text))
+                        {
+                            openFileDialog1.InitialDirectory = Path.GetDirectoryName(textBox10.Text);
+                            openFileDialog1.FileName = Path.GetFileName(textBox10.Text);
+                        }
+                        else if (Directory.Exists(textBox10.Text))
+                        {
+                            openFileDialog1.InitialDirectory = textBox10.Text;
+                            openFileDialog1.FileName = "streamlink.exe";
+                        }
+                        else
+                        {
+                            openFileDialog1.InitialDirectory = "C:\\";
+                            openFileDialog1.FileName = "streamlink.exe";
+                        }
+                    }
+
+                    if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
+                    {
+                        // 選択されたEXEファイルのフルパスを表示
+                        textBox10.Text = openFileDialog1.FileName;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

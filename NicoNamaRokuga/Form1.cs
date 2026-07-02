@@ -104,6 +104,11 @@ namespace NicoNamaRokuga
                         _ndb.Dispose();
                     }
                     AddLog("中断しました。", 1);
+                    if (props.Protocol == Protocol.hls && props.UseExternal != UseExternal.native)
+                    {
+                        if (!string.IsNullOrEmpty(epi.SaveFile))
+                            StartExtract(epi.SaveFile);
+                    }
                     EnableButton(true);
                     start_flg = false;
                     return;
@@ -125,7 +130,7 @@ namespace NicoNamaRokuga
                     return;
                 }
 
-                var exec_file = props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())];
+                var exec_file = props.ExtFile;
                 exec_file = GetExecFile(exec_file);
                 if (props.UseExternal != UseExternal.native)
                     if (!File.Exists(exec_file))
@@ -310,24 +315,26 @@ namespace NicoNamaRokuga
                 //保存ファイル名作成
                 epi = new ExecPsInfo();
                 epi.Sdir = string.IsNullOrEmpty(props.SaveDir) ? System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) : props.SaveDir;
-                epi.Exec = GetExecFile(props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())]);
-                epi.Arg = props.ExecCommand[Props.ParseProtocol(props.Protocol.ToString())];
+                epi.Exec = props.ExtFile;
+                epi.Arg = props.ExtCommand;
                 epi.Sfile = bci.SetRecFileFormat(props.SaveFile);
                 epi.Sfolder = bci.SetRecFolderFormat(props.SaveFolder);
                 epi.Protocol = props.Protocol.ToString();
                 epi.Seq = 0;
                 ExecPsInfo.MakeRecDir(epi);
 
-                if (props.Protocol == Protocol.hls)
-                {
-                    var file = ExecPsInfo.GetSaveFileSqlite3(epi);
-                    if (bci.IsTimeShift()) file += Props.TIMESHIFT;
-                    file += ".sqlite3";
-                    epi.SaveFile = file;
-                    _ndb = new NicoDb(this, epi.SaveFile);
-                    _ndb.CreateDbAll();
+                var file = ExecPsInfo.GetSaveFileSqlite3(epi);
+                if (bci.IsTimeShift()) file += Props.TIMESHIFT;
+                file += ".sqlite3";
+                epi.SaveFile = file;
+                _ndb = new NicoDb(this, epi.SaveFile);
+                _ndb.CreateDbAll();
+                _ndb.WriteDbKvsProps(bci);
 
-                    _ndb.WriteDbKvsProps(bci);
+                if (props.Protocol == Protocol.hls && props.UseExternal != UseExternal.native)
+                {
+                    epi.Sqlite3File = file;
+                    epi.SaveExtFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
                 }
 
                 //コメント情報
@@ -480,6 +487,11 @@ namespace NicoNamaRokuga
                         _ndb.Dispose();
                     }
                     AddLog("録画終了しました。", 1);
+                    if (props.Protocol == Protocol.hls && props.UseExternal != UseExternal.native)
+                    {
+                        if (!string.IsNullOrEmpty(epi.SaveFile))
+                            StartExtract(epi.SaveFile);
+                    }
                     EnableButton(true);
                     start_flg = false;
                     return;

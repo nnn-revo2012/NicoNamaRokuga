@@ -292,11 +292,7 @@ namespace NicoNamaRokuga.Net
                             //ffmpegを実行する
                             ttt = (string)data["uri"];
                             _form.AddLog("Masterm3u8: " + ttt, 9);
-                            if (Form1.props.Protocol != Protocol.hls || Form1.props.UseExternal != UseExternal.native)
-                                _epi.SaveFile = ExecPsInfo.GetSaveFileNum(_epi);
-                            if (Form1.props.IsComment)
-                                _epi.SaveCommentFile = _epi.SaveFile + _epi.Xml;
-                            var argument = ExecPsInfo.SetOption(_epi, ttt, NicoLiveNet.GetNicoPageUrl(_bci.LiveId), us, _bci.StartTs_Time, Form1.props.IsLogging);
+                            var argument = ExecPsInfo.SetOption(_epi, ttt, NicoLiveNet.GetNicoPageUrl(_bci.LiveId), us, Form1.props, _bci, false);
                             if (Form1.props.Protocol == Protocol.hls && Form1.props.UseExternal == UseExternal.native)
                                 _rHtml.ExecPs(ttt, _epi.SaveFile);
                             else

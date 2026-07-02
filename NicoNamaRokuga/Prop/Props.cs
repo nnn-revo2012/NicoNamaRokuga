@@ -142,6 +142,13 @@ namespace NicoNamaRokuga.Prop
         public string[] ExecFile { get; set; }
         public string[] ExecCommand { get; set; }
         public string[] BreakCommand { get; set; }
+        public string ExtFile { get; set; }
+        public string ExtCommand { get; set; }
+        public string ExtBreak { get; set; }
+        public string ExtQuality { get; set; }
+        public bool ExtIsRetry { get; set; }
+        public int ExtRetry { get; set; }
+        public int ExtReConnect { get; set; }
         public int Retry { get; set; }
         public int ReConnectTime1 { get; set; }
         public int ReConnectTime2 { get; set; }
@@ -250,6 +257,17 @@ namespace NicoNamaRokuga.Prop
                 this.ExecFile = Properties.Settings.Default.ExecFile.Split(';');
                 this.ExecCommand = Properties.Settings.Default.ExecCommand.Split(';');
                 this.BreakCommand = Properties.Settings.Default.BreakCommand.Split(';');
+                this.ExtFile = Properties.Settings.Default.ExtFile.Trim('"');
+                this.ExtCommand = Properties.Settings.Default.ExtCommand;
+                this.ExtBreak = Properties.Settings.Default.ExtBreak;
+                this.ExtQuality = Properties.Settings.Default.ExtQuality.Trim('"');
+                this.ExtIsRetry = Properties.Settings.Default.ExtIsRetry;
+                var n = (int)Properties.Settings.Default.ExtRetry;
+                if (n < 1 || n > 10) n = 3;
+                this.ExtRetry = n;
+                n = (int)Properties.Settings.Default.ExtReConnect;
+                if (n < 10) n = 10;
+                this.ExtReConnect = n;
                 this.Retry = Properties.Settings.Default.Retry;
                 this.ReConnectTime1 = Properties.Settings.Default.ReConnectTime1;
                 this.ReConnectTime2 = Properties.Settings.Default.ReConnectTime2;
@@ -290,6 +308,13 @@ namespace NicoNamaRokuga.Prop
                 Properties.Settings.Default.ExecFile = String.Join(";", this.ExecFile);
                 Properties.Settings.Default.ExecCommand = String.Join(";", this.ExecCommand);
                 Properties.Settings.Default.BreakCommand = String.Join(";", this.BreakCommand);
+                Properties.Settings.Default.ExtFile = this.ExtFile;
+                Properties.Settings.Default.ExtCommand = ExtCommand;
+                Properties.Settings.Default.ExtBreak = this.ExtBreak;
+                Properties.Settings.Default.ExtQuality = this.ExtQuality;
+                Properties.Settings.Default.ExtIsRetry = this.ExtIsRetry;
+                Properties.Settings.Default.ExtRetry = this.ExtRetry;
+                Properties.Settings.Default.ExtReConnect = this.ExtReConnect;
                 Properties.Settings.Default.Retry = this.Retry;
                 Properties.Settings.Default.ReConnectTime1 = this.ReConnectTime1;
                 Properties.Settings.Default.ReConnectTime2 = this.ReConnectTime2;

@@ -22,6 +22,7 @@ namespace NicoNamaRokuga.Proc
         public string SaveFile { get; set; }
         public string SaveCommentFile { get; set; }
         public string Sqlite3File { get; set; }
+        public string SaveExtFile { get; set; }
         public string Ext { get { return (Protocol == "rtmp") ? ".flv" : ".ts"; } }
         public string Xml { get { return ".xml"; } }
         public string Ext2 { get; set; }
@@ -41,25 +42,32 @@ namespace NicoNamaRokuga.Proc
         }
 
         //実行ファイル用の引数(argumentを設定)
-        public static string SetOption(ExecPsInfo epi, string para, string url, string us, int starttstime, bool isdebug)
+        public static string SetOption(ExecPsInfo epi, string para, string url, string us, Prop.Props props, Net.BroadCastInfo bci, bool isdebug)
         {
             var result = epi.Arg;
-            var ff = epi.SaveFile + epi.Ext;
+            var ff = epi.SaveExtFile + epi.Ext;
             var headers = string.Empty;
-            var para2 = starttstime > 0 ? para + "&start=" + starttstime.ToString() : para + "&start=0.0";
+            //var para2 = starttstime > 0 ? para + "&start=" + starttstime.ToString() : para + "&start=0.0";
 
             result = result.Replace("%HEADERS%", headers);
             //result = result.Replace("%PARA%", para2);
             result = result.Replace("%URL%", url);
             result = result.Replace("%FILE%", ff);
-            //result = result.Replace("%COKKIE%", cookie);
-            result = result.Replace("%US%", us);
+            if (props.IsLogin == Prop.IsLogin.always && !string.IsNullOrEmpty(us))
+                result = result.Replace("%US%", "--niconico-user-session " + us);
+            else
+                result = result.Replace("%US%", "");
+            result = result.Replace("%QUALITY%", props.ExtQuality);
+            if (props.ExtIsRetry)
+                result = result.Replace("%RETRY%", "--retry-max " + props.ExtRetry + " --retry-streams " + props.ExtReConnect);
+            else
+                result = result.Replace("%RETRY%", "");
+
             result = result.Replace("%M3U8%", para);
             if (isdebug)
                 result = result.Replace("%DEBUG%", "--loglevel trace");
             else
-                result = result.Replace("%DEBUG%", "");
-
+                result = result.Replace("%DEBUG%", "--loglevel info");
 
             return result;
         }

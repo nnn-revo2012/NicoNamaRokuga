@@ -264,7 +264,7 @@ namespace NicoNamaRokuga.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
         public int ReConnectTime2 {
             get {
                 return ((int)(this["ReConnectTime2"]));
@@ -343,6 +343,91 @@ namespace NicoNamaRokuga.Properties {
             }
             set {
                 this["AdjustVpos"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Streamlink\\bin\\streamlink.exe")]
+        public string ExtFile {
+            get {
+                return ((string)(this["ExtFile"]));
+            }
+            set {
+                this["ExtFile"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%HEADERS% %URL% %DEBUG% --niconico-purge-credentials %US% %RETRY% --default-strea" +
+            "m \"%QUALITY%\" --stream-timeout 60.0 -o \"%FILE%\"")]
+        public string ExtCommand {
+            get {
+                return ((string)(this["ExtCommand"]));
+            }
+            set {
+                this["ExtCommand"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ExtBreak {
+            get {
+                return ((string)(this["ExtBreak"]));
+            }
+            set {
+                this["ExtBreak"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("480p,854p,450p_alt,800p_alt,450p,800p,288p,512p,288p_alt,512p_alt")]
+        public string ExtQuality {
+            get {
+                return ((string)(this["ExtQuality"]));
+            }
+            set {
+                this["ExtQuality"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ExtIsRetry {
+            get {
+                return ((bool)(this["ExtIsRetry"]));
+            }
+            set {
+                this["ExtIsRetry"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int ExtRetry {
+            get {
+                return ((int)(this["ExtRetry"]));
+            }
+            set {
+                this["ExtRetry"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int ExtReConnect {
+            get {
+                return ((int)(this["ExtReConnect"]));
+            }
+            set {
+                this["ExtReConnect"] = value;
             }
         }
     }
