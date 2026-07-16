@@ -30,36 +30,40 @@ namespace Dwango.Nicolive.Chat.Data {
             "b21zL21vZGVyYXRvci5wcm90bxotZHdhbmdvL25pY29saXZlL2NoYXQvZGF0",
             "YS9hdG9tcy9ha2FzaGljLnByb3RvGjRkd2FuZ28vbmljb2xpdmUvY2hhdC9k",
             "YXRhL2F0b21zL2ljaGliYWxhdW5jaGVyLnByb3RvGjFkd2FuZ28vbmljb2xp",
-            "dmUvY2hhdC9kYXRhL2F0b21zL3N0cmVhbXN0YXRlLnByb3RvIsIICg1OaWNv",
-            "bGl2ZVN0YXRlEj4KCnN0YXRpc3RpY3MYASABKAsyJS5kd2FuZ28ubmljb2xp",
-            "dmUuY2hhdC5kYXRhLlN0YXRpc3RpY3NIAIgBARI4CgdlbnF1ZXRlGAIgASgL",
-            "MiIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5FbnF1ZXRlSAGIAQESPQoK",
-            "bW92ZV9vcmRlchgDIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEu",
-            "TW92ZU9yZGVySAKIAQESOAoHbWFycXVlZRgEIAEoCzIiLmR3YW5nby5uaWNv",
-            "bGl2ZS5jaGF0LmRhdGEuTWFycXVlZUgDiAEBEkEKDGNvbW1lbnRfbG9jaxgF",
-            "IAEoCzImLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ29tbWVudExvY2tI",
-            "BIgBARJBCgxjb21tZW50X21vZGUYBiABKAsyJi5kd2FuZ28ubmljb2xpdmUu",
-            "Y2hhdC5kYXRhLkNvbW1lbnRNb2RlSAWIAQESPwoLdHJpYWxfcGFuZWwYByAB",
-            "KAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWxIBogB",
-            "ARJFCg5wcm9ncmFtX3N0YXR1cxgJIAEoCzIoLmR3YW5nby5uaWNvbGl2ZS5j",
-            "aGF0LmRhdGEuUHJvZ3JhbVN0YXR1c0gHiAEBEl0KF21vZGVyYXRpb25fYW5u",
-            "b3VuY2VtZW50GAogASgLMjcuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5h",
-            "dG9tcy5Nb2RlcmF0aW9uQW5ub3VuY2VtZW50SAiIAQESVAoPaWNoaWJhX2xh",
-            "dW5jaGVyGAsgASgLMjYuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9t",
-            "cy5JY2hpYmFMYXVuY2hlckl0ZW1TZXRICYgBARJUChNzdHJlYW1fc3RhdGVf",
-            "Y2hhbmdlGAwgASgLMjIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9t",
-            "cy5TdHJlYW1TdGF0ZUNoYW5nZUgKiAEBElAKDWFrYXNoaWNfc3RhdGUYDSAB",
-            "KAsyNC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLkFrYXNoaWNT",
-            "dGF0ZVJvdXRpbmdIC4gBAUINCgtfc3RhdGlzdGljc0IKCghfZW5xdWV0ZUIN",
-            "CgtfbW92ZV9vcmRlckIKCghfbWFycXVlZUIPCg1fY29tbWVudF9sb2NrQg8K",
-            "DV9jb21tZW50X21vZGVCDgoMX3RyaWFsX3BhbmVsQhEKD19wcm9ncmFtX3N0",
-            "YXR1c0IaChhfbW9kZXJhdGlvbl9hbm5vdW5jZW1lbnRCEgoQX2ljaGliYV9s",
-            "YXVuY2hlckIWChRfc3RyZWFtX3N0YXRlX2NoYW5nZUIQCg5fYWthc2hpY19z",
-            "dGF0ZWIGcHJvdG8z"));
+            "dmUvY2hhdC9kYXRhL2F0b21zL3N0cmVhbXN0YXRlLnByb3RvGjRkd2FuZ28v",
+            "bmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL2NyZWF0b3JzdXBwb3J0LnByb3Rv",
+            "IscJCg1OaWNvbGl2ZVN0YXRlEj4KCnN0YXRpc3RpY3MYASABKAsyJS5kd2Fu",
+            "Z28ubmljb2xpdmUuY2hhdC5kYXRhLlN0YXRpc3RpY3NIAIgBARI4CgdlbnF1",
+            "ZXRlGAIgASgLMiIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5FbnF1ZXRl",
+            "SAGIAQESPQoKbW92ZV9vcmRlchgDIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5j",
+            "aGF0LmRhdGEuTW92ZU9yZGVySAKIAQESOAoHbWFycXVlZRgEIAEoCzIiLmR3",
+            "YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTWFycXVlZUgDiAEBEkEKDGNvbW1l",
+            "bnRfbG9jaxgFIAEoCzImLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ29t",
+            "bWVudExvY2tIBIgBARJBCgxjb21tZW50X21vZGUYBiABKAsyJi5kd2FuZ28u",
+            "bmljb2xpdmUuY2hhdC5kYXRhLkNvbW1lbnRNb2RlSAWIAQESPwoLdHJpYWxf",
+            "cGFuZWwYByABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFs",
+            "UGFuZWxIBogBARJFCg5wcm9ncmFtX3N0YXR1cxgJIAEoCzIoLmR3YW5nby5u",
+            "aWNvbGl2ZS5jaGF0LmRhdGEuUHJvZ3JhbVN0YXR1c0gHiAEBEl0KF21vZGVy",
+            "YXRpb25fYW5ub3VuY2VtZW50GAogASgLMjcuZHdhbmdvLm5pY29saXZlLmNo",
+            "YXQuZGF0YS5hdG9tcy5Nb2RlcmF0aW9uQW5ub3VuY2VtZW50SAiIAQESVAoP",
+            "aWNoaWJhX2xhdW5jaGVyGAsgASgLMjYuZHdhbmdvLm5pY29saXZlLmNoYXQu",
+            "ZGF0YS5hdG9tcy5JY2hpYmFMYXVuY2hlckl0ZW1TZXRICYgBARJUChNzdHJl",
+            "YW1fc3RhdGVfY2hhbmdlGAwgASgLMjIuZHdhbmdvLm5pY29saXZlLmNoYXQu",
+            "ZGF0YS5hdG9tcy5TdHJlYW1TdGF0ZUNoYW5nZUgKiAEBElAKDWFrYXNoaWNf",
+            "c3RhdGUYDSABKAsyNC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21z",
+            "LkFrYXNoaWNTdGF0ZVJvdXRpbmdIC4gBARJjChtjcmVhdG9yX3N1cHBvcnRf",
+            "Z29hbF9zdGF0dXMYDiABKAsyOS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRh",
+            "LmF0b21zLkNyZWF0b3JTdXBwb3J0R29hbFN0YXR1c0gMiAEBQg0KC19zdGF0",
+            "aXN0aWNzQgoKCF9lbnF1ZXRlQg0KC19tb3ZlX29yZGVyQgoKCF9tYXJxdWVl",
+            "Qg8KDV9jb21tZW50X2xvY2tCDwoNX2NvbW1lbnRfbW9kZUIOCgxfdHJpYWxf",
+            "cGFuZWxCEQoPX3Byb2dyYW1fc3RhdHVzQhoKGF9tb2RlcmF0aW9uX2Fubm91",
+            "bmNlbWVudEISChBfaWNoaWJhX2xhdW5jaGVyQhYKFF9zdHJlYW1fc3RhdGVf",
+            "Y2hhbmdlQhAKDl9ha2FzaGljX3N0YXRlQh4KHF9jcmVhdG9yX3N1cHBvcnRf",
+            "Z29hbF9zdGF0dXNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::Dwango.Nicolive.Chat.Data.AtomsReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.ModeratorReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.AkashicReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.IchibalauncherReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.StreamstateReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::Dwango.Nicolive.Chat.Data.AtomsReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.ModeratorReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.AkashicReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.IchibalauncherReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.StreamstateReflection.Descriptor, global::Dwango.Nicolive.Chat.Data.Atoms.CreatorsupportReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.NicoliveState), global::Dwango.Nicolive.Chat.Data.NicoliveState.Parser, new[]{ "Statistics", "Enquete", "MoveOrder", "Marquee", "CommentLock", "CommentMode", "TrialPanel", "ProgramStatus", "ModerationAnnouncement", "IchibaLauncher", "StreamStateChange", "AkashicState" }, new[]{ "Statistics", "Enquete", "MoveOrder", "Marquee", "CommentLock", "CommentMode", "TrialPanel", "ProgramStatus", "ModerationAnnouncement", "IchibaLauncher", "StreamStateChange", "AkashicState" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Dwango.Nicolive.Chat.Data.NicoliveState), global::Dwango.Nicolive.Chat.Data.NicoliveState.Parser, new[]{ "Statistics", "Enquete", "MoveOrder", "Marquee", "CommentLock", "CommentMode", "TrialPanel", "ProgramStatus", "ModerationAnnouncement", "IchibaLauncher", "StreamStateChange", "AkashicState", "CreatorSupportGoalStatus" }, new[]{ "Statistics", "Enquete", "MoveOrder", "Marquee", "CommentLock", "CommentMode", "TrialPanel", "ProgramStatus", "ModerationAnnouncement", "IchibaLauncher", "StreamStateChange", "AkashicState", "CreatorSupportGoalStatus" }, null, null, null)
           }));
     }
     #endregion
@@ -113,6 +117,7 @@ namespace Dwango.Nicolive.Chat.Data {
       ichibaLauncher_ = other.ichibaLauncher_ != null ? other.ichibaLauncher_.Clone() : null;
       streamStateChange_ = other.streamStateChange_ != null ? other.streamStateChange_.Clone() : null;
       akashicState_ = other.akashicState_ != null ? other.akashicState_.Clone() : null;
+      creatorSupportGoalStatus_ = other.creatorSupportGoalStatus_ != null ? other.creatorSupportGoalStatus_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -266,6 +271,18 @@ namespace Dwango.Nicolive.Chat.Data {
       }
     }
 
+    /// <summary>Field number for the "creator_support_goal_status" field.</summary>
+    public const int CreatorSupportGoalStatusFieldNumber = 14;
+    private global::Dwango.Nicolive.Chat.Data.Atoms.CreatorSupportGoalStatus creatorSupportGoalStatus_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Dwango.Nicolive.Chat.Data.Atoms.CreatorSupportGoalStatus CreatorSupportGoalStatus {
+      get { return creatorSupportGoalStatus_; }
+      set {
+        creatorSupportGoalStatus_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -293,6 +310,7 @@ namespace Dwango.Nicolive.Chat.Data {
       if (!object.Equals(IchibaLauncher, other.IchibaLauncher)) return false;
       if (!object.Equals(StreamStateChange, other.StreamStateChange)) return false;
       if (!object.Equals(AkashicState, other.AkashicState)) return false;
+      if (!object.Equals(CreatorSupportGoalStatus, other.CreatorSupportGoalStatus)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -312,6 +330,7 @@ namespace Dwango.Nicolive.Chat.Data {
       if (ichibaLauncher_ != null) hash ^= IchibaLauncher.GetHashCode();
       if (streamStateChange_ != null) hash ^= StreamStateChange.GetHashCode();
       if (akashicState_ != null) hash ^= AkashicState.GetHashCode();
+      if (creatorSupportGoalStatus_ != null) hash ^= CreatorSupportGoalStatus.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -378,6 +397,10 @@ namespace Dwango.Nicolive.Chat.Data {
         output.WriteRawTag(106);
         output.WriteMessage(AkashicState);
       }
+      if (creatorSupportGoalStatus_ != null) {
+        output.WriteRawTag(114);
+        output.WriteMessage(CreatorSupportGoalStatus);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -436,6 +459,10 @@ namespace Dwango.Nicolive.Chat.Data {
         output.WriteRawTag(106);
         output.WriteMessage(AkashicState);
       }
+      if (creatorSupportGoalStatus_ != null) {
+        output.WriteRawTag(114);
+        output.WriteMessage(CreatorSupportGoalStatus);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -481,6 +508,9 @@ namespace Dwango.Nicolive.Chat.Data {
       }
       if (akashicState_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(AkashicState);
+      }
+      if (creatorSupportGoalStatus_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(CreatorSupportGoalStatus);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -565,6 +595,12 @@ namespace Dwango.Nicolive.Chat.Data {
           AkashicState = new global::Dwango.Nicolive.Chat.Data.Atoms.AkashicStateRouting();
         }
         AkashicState.MergeFrom(other.AkashicState);
+      }
+      if (other.creatorSupportGoalStatus_ != null) {
+        if (creatorSupportGoalStatus_ == null) {
+          CreatorSupportGoalStatus = new global::Dwango.Nicolive.Chat.Data.Atoms.CreatorSupportGoalStatus();
+        }
+        CreatorSupportGoalStatus.MergeFrom(other.CreatorSupportGoalStatus);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -669,6 +705,13 @@ namespace Dwango.Nicolive.Chat.Data {
             input.ReadMessage(AkashicState);
             break;
           }
+          case 114: {
+            if (creatorSupportGoalStatus_ == null) {
+              CreatorSupportGoalStatus = new global::Dwango.Nicolive.Chat.Data.Atoms.CreatorSupportGoalStatus();
+            }
+            input.ReadMessage(CreatorSupportGoalStatus);
+            break;
+          }
         }
       }
     #endif
@@ -770,6 +813,13 @@ namespace Dwango.Nicolive.Chat.Data {
               AkashicState = new global::Dwango.Nicolive.Chat.Data.Atoms.AkashicStateRouting();
             }
             input.ReadMessage(AkashicState);
+            break;
+          }
+          case 114: {
+            if (creatorSupportGoalStatus_ == null) {
+              CreatorSupportGoalStatus = new global::Dwango.Nicolive.Chat.Data.Atoms.CreatorSupportGoalStatus();
+            }
+            input.ReadMessage(CreatorSupportGoalStatus);
             break;
           }
         }
