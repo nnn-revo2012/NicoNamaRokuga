@@ -163,10 +163,35 @@ namespace NicoNamaRokuga
             }));
         }
 
-        private void StartExtract(string filename)
+        private (bool, long, long) GetTsTime()
+        {
+            long start_time = 0;
+            long end_time = 0;
+            bool result = false;
+
+            //ＴＳ開始・終了時間
+            // 10:00 - 0
+            // 0 - 10:00
+            // 10:00 - 40:00
+            // 50:00 - 10:00 ×
+            if (!string.IsNullOrEmpty(textBox2.Text))
+                start_time = Props.ParseTime(textBox2.Text);
+            if (!string.IsNullOrEmpty(textBox3.Text))
+                end_time = Props.ParseTime(textBox3.Text);
+            AddLog("StartTS: " + Props.SecondsToHHMMSS(start_time), 1);
+            AddLog("EndTS: " + Props.SecondsToHHMMSS(end_time), 1);
+            if (end_time > 0 && (start_time > end_time))
+            {
+                AddLog("Error: 終了時間が開始時間より早いです", 1);
+                return (result, 0, 0);
+            }
+            result = true;
+            return (result, start_time, end_time);
+        }
+
+        private void StartExtract(string filename, string saveextfile)
         {
             long seqnoStart = 0;
-            long seqnoEnd = 0;
 
             if (filename.IndexOf(".sqlite3") < 0) return;
 
@@ -175,6 +200,7 @@ namespace NicoNamaRokuga
                 //保存ファイル名作成
                 epi = new ExecPsInfo();
                 epi.Sqlite3File = filename;
+                epi.SaveExtFile = saveextfile;
                 epi.Protocol = Protocol.hls.ToString();
                 epi.Seq = 0;
                 epi.Exec = GetExecFile(props.ExecFile[Props.ParseProtocol(props.Protocol.ToString())]);
@@ -225,13 +251,15 @@ namespace NicoNamaRokuga
                 if (revision > 2)
                     bci.StreamType = kvs["streamType"].ToString();
 
+                bool result = false;
+                (result, bci.StartTs_Time, bci.EndTs_Time) = GetTsTime();
+                if (!result)
+                    return;
+
                 epi.Comment_Offset = 0L;
                 if (bci.OnAirStatus == "ENDED")
                 {
-                    if (bci.StreamType == "dlive")
-                        epi.Comment_Offset = seqnoStart * 600; //timeshift
-                    else
-                        epi.Comment_Offset = seqnoStart * 500; //timeshift
+                    epi.Comment_Offset = bci.StartTs_Time * 100; //timeshift
                 }
                 else
                 {
@@ -261,8 +289,15 @@ namespace NicoNamaRokuga
                 else
                 {
                     AddLog("映像データーはありません。", 1);
-                    epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
-                    epi.SaveCommentFile = epi.SaveFile + epi.Xml;
+                    if (!string.IsNullOrEmpty(epi.SaveExtFile))
+                    {
+                        epi.SaveCommentFile = epi.SaveExtFile + epi.Xml;
+                    }
+                    else
+                    {
+                        epi.SaveFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                        epi.SaveCommentFile = epi.SaveFile + epi.Xml;
+                    }
                 }
                 if (_ndb.CountDbComment() > 0)
                 {

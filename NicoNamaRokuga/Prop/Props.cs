@@ -485,6 +485,60 @@ namespace NicoNamaRokuga.Prop
 
             return s;
         }
+        /// <summary>
+        /// "HH:MM:SS", "MM:SS", "SS" を秒数に変換する
+        /// </summary>
+        public static long ParseTime(string arg)
+        {
+            int hour = 0;
+            int min = 0;
+            int sec = 0;
+
+            Match m;
+
+            // HH:MM:SS
+            m = Regex.Match(arg, @"^(\d+):(\d+):(\d+)$");
+            if (m.Success)
+            {
+                hour = int.Parse(m.Groups[1].Value);
+                min = int.Parse(m.Groups[2].Value);
+                sec = int.Parse(m.Groups[3].Value);
+            }
+            // MM:SS
+            else if ((m = Regex.Match(arg, @"^(\d+):(\d+)$")).Success)
+            {
+                min = int.Parse(m.Groups[1].Value);
+                sec = int.Parse(m.Groups[2].Value);
+            }
+            // SS
+            else if ((m = Regex.Match(arg, @"^(\d+)$")).Success)
+            {
+                sec = int.Parse(m.Groups[1].Value);
+            }
+            else
+            {
+                throw new FormatException("regexp not matched");
+            }
+
+            return (long)(hour * 3600 + min * 60 + sec);
+        }
+
+        /// <summary>
+        /// 秒数を "H:MM:SS" に変換する
+        /// </summary>
+        public static string SecondsToHHMMSS(long seconds)
+        {
+            if (seconds <= 0)
+            {
+                return "";
+            }
+
+            long hours = seconds / 3600;
+            long minutes = (seconds % 3600) / 60;
+            long secs = seconds % 60;
+
+            return string.Format("{0}:{1:D2}:{2:D2}", hours, minutes, secs);
+        }
 
     }
 }

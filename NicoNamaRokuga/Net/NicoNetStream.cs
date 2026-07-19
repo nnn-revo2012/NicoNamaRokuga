@@ -50,7 +50,8 @@ namespace NicoNamaRokuga.Net
         public string StreamType { set; get; }
         public string User_Id { set; get; }
         public string AccountType { set; get; }
-        public int    StartTs_Time { set; get; }
+        public long   StartTs_Time { set; get; }
+        public long   EndTs_Time { set; get; }
         public string Data_Props { set; get; }
 
         public BroadCastInfo(string liveid, string autkn, string wsurl, string frontendid)
@@ -63,6 +64,7 @@ namespace NicoNamaRokuga.Net
             this.Status = null;
             this.Error = null;
             this.StartTs_Time = 0;
+            this.EndTs_Time = 0;
             this.Data_Props = null;
         }
 

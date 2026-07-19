@@ -78,7 +78,7 @@ namespace NicoNamaRokuga.Message
                 MessageStatus = 0;
                 if (_bci.IsTimeShift())
                 {
-                    var when = _ndb.GetDbFromWhen();
+                    var when = _ndb.GetDbFromWhen(_bci);
                     _msc.SetNextStreamAt(when.ToString());
                 }
 

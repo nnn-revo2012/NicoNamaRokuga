@@ -762,14 +762,14 @@ namespace NicoNamaRokuga.Rec
                 return result;
             }
         }
-        public long GetDbFromWhen()
+        public long GetDbFromWhen(BroadCastInfo bci)
         {
             long when = 0L;
+            long date2 = 0L;
             try
             {
                 using (SQLiteCommand command = _cn.CreateCommand())
                 {
-                    long date2 = 0L;
                     command.CommandText = "SELECT date2 FROM comment ORDER BY date2 ASC LIMIT 1";
                     using (SQLiteDataReader reader = command.ExecuteReader())
                     {
@@ -778,14 +778,10 @@ namespace NicoNamaRokuga.Rec
                     }
                     if (date2 == 0L)
                     {
-                        double endTime = 0.0;
-                        command.CommandText = "SELECT v FROM kvs WHERE k = \"endTime\"";
-                        using (SQLiteDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                                endTime = reader.GetDouble(0);
-                        }
-                        when = (long)endTime + 360L;
+                        if (bci.EndTs_Time > 0)
+                            when = bci.Open_Time + bci.EndTs_Time + 30L;
+                        else
+                            when = bci.End_Time + 360L;
                         var unix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                         if (unix < when)
                             when = unix;

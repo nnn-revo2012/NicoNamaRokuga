@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 
+using NicoNamaRokuga.Prop;
+
 namespace NicoNamaRokuga.Proc
 {
     public class ExecPsInfo
@@ -31,9 +33,12 @@ namespace NicoNamaRokuga.Proc
         //保存ファイルにシーケンスNoをつける
         public static string GetSaveFileNum(ExecPsInfo epi, string ext = null)
         {
-            var ff = Path.Combine(epi.Sdir, epi.Sfolder, epi.Sfile);
+            int idx = epi.Sqlite3File.IndexOf(".sqlite3");
+            if (idx < 0) return null;
+
             var ext2 = epi.Ext;
-            if (ext2 != null) ext2 = ext;
+            if (ext != null) ext2 = ext;
+            var ff = epi.Sqlite3File.Substring(0, idx) + "-";
 
             //同名ファイル名がないかチェック
             while (IsExistFile(ff, epi.Seq, ext2, epi.Xml)) ++epi.Seq;
@@ -42,15 +47,23 @@ namespace NicoNamaRokuga.Proc
         }
 
         //実行ファイル用の引数(argumentを設定)
-        public static string SetOption(ExecPsInfo epi, string para, string url, string us, Prop.Props props, Net.BroadCastInfo bci, bool isdebug)
+        public static string SetOption(ExecPsInfo epi, string para, string url, string us, Props props, Net.BroadCastInfo bci, bool isdebug)
         {
             var result = epi.Arg;
             var ff = epi.SaveExtFile + epi.Ext;
             var headers = string.Empty;
-            //var para2 = starttstime > 0 ? para + "&start=" + starttstime.ToString() : para + "&start=0.0";
-
+            if (bci.IsTimeShift())
+            {
+                if (bci.StartTs_Time > 0)
+                    headers = "--hls-start-offset " + Props.SecondsToHHMMSS(bci.StartTs_Time);
+                if (bci.EndTs_Time > 0)
+                {
+                    var ll = bci.EndTs_Time - bci.StartTs_Time;
+                    if (ll > 0)
+                        headers += " --stream-segmented-duration " + Props.SecondsToHHMMSS(ll);
+                }
+            }
             result = result.Replace("%HEADERS%", headers);
-            //result = result.Replace("%PARA%", para2);
             result = result.Replace("%URL%", url);
             result = result.Replace("%FILE%", ff);
             if (props.IsLogin == Prop.IsLogin.always && !string.IsNullOrEmpty(us))
@@ -106,7 +119,7 @@ namespace NicoNamaRokuga.Proc
             if (idx < 0) return null;
 
             var ext2 = epi.Ext;
-            if (ext2 != null) ext2 = ext;
+            if (ext != null) ext2 = ext;
             var ff = epi.Sqlite3File.Substring(0, idx) + "-";
 
             //同名ファイル名がないかチェック

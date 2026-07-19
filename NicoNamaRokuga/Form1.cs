@@ -107,7 +107,7 @@ namespace NicoNamaRokuga
                     if (props.Protocol == Protocol.hls && props.UseExternal != UseExternal.native)
                     {
                         if (!string.IsNullOrEmpty(epi.SaveFile))
-                            StartExtract(epi.SaveFile);
+                            StartExtract(epi.SaveFile, epi.SaveExtFile);
                     }
                     EnableButton(true);
                     start_flg = false;
@@ -304,10 +304,23 @@ namespace NicoNamaRokuga
                 var ws_ver = Regex.Match(bci.WsUrl, @"/wsapi/([^/]*)/").Groups[1].Value;
                 AddLog("Connect WebSocket", 1);
 
-                //ＴＳ開始時間
-                int ii;
-                if (int.TryParse(textBox2.Text, out ii))
-                    bci.StartTs_Time = ii;
+                //ＴＳ開始・終了時間
+                // 10:00 - 0
+                // 0 - 10:00
+                // 10:00 - 40:00
+                // 50:00 - 10:00 ×
+                if (bci.IsTimeShift())
+                {
+                    bool result = false;
+                    (result, bci.StartTs_Time, bci.EndTs_Time) = GetTsTime();
+                    if (!result)
+                        return;
+                    //if (bci.EndTs_Time > 0 && (bci.StartTs_Time > bci.EndTs_Time))
+                    //{
+                    //    AddLog("Error: 終了時間が開始時間より早いです", 1);
+                    //    return;
+                    //}
+                }
 
                 if (props.Protocol == Protocol.rtmp)
                     props.Protocol = Protocol.hls;
@@ -331,10 +344,10 @@ namespace NicoNamaRokuga
                 _ndb.CreateDbAll();
                 _ndb.WriteDbKvsProps(bci);
 
-                if (props.Protocol == Protocol.hls && props.UseExternal != UseExternal.native)
+                if (props.IsVideo && props.Protocol == Protocol.hls && props.UseExternal != UseExternal.native)
                 {
                     epi.Sqlite3File = file;
-                    epi.SaveExtFile = ExecPsInfo.GetSaveFileSqlite3Num(epi);
+                    epi.SaveExtFile = ExecPsInfo.GetSaveFileNum(epi);
                 }
 
                 //コメント情報
@@ -394,11 +407,14 @@ namespace NicoNamaRokuga
             string err;
             int neterr;
 
-            if (props.IsComment) MessageStatus = _nms.MessageStatus;
-            if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
-                ExecStatus = _rHtml.PsStatus;
-            else
-                ExecStatus = _eProcess.PsStatus;
+            if (props.IsComment)
+                MessageStatus = _nms.MessageStatus;
+            if (props.IsVideo)
+                if (props.Protocol == Protocol.hls && props.UseExternal == UseExternal.native)
+                    ExecStatus = _rHtml.PsStatus;
+                else
+                    ExecStatus = _eProcess.PsStatus;
+
             try
             {
                 if (_nns.WsStatus >= 2 || MessageStatus >= 2 || ExecStatus >= 2)
@@ -465,6 +481,11 @@ namespace NicoNamaRokuga
                         ExecStatus = 1;
                     }
                 }
+                //タイムシフトで動画は終わってるがコメント取得中の場合
+                if (bci.IsTimeShift())
+                    if (ExecStatus == 1 && MessageStatus == 0)
+                        return;
+                //コメントのみ取得の場合
                 if (!props.IsVideo && MessageStatus == 1)
                     ExecStatus = 1;
                 if (_nns.WsStatus == 1 || ExecStatus == 1) //終了処理
@@ -490,7 +511,9 @@ namespace NicoNamaRokuga
                     if (props.Protocol == Protocol.hls && props.UseExternal != UseExternal.native)
                     {
                         if (!string.IsNullOrEmpty(epi.SaveFile))
-                            StartExtract(epi.SaveFile);
+                        {
+                            StartExtract(epi.SaveFile, epi.SaveExtFile);
+                        }
                     }
                     EnableButton(true);
                     start_flg = false;
@@ -600,7 +623,7 @@ namespace NicoNamaRokuga
                 for (int i = 0; i < files.Length; i++)
                 {
                     AddLog("出力開始します。", 1);
-                    await Task.Run(() => StartExtract(files[i]));
+                    await Task.Run(() => StartExtract(files[i], string.Empty));
                 }
             }
             catch (Exception Ex)
